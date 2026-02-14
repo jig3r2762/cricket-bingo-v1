@@ -161,7 +161,9 @@ export function generateDailyGame(
   }
 
   const shuffle = <T>(arr: T[]) => seededShuffle(arr, rng);
-  const deck = buildCoverDeck(grid, allPlayers, 40, shuffle);
+  // Calculate deck size: ensure at least 5 players per cell
+  const deckSize = Math.max(40, cellCount * 5);
+  const deck = buildCoverDeck(grid, allPlayers, deckSize, shuffle);
 
   return { date, gridSize, grid, deck, seed };
 }
@@ -171,7 +173,9 @@ export function buildDeckForGrid(
   grid: GridCategory[],
   allPlayers: CricketPlayer[]
 ): CricketPlayer[] {
-  return buildCoverDeck(grid, allPlayers, 60, randomShuffle);
+  // Calculate deck size: ensure at least 5 players per cell
+  const deckSize = Math.max(60, grid.length * 5);
+  return buildCoverDeck(grid, allPlayers, deckSize, randomShuffle);
 }
 
 export function getTodayDateString(): string {
@@ -213,7 +217,8 @@ export function generateRandomGame(
     attempts++;
   }
 
-  const deck = buildCoverDeck(grid, allPlayers, 60, randomShuffle);
+  const deckSize = Math.max(60, cellCount * 5);
+  const deck = buildCoverDeck(grid, allPlayers, deckSize, randomShuffle);
 
   return { date: gameId, gridSize, grid, deck, seed: Date.now() };
 }
