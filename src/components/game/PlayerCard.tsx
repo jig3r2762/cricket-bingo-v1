@@ -50,7 +50,7 @@ export function PlayerCard({
           <div className="px-4 pt-4 pb-3">
             {/* Main row: avatar + name + skip */}
             <div className="flex items-center gap-3">
-              {/* Player photo or placeholder badge */}
+              {/* Player photo or initials badge */}
               <div className="relative w-12 h-12 shrink-0">
                 {player.headshot_url && !imageError ? (
                   <img
@@ -61,12 +61,16 @@ export function PlayerCard({
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  <img
-                    src="/placeholder-player.svg"
-                    alt="No image"
-                    className="w-full h-full rounded-full object-cover border-2 bg-gray-100"
-                    style={{borderColor: teamColor}}
-                  />
+                  <div
+                    className="w-full h-full rounded-full flex items-center justify-center font-display text-sm font-bold border-2"
+                    style={{
+                      borderColor: teamColor,
+                      background: `${teamColor}20`,
+                      color: teamColor,
+                    }}
+                  >
+                    {initials}
+                  </div>
                 )}
               </div>
 
