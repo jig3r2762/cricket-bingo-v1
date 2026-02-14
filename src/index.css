@@ -82,8 +82,9 @@
   }
   .glass-cell-filled {
     background: hsl(var(--glass) / 0.7);
-    border: 2px solid hsl(var(--glass-border) / 0.6);
+    border: 2px solid hsl(var(--neon-green) / 0.45);
     backdrop-filter: blur(12px);
+    box-shadow: 0 0 8px hsl(var(--neon-green) / 0.15), inset 0 0 12px hsl(var(--neon-green) / 0.06);
   }
   .glow-green {
     box-shadow: 0 0 20px hsl(var(--cricket-green) / 0.4), 0 0 60px hsl(var(--cricket-green) / 0.1);

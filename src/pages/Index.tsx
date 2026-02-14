@@ -10,7 +10,7 @@ import { GameOverScreen } from "@/components/game/GameOverScreen";
 import { useGameState, type AdminGrid } from "@/hooks/useGameState";
 import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
 import type { GridCategory } from "@/types/game";
 
@@ -20,32 +20,32 @@ const Index = () => {
   const [adminGrid, setAdminGrid] = useState<AdminGrid | undefined>(undefined);
   const [loadingGrid, setLoadingGrid] = useState(false);
 
-  // When grid size is selected, check Firestore for admin-set grid
+  // Listen for admin-set grid in real time (updates live when admin saves)
   useEffect(() => {
     if (!gridSize) return;
-    let cancelled = false;
     setLoadingGrid(true);
 
-    (async () => {
-      try {
-        const today = getTodayDateString();
-        const ref = doc(db, "dailyGrid", `${today}-${gridSize}`);
-        const snap = await getDoc(ref);
-        if (!cancelled && snap.exists()) {
+    const today = getTodayDateString();
+    const ref = doc(db, "dailyGrid", `${today}-${gridSize}`);
+    const unsubscribe = onSnapshot(
+      ref,
+      (snap) => {
+        if (snap.exists()) {
           const data = snap.data();
           setAdminGrid({
             grid: data.grid as GridCategory[],
             deckPlayerIds: data.deck as string[],
           });
         }
-      } catch {
+        setLoadingGrid(false);
+      },
+      () => {
         // Firestore unavailable — fall back to local generation
-      } finally {
-        if (!cancelled) setLoadingGrid(false);
-      }
-    })();
+        setLoadingGrid(false);
+      },
+    );
 
-    return () => { cancelled = true; };
+    return unsubscribe;
   }, [gridSize]);
 
   if (!gridSize) {

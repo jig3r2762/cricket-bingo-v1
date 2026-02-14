@@ -69,6 +69,72 @@ function isSolvable(
   return backtrack(0);
 }
 
+// --- Coverage-guaranteed deck builder ---
+// Ensures every cell has at least `minPerCell` players in the deck,
+// so you never get stuck with unfillable cells mid-game.
+
+function buildCoverDeck(
+  grid: GridCategory[],
+  allPlayers: CricketPlayer[],
+  deckSize: number,
+  shuffleFn: <T>(arr: T[]) => T[],
+  minPerCell = 4
+): CricketPlayer[] {
+  const playerMap = new Map(allPlayers.map((p) => [p.id, p]));
+
+  // Per-cell candidate lists (shuffled so picks are varied)
+  const perCell: string[][] = grid.map((cat) =>
+    shuffleFn(
+      allPlayers.filter((p) => validate(p, cat)).map((p) => p.id)
+    )
+  );
+
+  // 1. Guarantee minimum coverage per cell
+  const picked = new Set<string>();
+  for (const candidates of perCell) {
+    let count = 0;
+    for (const pid of candidates) {
+      if (count >= minPerCell) break;
+      if (!picked.has(pid)) {
+        picked.add(pid);
+        count++;
+      }
+    }
+  }
+
+  // 2. Fill remaining slots with other relevant players
+  const relevantSet = new Set<string>();
+  for (const cat of grid) {
+    for (const p of allPlayers) {
+      if (validate(p, cat)) relevantSet.add(p.id);
+    }
+  }
+  const remaining = shuffleFn(
+    allPlayers.filter((p) => relevantSet.has(p.id) && !picked.has(p.id))
+  );
+  for (const p of remaining) {
+    if (picked.size >= deckSize) break;
+    picked.add(p.id);
+  }
+
+  // 3. If still under deckSize, pad with distractors
+  if (picked.size < deckSize) {
+    const distractors = shuffleFn(
+      allPlayers.filter((p) => !relevantSet.has(p.id))
+    );
+    for (const p of distractors) {
+      if (picked.size >= deckSize) break;
+      picked.add(p.id);
+    }
+  }
+
+  // Resolve IDs back to player objects and shuffle
+  const deck = [...picked]
+    .map((id) => playerMap.get(id))
+    .filter((p): p is CricketPlayer => !!p);
+  return shuffleFn(deck);
+}
+
 // --- Daily Game Generator ---
 
 export function generateDailyGame(
@@ -94,27 +160,8 @@ export function generateDailyGame(
     attempts++;
   }
 
-  // If all attempts fail, relax: use the last grid anyway
-  // (extremely unlikely with 3670 players and ~42 categories)
-
-  // Build deck: players valid for at least one cell (relevant), padded with distractors
-  const relevantSet = new Set<string>();
-  for (const cat of grid) {
-    for (const p of allPlayers) {
-      if (validate(p, cat)) relevantSet.add(p.id);
-    }
-  }
-
-  const relevant = allPlayers.filter((p) => relevantSet.has(p.id));
-  const distractors = allPlayers.filter((p) => !relevantSet.has(p.id));
-
-  let deckPool = [...relevant];
-  if (deckPool.length < 40) {
-    const shuffledDistractors = seededShuffle(distractors, rng);
-    deckPool = [...deckPool, ...shuffledDistractors.slice(0, 40 - deckPool.length)];
-  }
-
-  const deck = seededShuffle(deckPool, rng).slice(0, 40);
+  const shuffle = <T>(arr: T[]) => seededShuffle(arr, rng);
+  const deck = buildCoverDeck(grid, allPlayers, 40, shuffle);
 
   return { date, gridSize, grid, deck, seed };
 }
@@ -124,20 +171,7 @@ export function buildDeckForGrid(
   grid: GridCategory[],
   allPlayers: CricketPlayer[]
 ): CricketPlayer[] {
-  const relevantSet = new Set<string>();
-  for (const cat of grid) {
-    for (const p of allPlayers) {
-      if (validate(p, cat)) relevantSet.add(p.id);
-    }
-  }
-  const relevant = allPlayers.filter((p) => relevantSet.has(p.id));
-  const distractors = allPlayers.filter((p) => !relevantSet.has(p.id));
-
-  let deckPool = [...relevant];
-  if (deckPool.length < 40) {
-    deckPool = [...deckPool, ...randomShuffle(distractors).slice(0, 40 - deckPool.length)];
-  }
-  return randomShuffle(deckPool).slice(0, 60);
+  return buildCoverDeck(grid, allPlayers, 60, randomShuffle);
 }
 
 export function getTodayDateString(): string {
@@ -179,16 +213,7 @@ export function generateRandomGame(
     attempts++;
   }
 
-  // Build deck: only players valid for at least one cell
-  const relevantSet = new Set<string>();
-  for (const cat of grid) {
-    for (const p of allPlayers) {
-      if (validate(p, cat)) relevantSet.add(p.id);
-    }
-  }
-
-  const relevant = allPlayers.filter((p) => relevantSet.has(p.id));
-  const deck = randomShuffle(relevant).slice(0, 60);
+  const deck = buildCoverDeck(grid, allPlayers, 60, randomShuffle);
 
   return { date: gameId, gridSize, grid, deck, seed: Date.now() };
 }
