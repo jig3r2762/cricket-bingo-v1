@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#8b5cf6" opacity="0.15"/>
+  <circle cx="60" cy="60" r="50" fill="#8b5cf6"/>
+
+  <!-- Trophy shape -->
+  <rect x="35" y="55" width="50" height="25" rx="3" fill="white"/>
+  <path d="M 40 55 Q 40 35 50 30 L 70 30 Q 80 35 80 55" fill="white" stroke="white" stroke-width="2"/>
+  <line x1="35" y1="55" x2="30" y2="70" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="85" y1="55" x2="90" y2="70" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <rect x="28" y="70" width="64" height="4" fill="white"/>
+
+  <!-- Trophy shine -->
+  <ellipse cx="60" cy="60" rx="18" ry="8" fill="white" opacity="0.3"/>
+
+  <text x="60" y="105" font-size="12" font-weight="bold" text-anchor="middle" fill="#8b5cf6" font-family="Arial">WORLD CUP</text>
+</svg>

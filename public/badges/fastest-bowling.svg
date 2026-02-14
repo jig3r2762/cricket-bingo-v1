@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#ef4444" opacity="0.15"/>
+  <circle cx="60" cy="60" r="50" fill="#ef4444"/>
+
+  <!-- Lightning bolt (speed) -->
+  <path d="M 60 25 L 80 55 L 70 55 L 85 85 L 35 50 L 45 50 Z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Speed lines -->
+  <line x1="25" y1="45" x2="15" y2="40" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="25" y1="65" x2="15" y2="65" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <text x="60" y="105" font-size="14" font-weight="bold" text-anchor="middle" fill="#ef4444" font-family="Arial">FAST BOWLER</text>
+</svg>

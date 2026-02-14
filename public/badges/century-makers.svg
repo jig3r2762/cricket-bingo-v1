@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#06b6d4" opacity="0.15"/>
+  <circle cx="60" cy="60" r="50" fill="#06b6d4"/>
+
+  <!-- Century badge (100) -->
+  <rect x="25" y="35" width="70" height="50" rx="8" fill="white"/>
+  <text x="60" y="70" font-size="38" font-weight="bold" text-anchor="middle" fill="#06b6d4" font-family="Arial">100</text>
+  <text x="60" y="105" font-size="14" font-weight="bold" text-anchor="middle" fill="#06b6d4" font-family="Arial">CENTURIES</text>
+</svg>

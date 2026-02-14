@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#fbbf24" opacity="0.15"/>
+  <circle cx="60" cy="60" r="50" fill="#fbbf24"/>
+
+  <!-- Large star -->
+  <polygon points="60,25 70,48 95,48 76,63 82,86 60,71 38,86 44,63 25,48 50,48" fill="white" stroke="white" stroke-width="1"/>
+
+  <!-- Smaller stars around it -->
+  <polygon points="35,35 38,40 44,40 40,43 41,49 35,45 29,49 30,43 26,40 32,40" fill="white" opacity="0.7"/>
+  <polygon points="85,35 88,40 94,40 90,43 91,49 85,45 79,49 80,43 76,40 82,40" fill="white" opacity="0.7"/>
+
+  <text x="60" y="105" font-size="14" font-weight="bold" text-anchor="middle" fill="#fbbf24" font-family="Arial">IPL STAR</text>
+</svg>

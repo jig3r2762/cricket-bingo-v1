@@ -45,6 +45,16 @@ const PLAYER_IMAGES: Record<string, { url: string; name: string }> = {
   },
 };
 
+// --- Achievement category badges (local SVG assets) ---
+const ACHIEVEMENT_BADGES: Record<string, string> = {
+  ach_captains: "/badges/captains.svg",
+  ach_century_makers: "/badges/century-makers.svg",
+  ach_fastest_bowling: "/badges/fastest-bowling.svg",
+  ach_aggressive_batsmen: "/badges/aggressive-batsmen.svg",
+  ach_world_cup_winners: "/badges/world-cup-winners.svg",
+  ach_ipl_superstars: "/badges/ipl-superstars.svg",
+};
+
 // --- SVG icons for roles, stats, trophies ---
 function CricketBatIcon({ className }: { className?: string }) {
   return (
@@ -220,6 +230,7 @@ export const BingoCell = memo(function BingoCell({
   const flagUrl = FLAG_IMAGES[category.id];
   const teamLogo = TEAM_LOGOS[category.id];
   const playerImg = PLAYER_IMAGES[category.id];
+  const achievementBadge = ACHIEVEMENT_BADGES[category.id];
   const categoryIcon = CATEGORY_ICON_MAP[category.shortLabel];
   const isCombo = category.type === "combo";
 
@@ -322,6 +333,13 @@ export const BingoCell = memo(function BingoCell({
                 target.style.display = "none";
                 target.nextElementSibling?.classList.remove("hidden");
               }}
+            />
+          ) : achievementBadge ? (
+            /* Achievement category badge */
+            <img
+              src={achievementBadge}
+              alt={category.label}
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-sm"
             />
           ) : isCombo ? (
             /* Combo visual */
