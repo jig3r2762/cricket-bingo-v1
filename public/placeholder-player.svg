@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#f5f5f5" rx="100"/>
+
+  <!-- Avatar placeholder -->
+  <circle cx="100" cy="80" r="35" fill="#e0e0e0"/>
+  <ellipse cx="100" cy="150" rx="50" ry="40" fill="#e0e0e0"/>
+
+  <!-- Cricket bat symbol -->
+  <line x1="120" y1="50" x2="140" y2="30" stroke="#999" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="145" cy="25" r="4" fill="#999"/>
+</svg>

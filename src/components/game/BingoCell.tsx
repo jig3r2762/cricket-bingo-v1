@@ -15,18 +15,18 @@ const FLAG_IMAGES: Record<string, string> = {
   country_wi:  "https://flagcdn.com/w160/jm.png", // Jamaica flag for West Indies
 };
 
-// --- IPL team logos (official iplt20.com CDN) ---
+// --- IPL team logos (local SVG assets - fast & reliable) ---
 const TEAM_LOGOS: Record<string, string> = {
-  team_mi:   "https://documents.iplt20.com/ipl/MI/Logos/Logooutline/MIoutline.png",
-  team_csk:  "https://documents.iplt20.com/ipl/CSK/logos/Logooutline/CSKoutline.png",
-  team_rcb:  "https://documents.iplt20.com/ipl/RCB/Logos/Logooutline/RCBoutline.png",
-  team_dc:   "https://documents.iplt20.com/ipl/DC/Logos/LogoOutline/DCoutline.png",
-  team_srh:  "https://documents.iplt20.com/ipl/SRH/Logos/Logooutline/SRHoutline.png",
-  team_rr:   "https://documents.iplt20.com/ipl/RR/Logos/Logooutline/RRoutline.png",
-  team_kkr:  "https://documents.iplt20.com/ipl/KKR/Logos/Logooutline/KKRoutline.png",
-  team_pbks: "https://documents.iplt20.com/ipl/PBKS/Logos/Logooutline/PBKSoutline.png",
-  team_gt:   "https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png",
-  team_lsg:  "https://documents.iplt20.com/ipl/LSG/Logos/Logooutline/LSGoutline.png",
+  team_mi:   "/logos/team-mi.svg",
+  team_csk:  "/logos/team-csk.svg",
+  team_rcb:  "/logos/team-rcb.svg",
+  team_dc:   "/logos/team-dc.svg",
+  team_srh:  "/logos/team-srh.svg",
+  team_rr:   "/logos/team-rr.svg",
+  team_kkr:  "/logos/team-kkr.svg",
+  team_pbks: "/logos/team-pbks.svg",
+  team_gt:   "/logos/team-gt.svg",
+  team_lsg:  "/logos/team-lsg.svg",
 };
 
 // --- Teammate player images (Wikimedia Commons, CC licensed) ---
@@ -265,23 +265,27 @@ export const BingoCell = memo(function BingoCell({
       {placedPlayer ? (
         /* --- Filled cell: show placed player --- */
         <div className="flex flex-col items-center gap-0.5 animate-pop-in">
-          {/* Player headshot or country flag */}
+          {/* Player headshot, placeholder, or country flag */}
           {placedPlayer.headshot_url ? (
             <img
               src={placedPlayer.headshot_url}
               alt={placedPlayer.name}
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-primary/40"
               onError={(e) => {
-                // Fallback to flag emoji if image fails
+                // Fallback to placeholder if image fails
                 e.currentTarget.style.display = "none";
                 const fallback = e.currentTarget.nextElementSibling;
                 if (fallback) fallback.classList.remove("hidden");
               }}
             />
-          ) : null}
-          {!placedPlayer.headshot_url ? (
-            <span className="text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
           ) : (
+            <img
+              src="/placeholder-player.svg"
+              alt="No image"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-primary/40 bg-gray-100"
+            />
+          )}
+          {placedPlayer.headshot_url && (
             <span className="hidden text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
           )}
           <span className="font-display text-[9px] sm:text-[10px] text-primary font-bold uppercase tracking-wider truncate w-full leading-tight">
