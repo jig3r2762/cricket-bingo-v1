@@ -92,6 +92,7 @@ function GameBoard({
     handleWildcard,
     cancelWildcard,
     resetGame,
+    playRandomGame,
     filledCount,
     remaining,
     isGameOver,
@@ -157,7 +158,7 @@ function GameBoard({
         <GameHeader score={gameState.score} streak={gameState.streak} onHowToPlay={() => setHowToPlay(true)} />
 
         {isGameOver ? (
-          <GameOverScreen gameState={gameState} onReset={resetGame} />
+          <GameOverScreen gameState={gameState} onReset={playRandomGame} />
         ) : currentPlayer ? (
           <PlayerCard
             player={currentPlayer}

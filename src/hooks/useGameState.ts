@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CricketPlayer, GameState, GridCategory } from "@/types/game";
 import { validate, calculateScore, checkBingo, getEligibleCells, getRecommendedCell, findNextPlayableIndex } from "@/lib/gameEngine";
-import { generateDailyGame, getTodayDateString } from "@/lib/dailyGame";
+import { generateDailyGame, getTodayDateString, generateRandomGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
 import allPlayersRaw from "@/data/players.json";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
@@ -374,6 +374,33 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     setGameState(createInitialState(gridSize, adminGrid));
   }, [gridSize, adminGrid]);
 
+  // Play a new random game (shuffled grid & deck) for endless play after game over
+  const playRandomGame = useCallback(() => {
+    const date = getTodayDateString();
+    const key = storageKey(date, gridSize);
+    try { localStorage.removeItem(key); } catch { /* ok */ }
+    const randomGame = generateRandomGame(gridSize, allPlayers, FULL_CATEGORY_POOL);
+    const newState: GameState = {
+      dailyGameId: randomGame.date,
+      gridSize,
+      grid: randomGame.grid,
+      deck: randomGame.deck,
+      deckIndex: 0,
+      placements: {},
+      remainingPlayers: gridSize === 3 ? 20 : 25,
+      wildcardsLeft: 1,
+      wildcardMode: false,
+      score: 0,
+      streak: 0,
+      maxStreak: 0,
+      status: "playing",
+      winLine: null,
+      feedbackStates: {},
+      history: [],
+    };
+    setGameState(newState);
+  }, [gridSize]);
+
   const filledCount = Object.values(gameState.placements).filter(Boolean).length;
 
   return {
@@ -386,6 +413,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     handleWildcard,
     cancelWildcard,
     resetGame,
+    playRandomGame,
     filledCount,
     remaining: gameState.remainingPlayers,
     isGameOver: gameState.status !== "playing",
