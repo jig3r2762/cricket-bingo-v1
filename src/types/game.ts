@@ -11,6 +11,7 @@ export interface CricketPlayer {
   trophies: string[];
   teammates: string[]; // flat array of player IDs
   headshot_url?: string; // Headshot image URL from Wikimedia Commons
+  categories?: string[]; // Achievement categories (Captains, World Cup Winners, etc)
 }
 
 export interface PlayerStats {
@@ -39,6 +40,7 @@ export type CategoryType =
   | "role"
   | "trophy"
   | "teammate"
+  | "achievement"
   | "combo";
 
 export interface GridCategory {

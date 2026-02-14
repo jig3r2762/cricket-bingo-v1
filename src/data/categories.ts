@@ -93,6 +93,14 @@ export const FULL_CATEGORY_POOL: GridCategory[] = [
   { id: "tm_kohli", label: "Played with Kohli", shortLabel: "w/ KOHLI", icon: "users", type: "teammate", validatorKey: "teammate:ind_virat_kohli" },
   { id: "tm_sachin", label: "Played with Sachin", shortLabel: "w/ SACHIN", icon: "users", type: "teammate", validatorKey: "teammate:ind_sachin_tendulkar" },
 
+  // --- ACHIEVEMENT (6) NEW ---
+  { id: "ach_captains", label: "Captains", shortLabel: "CAPTAIN", icon: "crown", type: "achievement", validatorKey: "category:Captains" },
+  { id: "ach_century_makers", label: "50+ Century Makers", shortLabel: "50+ 100s", icon: "award", type: "achievement", validatorKey: "category:100+ Century Makers" },
+  { id: "ach_fastest_bowling", label: "Fastest Bowling", shortLabel: "PACE KING", icon: "zap", type: "achievement", validatorKey: "category:Fastest Bowling" },
+  { id: "ach_aggressive_batsmen", label: "Aggressive Batsmen", shortLabel: "AGGR BAT", icon: "flame", type: "achievement", validatorKey: "category:Aggressive Batsmen" },
+  { id: "ach_world_cup_winners", label: "World Cup Winners", shortLabel: "WC WIN", icon: "trophy", type: "achievement", validatorKey: "category:World Cup Winners" },
+  { id: "ach_ipl_superstars", label: "IPL Superstars", shortLabel: "IPL STAR", icon: "star", type: "achievement", validatorKey: "category:IPL Superstars" },
+
   // --- COMBO (6) ---
   { id: "combo_mi_ind", label: "MI + Indian", shortLabel: "MI+IND", icon: "shield", type: "combo", comboIcons: ["shield", "flag"], validatorKey: "combo:team:MI+country:India" },
   { id: "combo_csk_pacer", label: "CSK + Pacer", shortLabel: "CSK+PACE", icon: "shield", type: "combo", comboIcons: ["shield", "zap"], validatorKey: "combo:team:CSK+role:Fast Bowler" },

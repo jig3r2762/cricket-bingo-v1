@@ -35,6 +35,10 @@ function validateSingle(player: CricketPlayer, key: string): boolean {
     case "teammate":
       return player.id !== value && player.teammates.includes(value);
 
+    case "category":
+      // Check if player has this category tag
+      return (player.categories ?? []).includes(value);
+
     default:
       return false;
   }
