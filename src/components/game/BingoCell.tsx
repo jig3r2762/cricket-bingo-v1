@@ -265,7 +265,25 @@ export const BingoCell = memo(function BingoCell({
       {placedPlayer ? (
         /* --- Filled cell: show placed player --- */
         <div className="flex flex-col items-center gap-0.5 animate-pop-in">
-          <span className="text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
+          {/* Player headshot or country flag */}
+          {placedPlayer.headshot_url ? (
+            <img
+              src={placedPlayer.headshot_url}
+              alt={placedPlayer.name}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-primary/40"
+              onError={(e) => {
+                // Fallback to flag emoji if image fails
+                e.currentTarget.style.display = "none";
+                const fallback = e.currentTarget.nextElementSibling;
+                if (fallback) fallback.classList.remove("hidden");
+              }}
+            />
+          ) : null}
+          {!placedPlayer.headshot_url ? (
+            <span className="text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
+          ) : (
+            <span className="hidden text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
+          )}
           <span className="font-display text-[9px] sm:text-[10px] text-primary font-bold uppercase tracking-wider truncate w-full leading-tight">
             {placedPlayer.name.split(" ").pop()}
           </span>

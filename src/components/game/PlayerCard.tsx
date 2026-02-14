@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { SkipForward, Sparkles, Info, User } from "lucide-react";
+import { SkipForward, Sparkles, Info } from "lucide-react";
 import type { CricketPlayer } from "@/types/game";
 import { TEAM_COLORS } from "@/data/categories";
+import { useState } from "react";
 
 interface PlayerCardProps {
   player: CricketPlayer;
@@ -20,6 +21,14 @@ export function PlayerCard({
   wildcardsLeft, wildcardMode, onCancelWildcard,
 }: PlayerCardProps) {
   const teamColor = TEAM_COLORS[player.iplTeams?.[0]] || "#6366f1";
+  const [imageError, setImageError] = useState(false);
+
+  // Get player initials for fallback
+  const initials = player.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 
   return (
     <AnimatePresence mode="wait">
@@ -41,16 +50,28 @@ export function PlayerCard({
           <div className="px-4 pt-4 pb-3">
             {/* Main row: avatar + name + skip */}
             <div className="flex items-center gap-3">
-              {/* Player badge */}
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center font-display text-lg font-bold shrink-0 border-2"
-                style={{
-                  borderColor: teamColor,
-                  background: `${teamColor}20`,
-                  color: teamColor,
-                }}
-              >
-                <User className="w-5 h-5" />
+              {/* Player photo or initials badge */}
+              <div className="relative w-12 h-12 shrink-0">
+                {player.headshot_url && !imageError ? (
+                  <img
+                    src={player.headshot_url}
+                    alt={player.name}
+                    className="w-full h-full rounded-full object-cover border-2"
+                    style={{borderColor: teamColor}}
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div
+                    className="w-full h-full rounded-full flex items-center justify-center font-display text-sm font-bold border-2"
+                    style={{
+                      borderColor: teamColor,
+                      background: `${teamColor}20`,
+                      color: teamColor,
+                    }}
+                  >
+                    {initials}
+                  </div>
+                )}
               </div>
 
               {/* Name block */}

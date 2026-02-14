@@ -10,6 +10,7 @@ export interface CricketPlayer {
   stats: PlayerStats;
   trophies: string[];
   teammates: string[]; // flat array of player IDs
+  headshot_url?: string; // Headshot image URL from Wikimedia Commons
 }
 
 export interface PlayerStats {
