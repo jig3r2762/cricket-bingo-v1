@@ -15,18 +15,18 @@ const FLAG_IMAGES: Record<string, string> = {
   country_wi:  "https://flagcdn.com/w160/jm.png", // Jamaica flag for West Indies
 };
 
-// --- IPL team logos (local SVG assets - fast & reliable) ---
+// --- IPL team logos (official iplt20.com CDN) ---
 const TEAM_LOGOS: Record<string, string> = {
-  team_mi:   "/logos/team-mi.svg",
-  team_csk:  "/logos/team-csk.svg",
-  team_rcb:  "/logos/team-rcb.svg",
-  team_dc:   "/logos/team-dc.svg",
-  team_srh:  "/logos/team-srh.svg",
-  team_rr:   "/logos/team-rr.svg",
-  team_kkr:  "/logos/team-kkr.svg",
-  team_pbks: "/logos/team-pbks.svg",
-  team_gt:   "/logos/team-gt.svg",
-  team_lsg:  "/logos/team-lsg.svg",
+  team_mi:   "https://documents.iplt20.com/ipl/MI/Logos/Logooutline/MIoutline.png",
+  team_csk:  "https://documents.iplt20.com/ipl/CSK/logos/Logooutline/CSKoutline.png",
+  team_rcb:  "https://documents.iplt20.com/ipl/RCB/Logos/Logooutline/RCBoutline.png",
+  team_dc:   "https://documents.iplt20.com/ipl/DC/Logos/LogoOutline/DCoutline.png",
+  team_srh:  "https://documents.iplt20.com/ipl/SRH/Logos/Logooutline/SRHoutline.png",
+  team_rr:   "https://documents.iplt20.com/ipl/RR/Logos/Logooutline/RRoutline.png",
+  team_kkr:  "https://documents.iplt20.com/ipl/KKR/Logos/Logooutline/KKRoutline.png",
+  team_pbks: "https://documents.iplt20.com/ipl/PBKS/Logos/Logooutline/PBKSoutline.png",
+  team_gt:   "https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png",
+  team_lsg:  "https://documents.iplt20.com/ipl/LSG/Logos/Logooutline/LSGoutline.png",
 };
 
 // --- Teammate player images (Wikimedia Commons, CC licensed) ---
