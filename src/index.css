@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+@layer base {
+  :root {
+    --background: 222 71% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 50% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 71% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 71% 4%;
+
+    --secondary: 38 92% 50%;
+    --secondary-foreground: 222 71% 4%;
+
+    --muted: 222 40% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 187 92% 55%;
+    --accent-foreground: 222 71% 4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 142 71% 45%;
+
+    --radius: 0.75rem;
+
+    --cricket-green: 142 71% 45%;
+    --golden-trophy: 38 92% 50%;
+    --electric-cyan: 187 92% 55%;
+    --midnight: 222 71% 4%;
+    --midnight-deep: 230 80% 2%;
+    --glass: 222 40% 12%;
+    --glass-border: 222 30% 22%;
+    --neon-green: 142 90% 55%;
+
+    --sidebar-background: 222 71% 4%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 222 71% 4%;
+    --sidebar-accent: 222 40% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 30% 18%;
+    --sidebar-ring: 142 71% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl rounded-xl;
+    background: hsl(var(--glass) / 0.6);
+    border: 1px solid hsl(var(--glass-border) / 0.5);
+  }
+  .glass-cell {
+    background: hsl(var(--glass) / 0.4);
+    border: 2px solid hsl(var(--glass-border) / 0.35);
+    backdrop-filter: blur(12px);
+  }
+  .glass-cell-filled {
+    background: hsl(var(--glass) / 0.7);
+    border: 2px solid hsl(var(--glass-border) / 0.6);
+    backdrop-filter: blur(12px);
+  }
+  .glow-green {
+    box-shadow: 0 0 20px hsl(var(--cricket-green) / 0.4), 0 0 60px hsl(var(--cricket-green) / 0.1);
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px hsl(var(--golden-trophy) / 0.4), 0 0 60px hsl(var(--golden-trophy) / 0.1);
+  }
+  .stadium-bg {
+    background:
+      radial-gradient(ellipse 100% 60% at 50% -10%, hsl(var(--electric-cyan) / 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 90% 80%, hsl(var(--cricket-green) / 0.04) 0%, transparent 50%),
+      hsl(var(--midnight-deep));
+  }
+  .scoreboard-font {
+    font-family: 'Share Tech Mono', 'Oswald', monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  .player-bar {
+    background: linear-gradient(135deg, hsl(var(--glass) / 0.8) 0%, hsl(var(--midnight) / 0.9) 100%);
+    border: 1px solid hsl(var(--glass-border) / 0.6);
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  @keyframes sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  }
+  @keyframes cell-correct {
+    0% { box-shadow: 0 0 0 0 hsl(var(--neon-green) / 0.8); }
+    50% { box-shadow: 0 0 30px 10px hsl(var(--neon-green) / 0.4); }
+    100% { box-shadow: 0 0 10px 3px hsl(var(--neon-green) / 0.2); }
+  }
+  @keyframes cell-wrong {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slide-in-right {
+    0% { transform: translateX(60px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+    background-size: 200% 100%;
+  }
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  .animate-sparkle {
+    animation: sparkle 0.6s ease-out forwards;
+  }
+  .animate-cell-correct {
+    animation: cell-correct 0.6s ease-out;
+  }
+  .animate-cell-wrong {
+    animation: cell-wrong 0.4s ease-out;
+  }
+  .animate-pop-in {
+    animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+}
