@@ -2,7 +2,7 @@
 
 A daily cricket knowledge challenge game where players match cricket players to grid cells based on their stats, achievements, and details.
 
-**Live Demo**: [cricket-bingo-v1.vercel.app](https://cricket-bingo-v1.vercel.app)
+**Live Demo**: [cricket-bingo.in](https://cricket-bingo.in)
 
 ---
 

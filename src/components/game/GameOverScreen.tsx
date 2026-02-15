@@ -75,7 +75,7 @@ function buildShareText(state: GameState, streak: number): string {
   if (streak >= 2) text += `\u{1F4C5} Day Streak: ${streak}\n`;
   text += "\n";
   text += buildEmojiGrid(state);
-  text += "\nPlay: cricket-bingo-v1.vercel.app";
+  text += "\nPlay: cricket-bingo.in";
 
   return text;
 }
@@ -116,7 +116,7 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
   }, [gameState, currentStreak]);
 
   const handleChallenge = useCallback(async () => {
-    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo (${gameState.gridSize}x${gameState.gridSize})! Can you beat me?\n\nPlay: cricket-bingo-v1.vercel.app`;
+    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo (${gameState.gridSize}x${gameState.gridSize})! Can you beat me?\n\nPlay: cricket-bingo.in`;
 
     if (navigator.share) {
       try {
@@ -201,7 +201,7 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
     const footerY = gridTop + n * cellSize + 30;
     ctx.fillStyle = "#64748b";
     ctx.font = "12px system-ui, sans-serif";
-    ctx.fillText("cricket-bingo-v1.vercel.app", w / 2, footerY);
+    ctx.fillText("cricket-bingo.in", w / 2, footerY);
 
     canvas.toBlob((blob) => {
       if (!blob) return;
