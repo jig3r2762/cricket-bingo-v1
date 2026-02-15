@@ -13,10 +13,8 @@ import {
 } from "firebase/firestore";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
 import { generateDailyGame, getTodayDateString, buildDeckForGrid } from "@/lib/dailyGame";
-import type { GridCategory, CricketPlayer } from "@/types/game";
-import allPlayersRaw from "@/data/players.json";
-
-const allPlayers = allPlayersRaw as CricketPlayer[];
+import type { GridCategory } from "@/types/game";
+import { usePlayers } from "@/contexts/PlayersContext";
 
 interface FirestoreUser {
   uid: string;
@@ -97,6 +95,7 @@ export default function Admin() {
 
 function GridManager() {
   const { user } = useAuth();
+  const { players: allPlayers } = usePlayers();
   const [gridSize, setGridSize] = useState<3 | 4>(3);
   const [grid, setGrid] = useState<GridCategory[]>([]);
   const [saving, setSaving] = useState(false);

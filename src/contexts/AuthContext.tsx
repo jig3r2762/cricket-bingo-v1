@@ -15,6 +15,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
@@ -36,8 +37,10 @@ interface AuthContextValue {
   user: User | null;
   userData: UserData | null;
   loading: boolean;
+  isGuest: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  playAsGuest: () => void;
   isAdmin: boolean;
   refreshUserData: () => Promise<void>;
 }
@@ -48,6 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(() => {
+    try {
+      return localStorage.getItem("cricket-bingo-guest") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -55,6 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(firebaseUser);
 
         if (firebaseUser) {
+          // User signed in — clear guest mode
+          setIsGuest(false);
+          try { localStorage.removeItem("cricket-bingo-guest"); } catch {}
           await ensureUserDoc(firebaseUser);
           const data = await fetchUserData(firebaseUser.uid);
           setUserData(data);
@@ -63,8 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error("Auth state change error:", err);
-        // Even if there's an error, we should still set loading to false
-        // to prevent the loading spinner from being stuck
       } finally {
         setLoading(false);
       }
@@ -76,7 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (err) {
-      // Handle popup blocked or user cancelled
       if (err instanceof Error) {
         console.error("Google sign-in failed:", err.message);
         if (err.message.includes("popup")) {
@@ -90,6 +100,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await firebaseSignOut(auth);
     setUserData(null);
+    setIsGuest(false);
+    try { localStorage.removeItem("cricket-bingo-guest"); } catch {}
+  };
+
+  const playAsGuest = () => {
+    setIsGuest(true);
+    try { localStorage.setItem("cricket-bingo-guest", "true"); } catch {}
   };
 
   const isAdmin = userData?.role === "admin";
@@ -103,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, userData, loading, signInWithGoogle, signOut, isAdmin, refreshUserData }}
+      value={{ user, userData, loading, isGuest, signInWithGoogle, signOut, playAsGuest, isAdmin, refreshUserData }}
     >
       {children}
     </AuthContext.Provider>
@@ -122,7 +139,6 @@ async function ensureUserDoc(user: User) {
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
-    // Check if this is the first user (make them admin)
     const isFirstUser = await checkFirstUser();
     const data: UserData = {
       email: user.email ?? "",
@@ -145,12 +161,17 @@ async function fetchUserData(uid: string): Promise<UserData | null> {
 }
 
 async function checkFirstUser(): Promise<boolean> {
-  // Use a simple approach: check if a sentinel doc exists
   const ref = doc(db, "meta", "init");
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, { initialized: true, createdAt: serverTimestamp() });
-    return true;
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      if (!snap.exists()) {
+        transaction.set(ref, { initialized: true, createdAt: serverTimestamp() });
+        return true;
+      }
+      return false;
+    });
+  } catch {
+    return false;
   }
-  return false;
 }

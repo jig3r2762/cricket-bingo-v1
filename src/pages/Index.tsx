@@ -7,15 +7,21 @@ import { BingoMeter } from "@/components/game/BingoMeter";
 import { GameHeader } from "@/components/game/GameHeader";
 import { HowToPlayModal } from "@/components/game/HowToPlayModal";
 import { GameOverScreen } from "@/components/game/GameOverScreen";
+import { TurnTimer } from "@/components/game/TurnTimer";
+import { OnboardingOverlay } from "@/components/game/OnboardingOverlay";
+import { NotificationPrompt } from "@/components/game/NotificationPrompt";
 import { useGameState, type AdminGrid } from "@/hooks/useGameState";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
 import type { GridCategory } from "@/types/game";
 
 const Index = () => {
+  const { loading: playersLoading, error: playersError } = usePlayers();
   const [gridSize, setGridSize] = useState<3 | 4 | null>(null);
+  const [timed, setTimed] = useState(false);
   const [howToPlay, setHowToPlay] = useState(false);
   const [adminGrid, setAdminGrid] = useState<AdminGrid | undefined>(undefined);
   const [loadingGrid, setLoadingGrid] = useState(false);
@@ -48,10 +54,44 @@ const Index = () => {
     return unsubscribe;
   }, [gridSize]);
 
+  if (playersLoading) {
+    return (
+      <div className="min-h-screen stadium-bg flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="text-4xl animate-bounce">🏏</div>
+          <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
+            Loading players...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (playersError) {
+    return (
+      <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
+        <div className="text-center space-y-3 max-w-sm">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-destructive font-display text-sm uppercase tracking-wider">
+            Failed to load player data
+          </p>
+          <p className="text-muted-foreground text-xs">{playersError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!gridSize) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <GridSelection onSelect={setGridSize} />
+        <OnboardingOverlay />
+        <GridSelection onSelect={(size, timedMode) => { setGridSize(size); setTimed(timedMode ?? false); }} />
       </div>
     );
   }
@@ -66,21 +106,23 @@ const Index = () => {
     );
   }
 
-  return <GameBoard gridSize={gridSize} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} />;
+  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} />;
 };
 
 function GameBoard({
   gridSize,
+  timed,
   howToPlay,
   setHowToPlay,
   adminGrid,
 }: {
   gridSize: 3 | 4;
+  timed: boolean;
   howToPlay: boolean;
   setHowToPlay: (v: boolean) => void;
   adminGrid?: AdminGrid;
 }) {
-  const { user, userData, signOut, isAdmin } = useAuth();
+  const { user, userData, signOut, isAdmin, isGuest, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const {
     gameState,
@@ -107,7 +149,11 @@ function GameBoard({
         {/* User bar */}
         <div className="w-full flex items-center justify-between bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
           <div className="flex items-center gap-3">
-            {user?.photoURL ? (
+            {isGuest ? (
+              <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
+                🎮
+              </div>
+            ) : user?.photoURL ? (
               <img
                 src={user.photoURL}
                 alt=""
@@ -121,23 +167,33 @@ function GameBoard({
             )}
             <div className="flex flex-col">
               <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
-                {user?.displayName || "Player"}
-                {(userData?.currentStreak ?? 0) >= 2 && (
+                {isGuest ? "Guest" : (user?.displayName || "Player")}
+                {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
                   <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
                 )}
               </span>
               <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
-                {user?.email}
+                {isGuest ? "Sign in to save progress" : user?.email}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => navigate("/leaderboard")}
-              className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
-            >
-              Ranks
-            </button>
+            {!isGuest && (
+              <>
+                <button
+                  onClick={() => navigate("/stats")}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                >
+                  Stats
+                </button>
+                <button
+                  onClick={() => navigate("/leaderboard")}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
+                >
+                  Ranks
+                </button>
+              </>
+            )}
             {isAdmin && (
               <button
                 onClick={() => navigate("/admin")}
@@ -146,16 +202,34 @@ function GameBoard({
                 Admin
               </button>
             )}
-            <button
-              onClick={signOut}
-              className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-            >
-              Sign Out
-            </button>
+            {isGuest ? (
+              <button
+                onClick={() => signInWithGoogle().catch(() => {})}
+                className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+              >
+                Sign In
+              </button>
+            ) : (
+              <button
+                onClick={signOut}
+                className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+              >
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
 
         <GameHeader score={gameState.score} streak={gameState.streak} onHowToPlay={() => setHowToPlay(true)} />
+
+        {timed && !isGameOver && currentPlayer && (
+          <TurnTimer
+            duration={10}
+            turnKey={gameState.deckIndex}
+            onTimeUp={handleSkip}
+            paused={isGameOver}
+          />
+        )}
 
         {isGameOver ? (
           <GameOverScreen gameState={gameState} onReset={playRandomGame} />
@@ -222,6 +296,7 @@ function GameBoard({
       )}
 
       <HowToPlayModal open={howToPlay} onClose={() => setHowToPlay(false)} />
+      <NotificationPrompt />
     </div>
   );
 }

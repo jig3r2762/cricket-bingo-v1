@@ -26,3 +26,6 @@ dist-ssr
 # Data collection cache
 scripts/cricsheet_data/
 .claude/
+
+# Claude Code temp files
+tmpclaude-*

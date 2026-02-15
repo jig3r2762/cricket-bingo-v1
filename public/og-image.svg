@@ -1,0 +1,69 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a"/>
+      <stop offset="100%" style="stop-color:#1a1f3a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ff41"/>
+      <stop offset="100%" style="stop-color:#00ff88"/>
+    </linearGradient>
+    <linearGradient id="gridGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7877c6;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#00ff41;stop-opacity:0.1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.08">
+    <line x1="0" y1="0" x2="1200" y2="630" stroke="#7877c6" stroke-width="1"/>
+    <line x1="400" y1="0" x2="400" y2="630" stroke="#7877c6" stroke-width="1"/>
+    <line x1="800" y1="0" x2="800" y2="630" stroke="#7877c6" stroke-width="1"/>
+    <line x1="0" y1="210" x2="1200" y2="210" stroke="#7877c6" stroke-width="1"/>
+    <line x1="0" y1="420" x2="1200" y2="420" stroke="#7877c6" stroke-width="1"/>
+  </g>
+
+  <!-- Bingo grid (3x3) -->
+  <g transform="translate(680, 140)">
+    <rect x="0" y="0" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+    <rect x="130" y="0" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+    <rect x="260" y="0" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+
+    <rect x="0" y="110" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#00ff41" stroke-width="2" opacity="0.8"/>
+    <rect x="130" y="110" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+    <rect x="260" y="110" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#00ff41" stroke-width="2" opacity="0.8"/>
+
+    <rect x="0" y="220" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+    <rect x="130" y="220" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#00ff41" stroke-width="2" opacity="0.8"/>
+    <rect x="260" y="220" width="120" height="100" rx="8" fill="url(#gridGlow)" stroke="#7877c6" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Check marks on filled cells -->
+    <text x="60" y="172" text-anchor="middle" font-size="32" fill="#00ff41">✓</text>
+    <text x="320" y="172" text-anchor="middle" font-size="32" fill="#00ff41">✓</text>
+    <text x="190" y="282" text-anchor="middle" font-size="32" fill="#00ff41">✓</text>
+
+    <!-- Category labels -->
+    <text x="60" y="55" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="system-ui">IPL Team</text>
+    <text x="190" y="55" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="system-ui">10K+ Runs</text>
+    <text x="320" y="55" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="system-ui">Bowler</text>
+  </g>
+
+  <!-- Cricket emoji -->
+  <text x="100" y="240" font-size="80" text-anchor="middle">🏏</text>
+
+  <!-- Title -->
+  <text x="100" y="310" font-size="52" font-weight="900" fill="white" font-family="system-ui" text-anchor="middle" letter-spacing="3">CRICKET</text>
+  <text x="100" y="370" font-size="52" font-weight="900" fill="url(#accent)" font-family="system-ui" text-anchor="middle" letter-spacing="3">BINGO</text>
+
+  <!-- Tagline -->
+  <text x="100" y="420" font-size="16" fill="#9ca3af" font-family="system-ui" text-anchor="middle" letter-spacing="2">DAILY CRICKET CHALLENGE</text>
+
+  <!-- Bottom bar -->
+  <rect x="60" y="480" width="280" height="3" rx="2" fill="url(#accent)" opacity="0.5"/>
+
+  <!-- URL -->
+  <text x="100" y="530" font-size="14" fill="#6b7280" font-family="system-ui" text-anchor="middle" letter-spacing="1">cricket-bingo-v1.vercel.app</text>
+</svg>

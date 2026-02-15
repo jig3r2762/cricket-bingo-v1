@@ -1,19 +1,20 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3 } from "lucide-react";
+import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
+import { CountdownTimer } from "./CountdownTimer";
 
 // Confetti animation
 function triggerConfetti() {
   if (typeof window === "undefined") return;
+  const emojis = ["🎉", "🏏", "🏆", "⭐", "🎊"];
 
-  // Create multiple confetti pieces
   for (let i = 0; i < 50; i++) {
     const confetti = document.createElement("div");
     confetti.className = "fixed pointer-events-none";
-    confetti.innerHTML = "🎉";
+    confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
     confetti.style.left = Math.random() * window.innerWidth + "px";
     confetti.style.top = "-20px";
     confetti.style.fontSize = (Math.random() * 20 + 10) + "px";
@@ -29,10 +30,7 @@ function triggerConfetti() {
         { transform: "translateY(0) translateX(0) rotate(0deg)", opacity: 1 },
         { transform: `translateY(${window.innerHeight + 50}px) translateX(${xOffset}px) rotate(360deg)`, opacity: 0 }
       ],
-      {
-        duration: duration * 1000,
-        easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-      }
+      { duration: duration * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
     );
 
     setTimeout(() => confetti.remove(), duration * 1000);
@@ -68,13 +66,16 @@ function buildShareText(state: GameState, streak: number): string {
   const n = gridSize;
   const filledCount = Object.values(placements).filter(Boolean).length;
   const total = n * n;
+  const turnsUsed = state.history.length;
 
-  let text = `\u{1F3CF} Cricket Bingo \u{2014} ${state.dailyGameId}\n`;
-  text += `${status === "won" ? "\u{1F3C6} BINGO!" : "\u{274C} Game Over"} | Score: ${score} | ${n}x${n}\n`;
-  if (state.maxStreak > 0) text += `\u{1F525} Best Streak: ${state.maxStreak} | Cells: ${filledCount}/${total}\n`;
+  let text = `\u{1F3CF} Cricket Bingo — ${state.dailyGameId}\n`;
+  text += `${status === "won" ? "\u{1F3C6} BINGO!" : "\u{274C} Game Over"} | ${n}x${n}\n`;
+  text += `Score: ${score} | Cells: ${filledCount}/${total} | Turns: ${turnsUsed}\n`;
+  if (state.maxStreak > 0) text += `\u{1F525} Best Streak: ${state.maxStreak}\n`;
   if (streak >= 2) text += `\u{1F4C5} Day Streak: ${streak}\n`;
   text += "\n";
   text += buildEmojiGrid(state);
+  text += "\nPlay: cricket-bingo-v1.vercel.app";
 
   return text;
 }
@@ -82,82 +83,91 @@ function buildShareText(state: GameState, streak: number): string {
 export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
   const isWin = gameState.status === "won";
   const navigate = useNavigate();
-  const { userData } = useAuth();
+  const { userData, isGuest, signInWithGoogle } = useAuth();
   const currentStreak = userData?.currentStreak ?? 0;
   const filledCount = Object.values(gameState.placements).filter(Boolean).length;
   const total = gameState.gridSize * gameState.gridSize;
+  const [copied, setCopied] = useState(false);
+  const [challengeCopied, setChallengeCopied] = useState(false);
 
-  // Trigger confetti on win
   useEffect(() => {
     if (isWin) {
-      // Delay slightly for visual effect
-      const timer = setTimeout(() => {
-        triggerConfetti();
-        // Play win sound if possible
-        try {
-          const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
-          audio.play().catch(() => {});
-        } catch (e) {
-          // Silent fail for audio
-        }
-      }, 300);
+      const timer = setTimeout(() => triggerConfetti(), 300);
       return () => clearTimeout(timer);
     }
   }, [isWin]);
 
-  const handleShare = useCallback(() => {
+  const handleShare = useCallback(async () => {
     const text = buildShareText(gameState, currentStreak);
-    navigator.clipboard.writeText(text).catch(() => {});
+
+    // Try native share on mobile
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch {
+        // User cancelled or not supported — fall through to clipboard
+      }
+    }
+
+    await navigator.clipboard.writeText(text).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }, [gameState, currentStreak]);
+
+  const handleChallenge = useCallback(async () => {
+    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo (${gameState.gridSize}x${gameState.gridSize})! Can you beat me?\n\nPlay: cricket-bingo-v1.vercel.app`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch {}
+    }
+
+    await navigator.clipboard.writeText(text).catch(() => {});
+    setChallengeCopied(true);
+    setTimeout(() => setChallengeCopied(false), 2000);
+  }, [gameState.score, gameState.gridSize]);
 
   const handleDownloadCard = useCallback(() => {
     const canvas = document.createElement("canvas");
-    // Draw at desired size
     canvas.width = 480;
     canvas.height = 520;
     const ctx = canvas.getContext("2d")!;
 
-    // Background
     ctx.fillStyle = "#0a0e27";
     ctx.fillRect(0, 0, 480, 520);
-
-    // Border glow
     ctx.strokeStyle = "#6366f1";
     ctx.lineWidth = 2;
     ctx.strokeRect(1, 1, 478, 518);
 
     const w = 480;
 
-    // Title
     ctx.fillStyle = "#e2e8f0";
     ctx.font = "bold 22px system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Cricket Bingo", w / 2, 40);
 
-    // Date
     ctx.fillStyle = "#94a3b8";
     ctx.font = "14px system-ui, sans-serif";
     ctx.fillText(gameState.dailyGameId, w / 2, 62);
 
-    // Result
     ctx.fillStyle = isWin ? "#facc15" : "#ef4444";
     ctx.font = "bold 28px system-ui, sans-serif";
     ctx.fillText(isWin ? "BINGO!" : "Game Over", w / 2, 105);
 
-    // Score
     ctx.fillStyle = "#e2e8f0";
     ctx.font = "bold 18px system-ui, sans-serif";
     ctx.fillText(`Score: ${gameState.score}`, w / 2, 135);
 
-    // Stats row
     const n = gameState.gridSize;
     let statsText = `${n}x${n} Grid | Cells: ${filledCount}/${total}`;
-    if (gameState.maxStreak > 0) statsText += ` | Best Streak: ${gameState.maxStreak}`;
+    if (gameState.maxStreak > 0) statsText += ` | Streak: ${gameState.maxStreak}`;
     ctx.fillStyle = "#94a3b8";
     ctx.font = "13px system-ui, sans-serif";
     ctx.fillText(statsText, w / 2, 160);
 
-    // Day streak
     let gridTop = 185;
     if (currentStreak >= 2) {
       ctx.fillStyle = "#f97316";
@@ -166,7 +176,6 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
       gridTop = 200;
     }
 
-    // Grid
     const cellSize = Math.min(60, (w - 80) / n);
     const gridWidth = cellSize * n;
     const gridLeft = (w - gridWidth) / 2;
@@ -189,13 +198,11 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
       }
     }
 
-    // Footer
     const footerY = gridTop + n * cellSize + 30;
     ctx.fillStyle = "#64748b";
     ctx.font = "12px system-ui, sans-serif";
-    ctx.fillText("Play Cricket Bingo!", w / 2, footerY);
+    ctx.fillText("cricket-bingo-v1.vercel.app", w / 2, footerY);
 
-    // Download
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -234,7 +241,7 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
               transition={{ delay: 0.4 }}
               className="font-display text-4xl font-extrabold text-yellow-400 uppercase tracking-wider"
             >
-              🎉 BINGO! 🎉
+              BINGO!
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -280,19 +287,30 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
           )}
         </div>
 
-        {currentStreak >= 2 && (
+        {!isGuest && currentStreak >= 2 && (
           <div className="text-orange-400 font-display text-sm tracking-wider">
             {"\u{1F525}"} {currentStreak}-day streak!
           </div>
         )}
 
+        {/* Countdown to next puzzle */}
+        <CountdownTimer />
+
+        {/* Action buttons */}
         <div className="flex items-center justify-center gap-2 flex-wrap">
           <button
             onClick={handleShare}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
           >
-            <Share2 className="w-4 h-4" />
-            Share
+            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+            {copied ? "Copied!" : "Share"}
+          </button>
+          <button
+            onClick={handleChallenge}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
+          >
+            {challengeCopied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+            {challengeCopied ? "Copied!" : "Challenge"}
           </button>
           <button
             onClick={handleDownloadCard}
@@ -301,21 +319,44 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
             <Download className="w-4 h-4" />
             Card
           </button>
-          <button
-            onClick={() => navigate("/leaderboard")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-400 font-display text-xs uppercase tracking-wider hover:bg-amber-500/25 transition-all active:scale-95"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Ranks
-          </button>
+          {!isGuest && (
+            <button
+              onClick={() => navigate("/leaderboard")}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-400 font-display text-xs uppercase tracking-wider hover:bg-amber-500/25 transition-all active:scale-95"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Ranks
+            </button>
+          )}
           <button
             onClick={onReset}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/15 border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/25 transition-all active:scale-95"
           >
             <RotateCcw className="w-4 h-4" />
-            Retry
+            Play Again
           </button>
         </div>
+
+        {/* Guest sign-in prompt */}
+        {isGuest && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <p className="text-xs text-muted-foreground mb-2">
+              Sign in to save your scores, track streaks & compete on the leaderboard!
+            </p>
+            <button
+              onClick={() => signInWithGoogle().catch(() => {})}
+              className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
+              style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
+            >
+              Sign in with Google
+            </button>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

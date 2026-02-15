@@ -3,12 +3,11 @@ import type { CricketPlayer, GameState, GridCategory } from "@/types/game";
 import { validate, calculateScore, checkBingo, getEligibleCells, getRecommendedCell, findNextPlayableIndex } from "@/lib/gameEngine";
 import { generateDailyGame, getTodayDateString, generateRandomGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
-import allPlayersRaw from "@/data/players.json";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
-
-const allPlayers = allPlayersRaw as CricketPlayer[];
+import { usePlayers } from "@/contexts/PlayersContext";
+import { playCorrect, playWrong, playSkip, playWildcard, playBingo, playGameOver } from "@/lib/sounds";
 
 // --- Storage helpers ---
 
@@ -65,7 +64,7 @@ export interface AdminGrid {
   deckPlayerIds: string[];
 }
 
-function createInitialState(gridSize: 3 | 4, adminGrid?: AdminGrid): GameState {
+function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminGrid?: AdminGrid): GameState {
   const date = getTodayDateString();
   const remaining = gridSize === 3 ? 20 : 25;
 
@@ -110,6 +109,7 @@ function createInitialState(gridSize: 3 | 4, adminGrid?: AdminGrid): GameState {
     wildcardMode: false,
     score: 0,
     streak: 0,
+    maxStreak: 0,
     status: "playing",
     winLine: null,
     feedbackStates: {},
@@ -122,6 +122,8 @@ function createInitialState(gridSize: 3 | 4, adminGrid?: AdminGrid): GameState {
 // =============================================================
 
 export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
+  const { players: allPlayers } = usePlayers();
+
   const [gameState, setGameState] = useState<GameState>(() => {
     const date = getTodayDateString();
     const saved = loadState(date, gridSize);
@@ -132,7 +134,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
       const adminGridIds = adminGrid.grid.map((c) => c.id).join(",");
       if (savedGridIds !== adminGridIds) {
         // Admin changed the grid — discard stale save
-        return createInitialState(gridSize, adminGrid);
+        return createInitialState(gridSize, allPlayers, adminGrid);
       }
     }
 
@@ -142,10 +144,10 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
       return { ...saved, deckIndex: nextIdx };
     }
     if (saved) return saved;
-    return createInitialState(gridSize, adminGrid);
+    return createInitialState(gridSize, allPlayers, adminGrid);
   });
 
-  const { user, userData, refreshUserData } = useAuth();
+  const { user, isGuest, userData, refreshUserData } = useAuth();
 
   // Persist on every state change
   useEffect(() => {
@@ -155,7 +157,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
   // Save score to Firestore and update streak when game ends
   const scoreSavedRef = useRef(false);
   useEffect(() => {
-    if (gameState.status === "playing" || !user || scoreSavedRef.current) return;
+    if (gameState.status === "playing" || !user || isGuest || scoreSavedRef.current) return;
     scoreSavedRef.current = true;
 
     const saveScore = async () => {
@@ -209,7 +211,21 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     };
 
     saveScore().catch(console.error);
-  }, [gameState.status, user, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
+  }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
+
+  // Sound effects
+  const prevStatusRef = useRef(gameState.status);
+  useEffect(() => {
+    // Play sounds on feedback
+    const feedbackValues = Object.values(gameState.feedbackStates).filter(Boolean);
+    if (feedbackValues.includes("correct")) playCorrect();
+    else if (feedbackValues.includes("wrong")) playWrong();
+
+    // Play sounds on game end
+    if (prevStatusRef.current === "playing" && gameState.status === "won") playBingo();
+    else if (prevStatusRef.current === "playing" && gameState.status === "lost") playGameOver();
+    prevStatusRef.current = gameState.status;
+  }, [gameState.feedbackStates, gameState.status]);
 
   // Feedback timer ref (avoids useEffect dependency issues)
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -330,6 +346,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
   );
 
   const handleSkip = useCallback(() => {
+    playSkip();
     setGameState((prev) => {
       if (prev.status !== "playing") return prev;
       if (prev.deckIndex >= prev.deck.length) return prev;
@@ -357,6 +374,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
   }, []);
 
   const handleWildcard = useCallback(() => {
+    playWildcard();
     setGameState((prev) => {
       if (prev.status !== "playing" || prev.wildcardsLeft <= 0) return prev;
       return { ...prev, wildcardMode: true };
@@ -371,11 +389,12 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     const date = getTodayDateString();
     const key = storageKey(date, gridSize);
     try { localStorage.removeItem(key); } catch { /* ok */ }
-    setGameState(createInitialState(gridSize, adminGrid));
-  }, [gridSize, adminGrid]);
+    setGameState(createInitialState(gridSize, allPlayers, adminGrid));
+  }, [gridSize, allPlayers, adminGrid]);
 
   // Play a new random game (shuffled grid & deck) for endless play after game over
   const playRandomGame = useCallback(() => {
+    if (allPlayers.length === 0) return;
     const date = getTodayDateString();
     const key = storageKey(date, gridSize);
     try { localStorage.removeItem(key); } catch { /* ok */ }
@@ -399,7 +418,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
       history: [],
     };
     setGameState(newState);
-  }, [gridSize]);
+  }, [gridSize, allPlayers]);
 
   const filledCount = Object.values(gameState.placements).filter(Boolean).length;
 

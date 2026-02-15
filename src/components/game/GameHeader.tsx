@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Flame, Volume2, VolumeX, HelpCircle } from "lucide-react";
 import { useState } from "react";
+import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 
 interface GameHeaderProps {
   score: number;
@@ -9,7 +10,13 @@ interface GameHeaderProps {
 }
 
 export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
-  const [soundOn, setSoundOn] = useState(true);
+  const [soundOn, setSoundOn] = useState(isSoundEnabled);
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+  };
 
   return (
     <div className="flex items-center justify-between w-full max-w-md mx-auto">
@@ -34,7 +41,7 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
             className="flex items-center gap-1 px-2 py-1.5 rounded-xl bg-secondary/10 border border-secondary/30"
           >
             <Flame className="w-3.5 h-3.5 text-secondary" />
-            <span className="scoreboard-font text-sm text-secondary">{streak}×</span>
+            <span className="scoreboard-font text-sm text-secondary">{streak}x</span>
           </motion.div>
         )}
       </div>
@@ -42,8 +49,9 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
       {/* Controls */}
       <div className="flex items-center gap-1">
         <button
-          onClick={() => setSoundOn(!soundOn)}
+          onClick={toggleSound}
           className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+          title={soundOn ? "Mute sounds" : "Enable sounds"}
         >
           {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
         </button>

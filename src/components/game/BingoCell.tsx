@@ -208,6 +208,21 @@ function ComboVisual({ category }: { category: GridCategory }) {
   );
 }
 
+function getDifficulty(cat: GridCategory): { label: string; color: string } | null {
+  const key = cat.validatorKey;
+  if (cat.type === "combo") return { label: "HARD", color: "text-red-400 bg-red-400/10 border-red-400/30" };
+  if (key.startsWith("stat:")) {
+    // High stat thresholds are harder
+    const match = key.match(/>=(\d+)/);
+    if (match && parseInt(match[1]) >= 5000) return { label: "HARD", color: "text-red-400 bg-red-400/10 border-red-400/30" };
+    return { label: "MED", color: "text-amber-400 bg-amber-400/10 border-amber-400/30" };
+  }
+  if (cat.type === "teammate") return { label: "MED", color: "text-amber-400 bg-amber-400/10 border-amber-400/30" };
+  if (cat.type === "trophy") return { label: "MED", color: "text-amber-400 bg-amber-400/10 border-amber-400/30" };
+  // team, country, role are easy
+  return { label: "EASY", color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/30" };
+}
+
 interface BingoCellProps {
   category: GridCategory;
   placedPlayer?: CricketPlayer | null;
@@ -358,6 +373,15 @@ export const BingoCell = memo(function BingoCell({
           <span className="font-display text-[8px] sm:text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight mt-0.5">
             {category.shortLabel}
           </span>
+          {/* Difficulty badge */}
+          {(() => {
+            const diff = getDifficulty(category);
+            return diff ? (
+              <span className={`absolute top-0.5 right-0.5 px-1 py-px rounded text-[6px] sm:text-[7px] font-display uppercase tracking-wider border ${diff.color}`}>
+                {diff.label}
+              </span>
+            ) : null;
+          })()}
         </>
       )}
 
