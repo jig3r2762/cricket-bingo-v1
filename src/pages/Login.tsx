@@ -1,5 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Users, Zap } from "lucide-react";
 
 export default function Login() {
   const { user, loading, signInWithGoogle } = useAuth();
@@ -19,27 +21,105 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        {/* Glassmorphism card */}
-        <div className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-8 shadow-2xl text-center">
-          {/* Logo / Title */}
-          <div className="mb-2">
-            <span className="text-4xl">&#127951;</span>
-          </div>
-          <h1 className="font-display text-2xl uppercase tracking-wider text-secondary mb-1">
-            Cricket Bingo
-          </h1>
-          <p className="text-muted-foreground text-sm mb-8">
-            Test your cricket knowledge daily
-          </p>
+    <div className="min-h-screen stadium-bg flex items-center justify-center p-4 overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-10 right-10 w-32 h-32 rounded-full bg-primary/5 blur-3xl"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-20 left-10 w-40 h-40 rounded-full bg-secondary/5 blur-3xl"
+        />
+      </div>
 
-          {/* Google Sign-In Button */}
-          <button
-            onClick={signInWithGoogle}
-            className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white text-gray-800 font-medium text-sm hover:bg-gray-100 active:scale-[0.98] transition-all shadow-lg"
+      <div className="w-full max-w-sm relative z-10">
+        {/* Animated card entry */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-8 shadow-2xl text-center"
+        >
+          {/* Animated Logo */}
+          <motion.div
+            initial={{ opacity: 0, rotate: -180, scale: 0 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 180, damping: 12 }}
+            className="mb-2"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <motion.span
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="text-5xl block"
+            >
+              🏏
+            </motion.span>
+          </motion.div>
+
+          {/* Title with staggered animation */}
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="font-display text-2xl uppercase tracking-wider text-secondary mb-1"
+          >
+            Cricket Bingo
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-muted-foreground text-sm mb-8"
+          >
+            Test your cricket knowledge daily
+          </motion.p>
+
+          {/* Trust badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="grid grid-cols-2 gap-3 mb-8"
+          >
+            <div className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 border border-primary/20">
+              <Users className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-display text-primary/80 uppercase tracking-wider">
+                1,000+ Players
+              </span>
+            </div>
+            <div className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
+              <Zap className="w-3.5 h-3.5 text-secondary" />
+              <span className="text-xs font-display text-secondary/80 uppercase tracking-wider">
+                Daily Games
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Gradient animated button */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            whileHover={{ scale: 1.02, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
+            whileTap={{ scale: 0.98 }}
+            onClick={signInWithGoogle}
+            className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-gray-800 font-medium text-sm active:scale-[0.98] transition-all shadow-lg relative overflow-hidden group"
+            style={{
+              background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)",
+            }}
+          >
+            {/* Shine effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            />
+            <svg className="w-5 h-5 relative z-10" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                 fill="#4285F4"
@@ -57,13 +137,18 @@ export default function Login() {
                 fill="#EA4335"
               />
             </svg>
-            Sign in with Google
-          </button>
+            <span className="relative z-10">Sign in with Google</span>
+          </motion.button>
 
-          <p className="text-muted-foreground/50 text-xs mt-6">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="text-muted-foreground/50 text-xs mt-6"
+          >
             Sign in to save your progress and compete daily
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </div>
     </div>
   );

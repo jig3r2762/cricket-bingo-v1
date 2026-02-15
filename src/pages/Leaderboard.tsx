@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { getTodayDateString } from "@/lib/dailyGame";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ScoreEntry {
   uid: string;
@@ -18,6 +19,35 @@ interface ScoreEntry {
 }
 
 type Tab = "today" | "alltime";
+
+// Medal animations for podium positions
+const medalVariants = {
+  1: {
+    initial: { y: -20, opacity: 0, rotate: -45 },
+    animate: { y: 0, opacity: 1, rotate: 0 },
+    transition: { delay: 0.1, type: "spring", stiffness: 200 },
+    hover: { y: -8, boxShadow: "0 0 20px hsl(var(--golden-trophy) / 0.6)" },
+  },
+  2: {
+    initial: { y: -15, opacity: 0, rotate: -30 },
+    animate: { y: 0, opacity: 1, rotate: 0 },
+    transition: { delay: 0.2, type: "spring", stiffness: 200 },
+    hover: { y: -6, boxShadow: "0 0 15px rgb(192,192,192,0.4)" },
+  },
+  3: {
+    initial: { y: -10, opacity: 0, rotate: -15 },
+    animate: { y: 0, opacity: 1, rotate: 0 },
+    transition: { delay: 0.3, type: "spring", stiffness: 200 },
+    hover: { y: -4, boxShadow: "0 0 15px rgb(205,127,50,0.4)" },
+  },
+};
+
+function getMedalColor(rank: number) {
+  if (rank === 1) return "text-yellow-400";
+  if (rank === 2) return "text-gray-300";
+  if (rank === 3) return "text-amber-600";
+  return "text-muted-foreground";
+}
 
 export default function Leaderboard() {
   const navigate = useNavigate();
@@ -65,11 +95,17 @@ export default function Leaderboard() {
     return () => { cancelled = true; };
   }, [tab]);
 
+  const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
+
   return (
     <div className="min-h-screen stadium-bg flex flex-col items-center p-4">
       <div className="w-full max-w-lg space-y-4">
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3"
+        >
           <button
             onClick={() => navigate("/")}
             className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
@@ -79,13 +115,20 @@ export default function Leaderboard() {
           <h1 className="font-display text-2xl font-extrabold text-secondary uppercase tracking-wider">
             Leaderboard
           </h1>
-        </div>
+        </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-2">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex gap-2"
+        >
           {(["today", "alltime"] as Tab[]).map((t) => (
-            <button
+            <motion.button
               key={t}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setTab(t)}
               className={`px-4 py-2 rounded-xl font-display text-xs uppercase tracking-wider transition-all ${
                 tab === t
@@ -94,12 +137,28 @@ export default function Leaderboard() {
               }`}
             >
               {t === "today" ? "Today" : "All Time"}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
+
+        {/* Your rank indicator (if not in top 50) */}
+        {userRank > 0 && userRank <= 50 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-center text-sm font-display text-primary uppercase tracking-wider"
+          >
+            Your Rank: #{userRank}
+          </motion.div>
+        )}
 
         {/* Table */}
-        <div className="glass-card rounded-2xl overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass-card rounded-2xl overflow-hidden"
+        >
           {loading ? (
             <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest animate-pulse">
               Loading...
@@ -112,33 +171,54 @@ export default function Leaderboard() {
             <div className="divide-y divide-border/20">
               {scores.map((entry, i) => {
                 const isMe = entry.uid === user?.uid;
+                const rank = i + 1;
+                const isMedal = rank <= 3;
+
                 return (
-                  <div
+                  <motion.div
                     key={`${entry.uid}-${entry.date}-${entry.gridSize}`}
-                    className={`flex items-center gap-3 px-4 py-3 ${
-                      isMe ? "bg-primary/10" : ""
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: Math.min(i * 0.05, 0.4) }}
+                    whileHover={{ backgroundColor: "rgba(120, 119, 198, 0.05)" }}
+                    className={`flex items-center gap-3 px-4 py-3 transition-all ${
+                      isMe ? "bg-primary/10 border-l-2 border-primary/50" : ""
                     }`}
                   >
-                    {/* Rank */}
-                    <div className={`w-8 text-center font-display text-sm font-bold ${
-                      i === 0 ? "text-yellow-400" : i === 1 ? "text-gray-300" : i === 2 ? "text-amber-600" : "text-muted-foreground"
-                    }`}>
-                      {i + 1}
-                    </div>
-
-                    {/* Avatar */}
-                    {entry.photoURL ? (
-                      <img
-                        src={entry.photoURL}
-                        alt=""
-                        className="w-8 h-8 rounded-full ring-2 ring-border/30"
-                        referrerPolicy="no-referrer"
-                      />
+                    {/* Medal/Rank badge */}
+                    {isMedal ? (
+                      <motion.div
+                        initial={medalVariants[rank as 1 | 2 | 3].initial}
+                        animate={medalVariants[rank as 1 | 2 | 3].animate}
+                        whileHover={medalVariants[rank as 1 | 2 | 3].hover}
+                        className={`w-8 text-center font-display text-lg font-bold ${getMedalColor(rank)}`}
+                      >
+                        {rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}
+                      </motion.div>
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-border/30 flex items-center justify-center text-sm text-primary font-bold">
-                        {(entry.displayName || "?")[0].toUpperCase()}
+                      <div className={`w-8 text-center font-display text-sm font-bold ${getMedalColor(rank)}`}>
+                        {rank}
                       </div>
                     )}
+
+                    {/* Avatar */}
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="flex-shrink-0"
+                    >
+                      {entry.photoURL ? (
+                        <img
+                          src={entry.photoURL}
+                          alt=""
+                          className="w-8 h-8 rounded-full ring-2 ring-border/30"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-border/30 flex items-center justify-center text-sm text-primary font-bold">
+                          {(entry.displayName || "?")[0].toUpperCase()}
+                        </div>
+                      )}
+                    </motion.div>
 
                     {/* Name */}
                     <div className="flex-1 min-w-0">
@@ -152,27 +232,40 @@ export default function Leaderboard() {
                     </div>
 
                     {/* Grid size badge */}
-                    <div className="px-2 py-0.5 rounded-md bg-card/60 border border-border/20 text-[10px] text-muted-foreground font-display">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      className="px-2 py-0.5 rounded-md bg-card/60 border border-border/20 text-[10px] text-muted-foreground font-display"
+                    >
                       {entry.gridSize}x{entry.gridSize}
-                    </div>
+                    </motion.div>
 
                     {/* Status icon */}
                     {entry.status === "won" ? (
-                      <Trophy className="w-4 h-4 text-yellow-400" />
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <Trophy className="w-4 h-4 text-yellow-400" />
+                      </motion.div>
                     ) : (
                       <XCircle className="w-4 h-4 text-destructive/60" />
                     )}
 
                     {/* Score */}
-                    <div className="scoreboard-font text-lg text-secondary w-16 text-right">
+                    <motion.div
+                      key={entry.score}
+                      initial={{ y: -8, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="scoreboard-font text-lg text-secondary w-16 text-right"
+                    >
                       {entry.score}
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
                 );
               })}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

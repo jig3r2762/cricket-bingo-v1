@@ -1,9 +1,43 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
+
+// Confetti animation
+function triggerConfetti() {
+  if (typeof window === "undefined") return;
+
+  // Create multiple confetti pieces
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement("div");
+    confetti.className = "fixed pointer-events-none";
+    confetti.innerHTML = "🎉";
+    confetti.style.left = Math.random() * window.innerWidth + "px";
+    confetti.style.top = "-20px";
+    confetti.style.fontSize = (Math.random() * 20 + 10) + "px";
+    confetti.style.opacity = "1";
+    confetti.style.zIndex = "9999";
+    document.body.appendChild(confetti);
+
+    const duration = Math.random() * 3 + 2;
+    const xOffset = (Math.random() - 0.5) * 400;
+
+    confetti.animate(
+      [
+        { transform: "translateY(0) translateX(0) rotate(0deg)", opacity: 1 },
+        { transform: `translateY(${window.innerHeight + 50}px) translateX(${xOffset}px) rotate(360deg)`, opacity: 0 }
+      ],
+      {
+        duration: duration * 1000,
+        easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+      }
+    );
+
+    setTimeout(() => confetti.remove(), duration * 1000);
+  }
+}
 
 interface GameOverScreenProps {
   gameState: GameState;
@@ -52,6 +86,24 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
   const currentStreak = userData?.currentStreak ?? 0;
   const filledCount = Object.values(gameState.placements).filter(Boolean).length;
   const total = gameState.gridSize * gameState.gridSize;
+
+  // Trigger confetti on win
+  useEffect(() => {
+    if (isWin) {
+      // Delay slightly for visual effect
+      const timer = setTimeout(() => {
+        triggerConfetti();
+        // Play win sound if possible
+        try {
+          const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
+          audio.play().catch(() => {});
+        } catch (e) {
+          // Silent fail for audio
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isWin]);
 
   const handleShare = useCallback(() => {
     const text = buildShareText(gameState, currentStreak);
@@ -165,18 +217,33 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
         {isWin ? (
           <>
             <motion.div
-              initial={{ rotate: -10, scale: 0 }}
-              animate={{ rotate: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
+              initial={{ rotate: -20, scale: 0, y: -50 }}
+              animate={{ rotate: 0, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.2 }}
             >
-              <Trophy className="w-16 h-16 text-yellow-400 mx-auto" />
+              <motion.div
+                animate={{ y: [0, -20, 0] }}
+                transition={{ duration: 0.6, repeat: 2, repeatDelay: 0.1, delay: 0.5 }}
+              >
+                <Trophy className="w-20 h-20 text-yellow-400 mx-auto drop-shadow-lg" />
+              </motion.div>
             </motion.div>
-            <h2 className="font-display text-3xl font-extrabold text-yellow-400 uppercase tracking-wider">
-              Bingo!
-            </h2>
-            <p className="text-muted-foreground text-sm">
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="font-display text-4xl font-extrabold text-yellow-400 uppercase tracking-wider"
+            >
+              🎉 BINGO! 🎉
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-green-400 text-sm font-semibold"
+            >
               You completed a line! +500 bonus
-            </p>
+            </motion.p>
           </>
         ) : (
           <>
