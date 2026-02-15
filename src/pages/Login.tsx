@@ -21,7 +21,7 @@ export default function Login() {
   }
 
   if (user || isGuest) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/play" replace />;
   }
 
   const handleSignIn = async () => {
@@ -43,7 +43,7 @@ export default function Login() {
 
   const handleGuestPlay = () => {
     playAsGuest();
-    navigate("/");
+    navigate("/play");
   };
 
   return (

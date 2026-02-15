@@ -45,7 +45,7 @@ export default function Admin() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/play")}
               className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider border border-border/50 text-secondary hover:bg-secondary/10 transition-colors"
             >
               Back to Game

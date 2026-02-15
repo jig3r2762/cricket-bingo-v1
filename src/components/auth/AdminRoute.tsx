@@ -19,7 +19,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/play" replace />;
   }
 
   return <>{children}</>;

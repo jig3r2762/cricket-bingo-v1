@@ -79,7 +79,7 @@ export default function Stats() {
           className="flex items-center gap-3"
         >
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/play")}
             className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />

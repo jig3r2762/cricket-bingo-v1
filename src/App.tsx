@@ -14,6 +14,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Lazy-loaded routes for code splitting
+const Landing = lazy(() => import("./pages/Landing"));
 const Index = lazy(() => import("./pages/Index"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
@@ -43,9 +44,10 @@ const App = () => (
           <PlayersProvider>
             <Suspense fallback={<PageLoader />}>
               <Routes>
+                <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route
-                  path="/"
+                  path="/play"
                   element={
                     <ProtectedRoute>
                       <Index />
