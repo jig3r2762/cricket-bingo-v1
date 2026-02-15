@@ -1,10 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, Zap } from "lucide-react";
+import { Users, Zap, AlertCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function Login() {
   const { user, loading, signInWithGoogle } = useAuth();
+  const [signingIn, setSigningIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -19,6 +22,23 @@ export default function Login() {
   if (user) {
     return <Navigate to="/" replace />;
   }
+
+  const handleSignIn = async () => {
+    setError(null);
+    setSigningIn(true);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("Sign in error:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Sign in failed. Please try again."
+      );
+    } finally {
+      setSigningIn(false);
+    }
+  };
 
   return (
     <div className="min-h-screen stadium-bg flex items-center justify-center p-4 overflow-hidden">
@@ -100,15 +120,30 @@ export default function Login() {
             </div>
           </motion.div>
 
+          {/* Error message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 py-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-start gap-2"
+            >
+              <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+              <span className="text-xs text-destructive">{error}</span>
+            </motion.div>
+          )}
+
           {/* Gradient animated button */}
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            whileHover={{ scale: 1.02, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
-            whileTap={{ scale: 0.98 }}
-            onClick={signInWithGoogle}
-            className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-gray-800 font-medium text-sm active:scale-[0.98] transition-all shadow-lg relative overflow-hidden group"
+            whileHover={{ scale: !signingIn ? 1.02 : 1, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
+            whileTap={{ scale: !signingIn ? 0.98 : 1 }}
+            onClick={handleSignIn}
+            disabled={signingIn}
+            className={`w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-gray-800 font-medium text-sm active:scale-[0.98] transition-all shadow-lg relative overflow-hidden group ${
+              signingIn ? "opacity-75 cursor-not-allowed" : ""
+            }`}
             style={{
               background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)",
             }}
@@ -137,7 +172,9 @@ export default function Login() {
                 fill="#EA4335"
               />
             </svg>
-            <span className="relative z-10">Sign in with Google</span>
+            <span className="relative z-10">
+              {signingIn ? "Signing in..." : "Sign in with Google"}
+            </span>
           </motion.button>
 
           <motion.p

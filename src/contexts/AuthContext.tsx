@@ -51,21 +51,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        await ensureUserDoc(firebaseUser);
-        const data = await fetchUserData(firebaseUser.uid);
-        setUserData(data);
-      } else {
-        setUserData(null);
+      try {
+        setUser(firebaseUser);
+
+        if (firebaseUser) {
+          await ensureUserDoc(firebaseUser);
+          const data = await fetchUserData(firebaseUser.uid);
+          setUserData(data);
+        } else {
+          setUserData(null);
+        }
+      } catch (err) {
+        console.error("Auth state change error:", err);
+        // Even if there's an error, we should still set loading to false
+        // to prevent the loading spinner from being stuck
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
     return unsubscribe;
   }, []);
 
   const signInWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      // Handle popup blocked or user cancelled
+      if (err instanceof Error) {
+        console.error("Google sign-in failed:", err.message);
+        if (err.message.includes("popup")) {
+          throw new Error("Please allow popups for Google sign-in");
+        }
+      }
+      throw err;
+    }
   };
 
   const signOut = async () => {
