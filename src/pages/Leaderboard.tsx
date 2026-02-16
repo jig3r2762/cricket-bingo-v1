@@ -85,26 +85,25 @@ export default function Leaderboard() {
 
       const entries: ScoreEntry[] = snap.docs.map((d) => d.data() as ScoreEntry);
 
-      // Group by user and grid size, keeping only the highest score
-      const scoresByUserAndGrid: Record<string, Record<3 | 4, ScoreEntry>> = {};
+      // Group by user and grid size, keeping only the highest score per grid size
+      const scoresByUserAndGrid: Record<string, Partial<Record<3 | 4, ScoreEntry>>> = {};
 
       for (const entry of entries) {
         const key = entry.uid;
+        const size = entry.gridSize;
         if (!scoresByUserAndGrid[key]) {
-          scoresByUserAndGrid[key] = { 3: entry, 4: entry };
-        } else {
-          if (entry.gridSize === 3 && entry.score > (scoresByUserAndGrid[key][3]?.score || 0)) {
-            scoresByUserAndGrid[key][3] = entry;
-          } else if (entry.gridSize === 4 && entry.score > (scoresByUserAndGrid[key][4]?.score || 0)) {
-            scoresByUserAndGrid[key][4] = entry;
-          }
+          scoresByUserAndGrid[key] = {};
+        }
+        const existing = scoresByUserAndGrid[key][size];
+        if (!existing || entry.score > existing.score) {
+          scoresByUserAndGrid[key][size] = entry;
         }
       }
 
-      // Convert to arrays and sort
+      // Convert to arrays and sort — only include entries that actually exist for each grid size
       const grid3x3 = Object.values(scoresByUserAndGrid)
         .map(g => g[3])
-        .filter(Boolean)
+        .filter((e): e is ScoreEntry => !!e)
         .sort((a, b) => b.score - a.score)
         .slice(0, 50)
         .map(e => ({
@@ -117,7 +116,7 @@ export default function Leaderboard() {
 
       const grid4x4 = Object.values(scoresByUserAndGrid)
         .map(g => g[4])
-        .filter(Boolean)
+        .filter((e): e is ScoreEntry => !!e)
         .sort((a, b) => b.score - a.score)
         .slice(0, 50)
         .map(e => ({
