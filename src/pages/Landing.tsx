@@ -102,9 +102,10 @@ export default function Landing() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="text-muted-foreground text-base sm:text-lg max-w-md mb-8"
+            className="text-muted-foreground text-base sm:text-lg max-w-lg mb-8"
           >
-            Play cricket while watching cricket. Fill the grid, <span className="text-primary font-semibold">beat the clock,</span> and compete globally.
+            The free online cricket game with <span className="text-primary font-semibold">3,600+ real player cards.</span>{" "}
+            Match cricketers to categories, <span className="text-primary font-semibold">beat the clock,</span> and compete globally.
           </motion.p>
 
           <motion.div
@@ -125,7 +126,7 @@ export default function Landing() {
                 animate={{ x: ["-100%", "100%"] }}
                 transition={{ duration: 1.2, repeat: Infinity }}
               />
-              <span className="relative z-10">Play Now</span>
+              <span className="relative z-10">Play Now — Free</span>
             </motion.button>
 
             <motion.button
@@ -163,7 +164,7 @@ export default function Landing() {
             viewport={{ once: true }}
             className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-[0.15em] text-secondary text-center mb-12"
           >
-            How It Works
+            How to Play This Cricket Card Game
           </motion.h2>
 
           <motion.div
@@ -174,9 +175,9 @@ export default function Landing() {
             className="grid grid-cols-1 sm:grid-cols-3 gap-6"
           >
             {[
-              { step: "1", icon: "🧑‍💻", title: "A Player Appears", desc: "Each turn reveals a cricket player. You have 10 seconds to place them before the clock moves on." },
-              { step: "2", icon: "📍", title: "Place Strategically", desc: "Drop them on a grid cell that matches their stats, team, or country. Wrong placements hurt your score." },
-              { step: "3", icon: "🏆", title: "Race for the Top", desc: "Fill a row/column/diagonal to bank your score. Fastest players climb the daily leaderboard!" },
+              { step: "1", icon: "🧑‍💻", title: "A Player Card Appears", desc: "Each turn reveals a real cricket player card. You have 10 seconds to place them before the clock moves on." },
+              { step: "2", icon: "📍", title: "Answer the Cricket Question", desc: "Match the player to a grid category — IPL team, role, career stats, trophy, or country. Wrong answers cost you turns." },
+              { step: "3", icon: "🏆", title: "Compete on the Leaderboard", desc: "Fill a row, column, or diagonal to win. Score higher, climb the global ranks, and challenge your friends!" },
             ].map((item) => (
               <motion.div key={item.step} variants={fadeUp} className="glass-card rounded-2xl p-6 text-center">
                 <div className="text-4xl mb-3">{item.icon}</div>
@@ -196,7 +197,7 @@ export default function Landing() {
             viewport={{ once: true }}
             className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-[0.15em] text-secondary text-center mb-12"
           >
-            Features
+            Why Play This Free Online Cricket Game
           </motion.h2>
 
           <motion.div
@@ -207,12 +208,12 @@ export default function Landing() {
             className="grid grid-cols-2 sm:grid-cols-3 gap-4"
           >
             {[
-              { icon: "📅", title: "Same Puzzle Daily", desc: "Everyone plays the same puzzle. Your score today determines your rank." },
-              { icon: "🏏", title: "3,600+ Players", desc: "Real cricketers across Tests, ODIs, T20Is & IPL. Know the game, dominate the grid." },
-              { icon: "⏱️", title: "10-Second Turns", desc: "Race against the clock. Faster decisions = higher scores = higher ranks." },
-              { icon: "🏆", title: "Live Leaderboard", desc: "See where you rank globally. Beat today's top score to claim your spot." },
-              { icon: "🔥", title: "Streaks", desc: "Play every day. Build your streak. Never miss a puzzle." },
-              { icon: "🎮", title: "Play Now", desc: "No sign-up. No limits. Start playing in 5 seconds flat." },
+              { icon: "📅", title: "Daily Cricket Quiz", desc: "A new puzzle every day at midnight. Same grid for everyone — your cricket GK determines your rank." },
+              { icon: "🏏", title: "3,600+ Player Cards", desc: "Real cricket players from Tests, ODIs, T20Is & IPL. Know the players, dominate the grid." },
+              { icon: "⏱️", title: "10-Second Turns", desc: "Race against the clock. Faster decisions mean higher scores in this online cricket game." },
+              { icon: "🏆", title: "Live Leaderboard", desc: "See where you rank globally. Beat today's top score to claim the #1 spot." },
+              { icon: "🔥", title: "Streaks & Stats", desc: "Track your daily streak and career stats. Build the longest streak on the leaderboard." },
+              { icon: "🎮", title: "Play Free Instantly", desc: "No download, no sign-up needed. Start playing this cricket card game in 5 seconds." },
             ].map((f) => (
               <motion.div key={f.title} variants={fadeUp} className="glass-card rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">{f.icon}</div>
@@ -233,13 +234,58 @@ export default function Landing() {
             className="max-w-3xl mx-auto px-4 grid grid-cols-3 gap-6 text-center"
           >
             {[
-              { value: "3,600+", label: "Cricket Players" },
-              { value: "42", label: "Categories" },
-              { value: "∞", label: "New Puzzle Daily" },
+              { value: "3,600+", label: "Cricket Player Cards" },
+              { value: "42", label: "Quiz Categories" },
+              { value: "∞", label: "Free Games Daily" },
             ].map((stat) => (
               <motion.div key={stat.label} variants={fadeUp}>
                 <div className="scoreboard-font text-3xl sm:text-4xl text-primary mb-1">{stat.value}</div>
                 <div className="font-display text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* ─── CRICKET QUIZ CATEGORIES ─── */}
+        <section className="max-w-4xl mx-auto px-4 py-20">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-[0.15em] text-secondary text-center mb-4"
+          >
+            Cricket Quiz Questions & Categories
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-muted-foreground text-sm text-center max-w-2xl mx-auto mb-10"
+          >
+            Test your cricket general knowledge across 42 unique categories. Each game picks a random set — no two games are alike.
+          </motion.p>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+          >
+            {[
+              { icon: "🏏", label: "IPL Teams", examples: "MI, CSK, RCB, DC, SRH, RR, KKR, GT" },
+              { icon: "🌍", label: "Countries", examples: "India, Australia, England, Pakistan, SA" },
+              { icon: "⚾", label: "Player Roles", examples: "Batsman, Pacer, Spinner, All-Rounder, WK" },
+              { icon: "📊", label: "Career Stats", examples: "10K+ runs, 300+ wickets, 50+ Tests" },
+              { icon: "🏆", label: "Trophies Won", examples: "IPL, World Cup, T20 WC, Champions Trophy" },
+              { icon: "🤝", label: "Teammates", examples: "Played with Dhoni, Kohli, Sachin" },
+              { icon: "⭐", label: "Achievements", examples: "Century makers, captains, IPL MVPs" },
+              { icon: "🔀", label: "Combo Categories", examples: "Indian + MI, Pacer + CSK, and more" },
+            ].map((cat) => (
+              <motion.div key={cat.label} variants={fadeUp} className="glass-card rounded-xl p-3 text-center">
+                <div className="text-2xl mb-1.5">{cat.icon}</div>
+                <h3 className="font-display text-xs font-bold text-secondary uppercase tracking-wider mb-1">{cat.label}</h3>
+                <p className="text-muted-foreground text-[10px] leading-relaxed">{cat.examples}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -253,7 +299,7 @@ export default function Landing() {
             viewport={{ once: true }}
             className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-[0.15em] text-secondary text-center mb-12"
           >
-            FAQ
+            Frequently Asked Questions
           </motion.h2>
 
           <motion.div
@@ -266,19 +312,27 @@ export default function Landing() {
             {[
               {
                 q: "What is Cricket Bingo?",
-                a: "Cricket Bingo is a free daily cricket trivia game where you match cricket players to categories on a bingo grid. Each day features a new puzzle with players from Tests, ODIs, T20Is, and IPL. Place players correctly based on their stats, teams, and achievements to complete a row, column, or diagonal and get BINGO!",
+                a: "Cricket Bingo is a free online cricket quiz game where you match real cricket player cards to categories on a bingo grid. Each day features a new puzzle with players from Tests, ODIs, T20Is, and IPL. Place players correctly based on their stats, teams, and achievements to complete a row, column, or diagonal and get BINGO!",
               },
               {
-                q: "How do you play Cricket Bingo?",
-                a: "Each turn, you're shown a cricket player. Place them on any grid cell whose category they match (e.g., 'Played for MI', 'Scored 10000+ runs', 'Indian player'). Fill a complete row, column, or diagonal to win. You have limited turns, so choose wisely! You can play a 3x3 or 4x4 grid in relaxed or timed mode.",
+                q: "How do you play this online cricket game?",
+                a: "Each turn, you're shown a cricket player card. Place them on any grid cell whose category they match (e.g., 'Played for MI', 'Scored 10,000+ runs', 'Indian player'). Fill a complete row, column, or diagonal to win. You have limited turns, so choose wisely! You can play a 3x3 or 4x4 grid in relaxed or timed mode.",
               },
               {
-                q: "Is Cricket Bingo free to play?",
-                a: "Yes! Cricket Bingo is completely free to play. A new puzzle is available every day at midnight. You can play as a guest or sign in with Google to save your stats, streaks, and compete on the leaderboard.",
+                q: "Is this cricket card game free?",
+                a: "Yes! Cricket Bingo is 100% free to play. A new puzzle is available every day at midnight. You can play as a guest or sign in with Google to save your stats, streaks, and compete on the global leaderboard. No download or installation required.",
               },
               {
-                q: "How many cricket players are in Cricket Bingo?",
-                a: "Cricket Bingo features over 3,600 cricket players from international cricket (Tests, ODIs, T20Is) and the Indian Premier League (IPL), sourced from Cricsheet open data.",
+                q: "How many cricket player cards are there?",
+                a: "Cricket Bingo features over 3,600 real cricket player cards from international cricket (Tests, ODIs, T20Is) and the Indian Premier League (IPL), sourced from Cricsheet open data. Players are categorized by teams, roles, stats, trophies, and country.",
+              },
+              {
+                q: "What cricket quiz questions does this game have?",
+                a: "Cricket Bingo tests your cricket GK with 42 category types including IPL teams (MI, CSK, RCB, DC, SRH, etc.), player roles (Batsman, Bowler, All-Rounder, Wicket-Keeper), career stats (10,000+ runs, 300+ wickets), trophies (IPL, World Cup, T20 World Cup, Champions Trophy), and countries. Each game picks a random set from these categories.",
+              },
+              {
+                q: "Can I play this cricket game on my phone?",
+                a: "Yes! Cricket Bingo is a browser-based online cricket game that works on any device — mobile, tablet, or desktop. No app download needed. Just visit cricket-bingo.in and start playing instantly.",
               },
             ].map((faq) => (
               <motion.article key={faq.q} variants={fadeUp} className="glass-card rounded-xl p-5">
@@ -301,7 +355,7 @@ export default function Landing() {
               Ready to Play?
             </h2>
             <p className="text-muted-foreground text-sm mb-8">
-              A new cricket puzzle awaits you every day. How well do you know the game?
+              A new cricket quiz awaits you every day. 3,600+ player cards, 42 categories, zero cost. How well do you really know cricket?
             </p>
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(0,255,65,0.4)" }}
@@ -318,7 +372,7 @@ export default function Landing() {
         {/* ─── FOOTER ─── */}
         <footer className="border-t border-border/20 py-8 text-center px-4">
           <p className="text-muted-foreground/50 text-xs">
-            Cricket Bingo &copy; 2025 &middot; Data from{" "}
+            Cricket Bingo &copy; 2025 &middot; Free online cricket quiz game &middot; Data from{" "}
             <a href="https://cricsheet.org" target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary transition-colors">
               Cricsheet
             </a>{" "}
