@@ -151,7 +151,7 @@ function GameBoard({
     <div className="min-h-screen stadium-bg flex flex-col">
       <div className="flex-1 flex flex-col items-center gap-4 px-3 pt-3 pb-24 sm:pb-4 max-w-xl mx-auto w-full">
         {/* User bar with back button */}
-        <div className="w-full relative bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
+        <div className="w-full relative z-30 bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
             <button
               onClick={onBack}
@@ -300,6 +300,7 @@ function GameBoard({
         {isGameOver ? (
           <GameOverScreen gameState={gameState} onReset={playRandomGame} />
         ) : currentPlayer ? (
+          <div className="relative z-10 w-full">
           <PlayerCard
             player={currentPlayer}
             remaining={remaining}
@@ -311,6 +312,7 @@ function GameBoard({
             wildcardMode={gameState.wildcardMode}
             onCancelWildcard={cancelWildcard}
           />
+          </div>
         ) : null}
 
         <BingoMeter
