@@ -19,7 +19,15 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
   };
 
   return (
-    <div className="flex items-center justify-between w-full max-w-md mx-auto">
+    <div>
+      {/* Competitive message */}
+      <div className="text-center mb-2">
+        <p className="text-[10px] text-primary/70 font-display uppercase tracking-widest">
+          ↑ Higher score = Higher rank today ↑
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between w-full max-w-md mx-auto">
       {/* Score */}
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/40 border border-border/50">
@@ -61,6 +69,7 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
         >
           <HelpCircle className="w-4 h-4" />
         </button>
+      </div>
       </div>
     </div>
   );
