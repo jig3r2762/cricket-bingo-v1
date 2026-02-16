@@ -21,7 +21,6 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
       subtitle: "3 x 3",
       description: "9 cells · Fast rounds",
       icon: Grid3X3,
-      difficulty: "EASY",
       color: "var(--cricket-green)",
     },
     {
@@ -30,7 +29,6 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
       subtitle: "4 x 4",
       description: "16 cells · Full challenge",
       icon: LayoutGrid,
-      difficulty: "HARD",
       color: "var(--golden-trophy)",
     },
   ];
@@ -112,16 +110,6 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
             <div className="flex-1 text-left">
               <div className="flex items-center gap-2">
                 <h3 className="font-display text-lg font-bold text-foreground tracking-wider">{opt.title}</h3>
-                <span
-                  className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border"
-                  style={{
-                    borderColor: `hsl(${opt.color} / 0.4)`,
-                    color: `hsl(${opt.color})`,
-                    background: `hsl(${opt.color} / 0.1)`,
-                  }}
-                >
-                  {opt.difficulty}
-                </span>
                 {timed && (
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-orange-400/40 text-orange-400 bg-orange-400/10">
                     TIMED

@@ -168,6 +168,25 @@ const TEAM_ABBR_MAP: Record<string, string> = {
   GT: "team_gt", LSG: "team_lsg",
 };
 
+// --- Category definitions for tooltips ---
+const CATEGORY_DEFINITIONS: Record<string, string> = {
+  PACER: "Fast bowler who bowls at 130+ km/h in any format",
+  SPINNER: "Spin bowler (off-spin, leg-spin, or left-arm spin) in any format",
+  "ALL-RTR": "All-rounder who both bats and bowls significantly",
+  WK: "Wicket-keeper in any format",
+  BAT: "Batsman or opener in any format",
+  IPL: "Won the IPL trophy",
+  CWC: "Won the Cricket World Cup",
+  T20WC: "Won the T20 World Cup",
+  CT: "Won the Champions Trophy",
+  "10K RUNS": "Scored 10,000+ runs across all formats",
+  "5K ODI": "Scored 5,000+ runs in ODI format",
+  "300 WKTS": "Took 300+ wickets across all formats",
+  "100s": "Hit 100+ centuries in career",
+  "50 TESTS": "Played 50+ Test matches",
+  "1K IPL": "Scored 1,000+ runs in IPL career",
+};
+
 // --- Combo visual ---
 function ComboVisual({ category }: { category: GridCategory }) {
   // Extract parts from validatorKey like "combo:team:MI+country:India"
@@ -240,6 +259,7 @@ export const BingoCell = memo(function BingoCell({
   isEligible, isRecommended, isWildcardTarget, isWinLine,
 }: BingoCellProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [showDefinition, setShowDefinition] = useState(false);
 
   // Determine what visual to show for an empty cell
   const flagUrl = FLAG_IMAGES[category.id];
@@ -370,9 +390,31 @@ export const BingoCell = memo(function BingoCell({
             </div>
           )}
 
-          <span className="font-display text-[8px] sm:text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight mt-0.5">
-            {category.shortLabel}
-          </span>
+          <div className="relative flex items-center gap-0.5">
+            <span className="font-display text-[8px] sm:text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight mt-0.5">
+              {category.shortLabel}
+            </span>
+            {CATEGORY_DEFINITIONS[category.shortLabel] && (
+              <button
+                onMouseEnter={() => setShowDefinition(true)}
+                onMouseLeave={() => setShowDefinition(false)}
+                onClick={(e) => e.stopPropagation()}
+                className="relative shrink-0 p-0.5 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+              >
+                <HelpCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                {showDefinition && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-32 sm:w-40 px-2 py-1.5 rounded-lg bg-muted border border-border/50 text-muted-foreground text-[7px] sm:text-[8px] text-center whitespace-normal z-50 pointer-events-none"
+                  >
+                    {CATEGORY_DEFINITIONS[category.shortLabel]}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-muted border-t border-l border-border/50" />
+                  </motion.div>
+                )}
+              </button>
+            )}
+          </div>
           {/* Difficulty badge */}
           {(() => {
             const diff = getDifficulty(category);

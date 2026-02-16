@@ -10,12 +10,14 @@ import { GameOverScreen } from "@/components/game/GameOverScreen";
 import { TurnTimer } from "@/components/game/TurnTimer";
 import { OnboardingOverlay } from "@/components/game/OnboardingOverlay";
 import { NotificationPrompt } from "@/components/game/NotificationPrompt";
+import { FinalChallengeModal } from "@/components/game/FinalChallengeModal";
 import { useGameState, type AdminGrid } from "@/hooks/useGameState";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
+import { ArrowLeft } from "lucide-react";
 import type { GridCategory } from "@/types/game";
 
 const Index = () => {
@@ -106,7 +108,7 @@ const Index = () => {
     );
   }
 
-  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} />;
+  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => { setGridSize(null); setTimed(false); }} />;
 };
 
 function GameBoard({
@@ -115,12 +117,14 @@ function GameBoard({
   howToPlay,
   setHowToPlay,
   adminGrid,
+  onBack,
 }: {
   gridSize: 3 | 4;
   timed: boolean;
   howToPlay: boolean;
   setHowToPlay: (v: boolean) => void;
   adminGrid?: AdminGrid;
+  onBack: () => void;
 }) {
   const { user, userData, signOut, isAdmin, isGuest, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -146,6 +150,15 @@ function GameBoard({
   return (
     <div className="min-h-screen stadium-bg flex flex-col">
       <div className="flex-1 flex flex-col items-center gap-4 px-3 pt-3 pb-24 sm:pb-4 max-w-xl mx-auto w-full">
+        {/* Back button */}
+        <button
+          onClick={onBack}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Grid Selection
+        </button>
+
         {/* User bar */}
         <div className="w-full flex items-center justify-between bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
           <div className="flex items-center gap-3">
@@ -296,6 +309,13 @@ function GameBoard({
       )}
 
       <HowToPlayModal open={howToPlay} onClose={() => setHowToPlay(false)} />
+      <FinalChallengeModal
+        eligibleCells={Array.from(eligibleCells)}
+        gridSize={gridSize}
+        grid={categories}
+        placements={gameState.placements}
+        onCellSelect={handleCellClick}
+      />
       <NotificationPrompt />
     </div>
   );
