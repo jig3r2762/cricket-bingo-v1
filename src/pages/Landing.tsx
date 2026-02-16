@@ -104,7 +104,7 @@ export default function Landing() {
             transition={{ delay: 0.35 }}
             className="text-muted-foreground text-base sm:text-lg max-w-md mb-8"
           >
-            The free daily cricket trivia game. Match players to categories, fill the grid, and get <span className="text-primary font-semibold">BINGO!</span>
+            Play cricket while watching cricket. Fill the grid, <span className="text-primary font-semibold">beat the clock,</span> and compete globally.
           </motion.p>
 
           <motion.div
@@ -174,9 +174,9 @@ export default function Landing() {
             className="grid grid-cols-1 sm:grid-cols-3 gap-6"
           >
             {[
-              { step: "1", icon: "🧑‍💻", title: "A Player Appears", desc: "Each turn reveals a cricket player from a deck of 3600+ players across Tests, ODIs, T20Is, and IPL." },
-              { step: "2", icon: "📍", title: "Place in Grid", desc: "Drop them on a grid cell whose category they match — teams, stats, country, role, or trophies." },
-              { step: "3", icon: "🎉", title: "Get BINGO!", desc: "Fill a complete row, column, or diagonal to score BINGO and earn bonus points!" },
+              { step: "1", icon: "🧑‍💻", title: "A Player Appears", desc: "Each turn reveals a cricket player. You have 10 seconds to place them before the clock moves on." },
+              { step: "2", icon: "📍", title: "Place Strategically", desc: "Drop them on a grid cell that matches their stats, team, or country. Wrong placements hurt your score." },
+              { step: "3", icon: "🏆", title: "Race for the Top", desc: "Fill a row/column/diagonal to bank your score. Fastest players climb the daily leaderboard!" },
             ].map((item) => (
               <motion.div key={item.step} variants={fadeUp} className="glass-card rounded-2xl p-6 text-center">
                 <div className="text-4xl mb-3">{item.icon}</div>
@@ -207,12 +207,12 @@ export default function Landing() {
             className="grid grid-cols-2 sm:grid-cols-3 gap-4"
           >
             {[
-              { icon: "📅", title: "Daily Puzzles", desc: "A brand-new puzzle every day at midnight, same for all players." },
-              { icon: "🏏", title: "3,600+ Players", desc: "Real cricketers from Tests, ODIs, T20Is & IPL via Cricsheet data." },
-              { icon: "⏱️", title: "Timed Mode", desc: "Race the clock with 10-second turns for an extra challenge." },
-              { icon: "🏆", title: "Leaderboard", desc: "Compete globally and track your ranking among all players." },
-              { icon: "🔊", title: "Sound Effects", desc: "Satisfying audio feedback for every correct placement." },
-              { icon: "🎮", title: "Play as Guest", desc: "No sign-up needed. Jump in and start playing instantly." },
+              { icon: "📅", title: "Same Puzzle Daily", desc: "Everyone plays the same puzzle. Your score today determines your rank." },
+              { icon: "🏏", title: "3,600+ Players", desc: "Real cricketers across Tests, ODIs, T20Is & IPL. Know the game, dominate the grid." },
+              { icon: "⏱️", title: "10-Second Turns", desc: "Race against the clock. Faster decisions = higher scores = higher ranks." },
+              { icon: "🏆", title: "Live Leaderboard", desc: "See where you rank globally. Beat today's top score to claim your spot." },
+              { icon: "🔥", title: "Streaks", desc: "Play every day. Build your streak. Never miss a puzzle." },
+              { icon: "🎮", title: "Play Now", desc: "No sign-up. No limits. Start playing in 5 seconds flat." },
             ].map((f) => (
               <motion.div key={f.title} variants={fadeUp} className="glass-card rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">{f.icon}</div>
