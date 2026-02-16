@@ -10,14 +10,13 @@ import { GameOverScreen } from "@/components/game/GameOverScreen";
 import { TurnTimer } from "@/components/game/TurnTimer";
 import { OnboardingOverlay } from "@/components/game/OnboardingOverlay";
 import { NotificationPrompt } from "@/components/game/NotificationPrompt";
-import { FinalChallengeModal } from "@/components/game/FinalChallengeModal";
 import { useGameState, type AdminGrid } from "@/hooks/useGameState";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Menu, X } from "lucide-react";
 import type { GridCategory } from "@/types/game";
 
 const Index = () => {
@@ -144,93 +143,147 @@ function GameBoard({
     isGameOver,
   } = useGameState(gridSize, adminGrid);
 
+  const [menuOpen, setMenuOpen] = useState(false);
   const categories = gameState.grid;
   const total = gameState.deck.length;
 
   return (
     <div className="min-h-screen stadium-bg flex flex-col">
       <div className="flex-1 flex flex-col items-center gap-4 px-3 pt-3 pb-24 sm:pb-4 max-w-xl mx-auto w-full">
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Grid Selection
-        </button>
-
-        {/* User bar */}
-        <div className="w-full flex items-center justify-between bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
-          <div className="flex items-center gap-3">
-            {isGuest ? (
-              <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
-                🎮
+        {/* User bar with back button */}
+        <div className="w-full relative bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={onBack}
+              className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+              title="Back to Grid Selection"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3">
+              {isGuest ? (
+                <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
+                  🎮
+                </div>
+              ) : user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt=""
+                  className="w-8 h-8 rounded-full ring-2 ring-primary/30"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center text-sm text-primary font-bold">
+                  {(user?.displayName || user?.email || "?")[0].toUpperCase()}
+                </div>
+              )}
+              <div className="flex flex-col">
+                <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
+                  {isGuest ? "Guest" : (user?.displayName || "Player")}
+                  {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
+                    <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
+                  )}
+                </span>
+                <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
+                  {isGuest ? "Sign in to save progress" : user?.email}
+                </span>
               </div>
-            ) : user?.photoURL ? (
-              <img
-                src={user.photoURL}
-                alt=""
-                className="w-8 h-8 rounded-full ring-2 ring-primary/30"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center text-sm text-primary font-bold">
-                {(user?.displayName || user?.email || "?")[0].toUpperCase()}
-              </div>
-            )}
-            <div className="flex flex-col">
-              <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
-                {isGuest ? "Guest" : (user?.displayName || "Player")}
-                {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
-                  <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
-                )}
-              </span>
-              <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
-                {isGuest ? "Sign in to save progress" : user?.email}
-              </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {!isGuest && (
-              <>
+            {/* Desktop nav buttons */}
+            <div className="hidden sm:flex items-center gap-2">
+              {!isGuest && (
+                <>
+                  <button
+                    onClick={() => navigate("/stats")}
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                  >
+                    Stats
+                  </button>
+                  <button
+                    onClick={() => navigate("/leaderboard")}
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
+                  >
+                    Ranks
+                  </button>
+                </>
+              )}
+              {isAdmin && (
                 <button
-                  onClick={() => navigate("/stats")}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                  onClick={() => navigate("/admin")}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
                 >
-                  Stats
+                  Admin
                 </button>
+              )}
+              {isGuest ? (
                 <button
-                  onClick={() => navigate("/leaderboard")}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
+                  onClick={() => signInWithGoogle().catch(() => {})}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
                 >
-                  Ranks
+                  Sign In
                 </button>
-              </>
-            )}
-            {isAdmin && (
-              <button
-                onClick={() => navigate("/admin")}
-                className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-              >
-                Admin
-              </button>
-            )}
-            {isGuest ? (
-              <button
-                onClick={() => signInWithGoogle().catch(() => {})}
-                className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-              >
-                Sign In
-              </button>
-            ) : (
-              <button
-                onClick={signOut}
-                className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-              >
-                Sign Out
-              </button>
-            )}
+              ) : (
+                <button
+                  onClick={signOut}
+                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+                >
+                  Sign Out
+                </button>
+              )}
+            </div>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="sm:hidden p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
+
+          {/* Mobile dropdown menu */}
+          {menuOpen && (
+            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card/95 backdrop-blur-md border border-border/30 rounded-xl py-2 px-3 z-50 space-y-1">
+              {!isGuest && (
+                <>
+                  <button
+                    onClick={() => { setMenuOpen(false); navigate("/stats"); }}
+                    className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                  >
+                    Stats
+                  </button>
+                  <button
+                    onClick={() => { setMenuOpen(false); navigate("/leaderboard"); }}
+                    className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-amber-400 hover:bg-amber-500/10 transition-colors"
+                  >
+                    Ranks
+                  </button>
+                </>
+              )}
+              {isAdmin && (
+                <button
+                  onClick={() => { setMenuOpen(false); navigate("/admin"); }}
+                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-primary hover:bg-primary/10 transition-colors"
+                >
+                  Admin
+                </button>
+              )}
+              {isGuest ? (
+                <button
+                  onClick={() => { setMenuOpen(false); signInWithGoogle().catch(() => {}); }}
+                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-primary hover:bg-primary/10 transition-colors"
+                >
+                  Sign In
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setMenuOpen(false); signOut(); }}
+                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-muted-foreground hover:bg-muted/20 transition-colors"
+                >
+                  Sign Out
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <GameHeader score={gameState.score} streak={gameState.streak} onHowToPlay={() => setHowToPlay(true)} />
@@ -309,13 +362,6 @@ function GameBoard({
       )}
 
       <HowToPlayModal open={howToPlay} onClose={() => setHowToPlay(false)} />
-      <FinalChallengeModal
-        eligibleCells={Array.from(eligibleCells)}
-        gridSize={gridSize}
-        grid={categories}
-        placements={gameState.placements}
-        onCellSelect={handleCellClick}
-      />
       <NotificationPrompt />
     </div>
   );

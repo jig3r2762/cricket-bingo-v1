@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
-import { getTodayDateString } from "@/lib/dailyGame";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -18,7 +17,6 @@ interface ScoreEntry {
   date: string;
 }
 
-type Tab = "today" | "alltime";
 type GridTab = 3 | 4;
 
 interface PlayerScore {
@@ -66,7 +64,6 @@ function getMedalColor(rank: number) {
 export default function Leaderboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [tab, setTab] = useState<Tab>("today");
   const [gridTab, setGridTab] = useState<GridTab>(3);
   const [leaderboards, setLeaderboards] = useState<LeaderboardData>({ grid3x3: [], grid4x4: [] });
   const [loading, setLoading] = useState(true);
@@ -77,23 +74,11 @@ export default function Leaderboard() {
 
     const fetchScores = async () => {
       const scoresRef = collection(db, "scores");
-      let q;
-
-      if (tab === "today") {
-        const today = getTodayDateString();
-        q = query(
-          scoresRef,
-          where("date", "==", today),
-          orderBy("score", "desc"),
-          limit(200),
-        );
-      } else {
-        q = query(
-          scoresRef,
-          orderBy("score", "desc"),
-          limit(200),
-        );
-      }
+      const q = query(
+        scoresRef,
+        orderBy("score", "desc"),
+        limit(200),
+      );
 
       const snap = await getDocs(q);
       if (cancelled) return;
@@ -152,7 +137,10 @@ export default function Leaderboard() {
     });
 
     return () => { cancelled = true; };
-  }, [tab]);
+  }, []);
+
+  const scores = gridTab === 3 ? leaderboards.grid3x3 : leaderboards.grid4x4;
+  const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
 
   return (
     <div className="min-h-screen stadium-bg flex flex-col items-center p-4">
@@ -170,39 +158,15 @@ export default function Leaderboard() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="font-display text-2xl font-extrabold text-secondary uppercase tracking-wider">
-            Leaderboard
+            {gridTab}×{gridTab} Top Scorers
           </h1>
-        </motion.div>
-
-        {/* Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-2"
-        >
-          {(["today", "alltime"] as Tab[]).map((t) => (
-            <motion.button
-              key={t}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setTab(t)}
-              className={`px-4 py-2 rounded-xl font-display text-xs uppercase tracking-wider transition-all ${
-                tab === t
-                  ? "bg-primary/20 border border-primary/50 text-primary"
-                  : "bg-card/40 border border-border/30 text-muted-foreground hover:text-secondary"
-              }`}
-            >
-              {t === "today" ? "Today" : "All Time"}
-            </motion.button>
-          ))}
         </motion.div>
 
         {/* Grid Size Tabs */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.1 }}
           className="flex gap-2"
         >
           {([3, 4] as GridTab[]).map((size) => (
@@ -223,125 +187,125 @@ export default function Leaderboard() {
         </motion.div>
 
         {/* Your rank indicator */}
-        {(() => {
-          const scores = gridTab === 3 ? leaderboards.grid3x3 : leaderboards.grid4x4;
-          const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
-          return userRank > 0 && userRank <= 50 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-center text-sm font-display text-primary uppercase tracking-wider"
-            >
-              Your Rank: #{userRank}
-            </motion.div>
-          ) : null;
-        })()}
+        {userRank > 0 && userRank <= 50 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-center text-sm font-display text-primary uppercase tracking-wider"
+          >
+            Your Rank: #{userRank}
+          </motion.div>
+        )}
 
         {/* Table */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
           className="glass-card rounded-2xl overflow-hidden"
         >
           {loading ? (
             <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest animate-pulse">
               Loading...
             </div>
-          ) : (() => {
-            const scores = gridTab === 3 ? leaderboards.grid3x3 : leaderboards.grid4x4;
-            return scores.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest">
-                No scores yet
-              </div>
-            ) : (
-              <div className="divide-y divide-border/20">
-                {scores.map((entry, i) => {
-                  const isMe = entry.uid === user?.uid;
-                  const rank = i + 1;
-                  const isMedal = rank <= 3;
+          ) : scores.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest">
+              No scores yet
+            </div>
+          ) : (
+            <div className="divide-y divide-border/20">
+              {scores.map((entry, i) => {
+                const isMe = entry.uid === user?.uid;
+                const rank = i + 1;
+                const isMedal = rank <= 3;
+                const isEven = i % 2 === 0;
 
-                  return (
-                    <motion.div
-                      key={entry.uid}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: Math.min(i * 0.05, 0.4) }}
-                      whileHover={{ backgroundColor: "rgba(120, 119, 198, 0.05)" }}
-                      className={`flex items-center gap-3 px-4 py-3 transition-all ${
-                        isMe ? "bg-primary/10 border-l-2 border-primary/50" : ""
-                      }`}
-                    >
-                      {/* Medal/Rank badge */}
-                      {isMedal ? (
-                        <motion.div
-                          initial={medalVariants[rank as 1 | 2 | 3].initial}
-                          animate={medalVariants[rank as 1 | 2 | 3].animate}
-                          whileHover={medalVariants[rank as 1 | 2 | 3].hover}
-                          className={`w-8 text-center font-display text-lg font-bold ${getMedalColor(rank)}`}
-                        >
-                          {rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}
-                        </motion.div>
-                      ) : (
-                        <div className={`w-8 text-center font-display text-sm font-bold ${getMedalColor(rank)}`}>
-                          {rank}
-                        </div>
-                      )}
-
-                      {/* Avatar */}
+                return (
+                  <motion.div
+                    key={entry.uid}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: Math.min(i * 0.05, 0.4) }}
+                    whileHover={{ backgroundColor: "rgba(120, 119, 198, 0.05)" }}
+                    className={`flex items-center gap-3 px-4 py-3 transition-all ${
+                      isMe
+                        ? "bg-primary/15 border-l-4 border-primary/60 ring-1 ring-inset ring-primary/20"
+                        : isEven
+                          ? "bg-white/[0.02]"
+                          : ""
+                    }`}
+                  >
+                    {/* Medal/Rank badge */}
+                    {isMedal ? (
                       <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        className="flex-shrink-0"
+                        initial={medalVariants[rank as 1 | 2 | 3].initial}
+                        animate={medalVariants[rank as 1 | 2 | 3].animate}
+                        whileHover={medalVariants[rank as 1 | 2 | 3].hover}
+                        className={`w-9 text-center font-display text-lg font-bold ${getMedalColor(rank)}`}
                       >
-                        {entry.photoURL ? (
-                          <img
-                            src={entry.photoURL}
-                            alt=""
-                            className="w-8 h-8 rounded-full ring-2 ring-border/30"
-                            referrerPolicy="no-referrer"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-border/30 flex items-center justify-center text-sm text-primary font-bold">
-                            {(entry.displayName || "?")[0].toUpperCase()}
-                          </div>
-                        )}
+                        {rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}
                       </motion.div>
-
-                      {/* Name */}
-                      <div className="flex-1 min-w-0">
-                        <div className={`text-sm font-medium truncate ${isMe ? "text-primary" : "text-secondary"}`}>
-                          {entry.displayName || "Player"}
-                          {isMe && <span className="text-primary/60 text-xs ml-1">(you)</span>}
-                        </div>
+                    ) : (
+                      <div className={`w-9 text-center font-display text-base font-extrabold tabular-nums ${isMe ? "text-primary" : "text-muted-foreground/80"}`}>
+                        #{rank}
                       </div>
+                    )}
 
-                      {/* Status icon */}
-                      {entry.status === "won" ? (
-                        <motion.div
-                          animate={{ rotate: [0, 10, -10, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          <Trophy className="w-4 h-4 text-yellow-400" />
-                        </motion.div>
+                    {/* Avatar */}
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="flex-shrink-0"
+                    >
+                      {entry.photoURL ? (
+                        <img
+                          src={entry.photoURL}
+                          alt=""
+                          className={`w-9 h-9 rounded-full ring-2 ${isMe ? "ring-primary/50" : "ring-border/30"}`}
+                          referrerPolicy="no-referrer"
+                        />
                       ) : (
-                        <XCircle className="w-4 h-4 text-destructive/60" />
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold ring-2 ${
+                          isMe ? "bg-primary/30 ring-primary/50 text-primary" : "bg-primary/20 ring-border/30 text-primary"
+                        }`}>
+                          {(entry.displayName || "?")[0].toUpperCase()}
+                        </div>
                       )}
-
-                      {/* Score */}
-                      <motion.div
-                        key={entry.score}
-                        initial={{ y: -8, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="scoreboard-font text-lg text-secondary w-16 text-right"
-                      >
-                        {entry.score}
-                      </motion.div>
                     </motion.div>
-                  );
-                })}
-              </div>
-            );
-            })()}
+
+                    {/* Name */}
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-sm font-medium truncate ${isMe ? "text-primary font-bold" : "text-secondary"}`}>
+                        {entry.displayName || "Player"}
+                        {isMe && <span className="text-primary/60 text-xs ml-1.5">(you)</span>}
+                      </div>
+                    </div>
+
+                    {/* Status icon */}
+                    {entry.status === "won" ? (
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <Trophy className="w-4 h-4 text-yellow-400" />
+                      </motion.div>
+                    ) : (
+                      <XCircle className="w-4 h-4 text-destructive/60" />
+                    )}
+
+                    {/* Score */}
+                    <motion.div
+                      key={entry.score}
+                      initial={{ y: -8, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className={`scoreboard-font text-lg w-16 text-right ${isMe ? "text-primary" : "text-secondary"}`}
+                    >
+                      {entry.score}
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

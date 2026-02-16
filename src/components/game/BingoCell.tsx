@@ -59,10 +59,23 @@ const ACHIEVEMENT_BADGES: Record<string, string> = {
 function CricketBatIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <rect x="28" y="4" width="8" height="36" rx="4" fill="#d4a574" stroke="#8B6914" strokeWidth="1.5"/>
-      <rect x="26" y="36" width="12" height="18" rx="2" fill="#c4956a" stroke="#8B6914" strokeWidth="1.5"/>
-      <rect x="30" y="54" width="4" height="6" rx="1" fill="#8B6914"/>
-      <line x1="32" y1="38" x2="32" y2="52" stroke="#8B6914" strokeWidth="0.8" opacity="0.4"/>
+      {/* Handle grip */}
+      <rect x="29" y="4" width="6" height="12" rx="2" fill="#6B4226" stroke="#4A2C17" strokeWidth="1"/>
+      <line x1="30" y1="6" x2="30" y2="14" stroke="#4A2C17" strokeWidth="0.5" opacity="0.5"/>
+      <line x1="34" y1="6" x2="34" y2="14" stroke="#4A2C17" strokeWidth="0.5" opacity="0.5"/>
+      {/* Blade */}
+      <path d="M 25 16 L 25 48 Q 25 52 32 52 Q 39 52 39 48 L 39 16 Q 39 14 32 14 Q 25 14 25 16 Z" fill="#e8c88a" stroke="#B8860B" strokeWidth="1.2"/>
+      {/* Blade spine */}
+      <line x1="32" y1="16" x2="32" y2="50" stroke="#B8860B" strokeWidth="0.8" opacity="0.3"/>
+      {/* Sweet spot highlight */}
+      <ellipse cx="32" cy="34" rx="5" ry="8" fill="#f5deb3" opacity="0.4"/>
+      {/* Edge detail */}
+      <path d="M 25.5 20 L 25.5 46" stroke="#d4a574" strokeWidth="0.6" opacity="0.5"/>
+      <path d="M 38.5 20 L 38.5 46" stroke="#d4a574" strokeWidth="0.6" opacity="0.5"/>
+      {/* Toe guard */}
+      <path d="M 26 48 Q 32 54 38 48" stroke="#8B6914" strokeWidth="1.2" fill="none"/>
+      {/* Ball impact mark */}
+      <circle cx="32" cy="32" r="1.5" fill="#cc2222" opacity="0.3"/>
     </svg>
   );
 }
@@ -70,13 +83,35 @@ function CricketBatIcon({ className }: { className?: string }) {
 function BowlerIcon({ className, isSpin }: { className?: string; isSpin?: boolean }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <circle cx="32" cy="32" r="10" fill="#cc2222" stroke="#991111" strokeWidth="1.5"/>
-      <path d="M 22 32 Q 32 22 42 32" stroke="white" strokeWidth="1.5" fill="none"/>
-      <path d="M 22 32 Q 32 42 42 32" stroke="white" strokeWidth="1.5" fill="none"/>
+      {/* Cricket ball */}
+      <circle cx="32" cy="30" r="12" fill="#cc2222" stroke="#8B1A1A" strokeWidth="1.5"/>
+      {/* Ball seam */}
+      <path d="M 20 30 Q 26 22 32 22 Q 38 22 44 30" stroke="#f5f5dc" strokeWidth="1.8" fill="none"/>
+      <path d="M 20 30 Q 26 38 32 38 Q 38 38 44 30" stroke="#f5f5dc" strokeWidth="1.8" fill="none"/>
+      {/* Seam stitches */}
+      <line x1="22" y1="25" x2="24" y2="24" stroke="#f5f5dc" strokeWidth="0.8"/>
+      <line x1="26" y1="23" x2="28" y2="22.5" stroke="#f5f5dc" strokeWidth="0.8"/>
+      <line x1="36" y1="22.5" x2="38" y2="23" stroke="#f5f5dc" strokeWidth="0.8"/>
+      <line x1="40" y1="24" x2="42" y2="25" stroke="#f5f5dc" strokeWidth="0.8"/>
+      {/* Ball shine */}
+      <ellipse cx="28" cy="26" rx="2" ry="1.5" fill="white" opacity="0.2"/>
       {isSpin ? (
-        <path d="M 18 20 Q 28 14 38 20 Q 48 26 44 38" stroke="#ffaa00" strokeWidth="2" fill="none" strokeDasharray="3 2"/>
+        <>
+          {/* Spin arc with rotation indicator */}
+          <path d="M 16 18 Q 24 8 36 12 Q 48 16 50 28" stroke="#ffaa00" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+          <path d="M 48 24 L 50 28 L 46 27" fill="#ffaa00"/>
+          {/* Spin revolutions */}
+          <path d="M 20 46 Q 26 42 32 44 Q 38 46 44 42" stroke="#ffaa00" strokeWidth="1.5" fill="none" opacity="0.5" strokeDasharray="2 2"/>
+        </>
       ) : (
-        <path d="M 20 14 L 32 20 L 32 22" stroke="#ffaa00" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+        <>
+          {/* Speed lines */}
+          <line x1="10" y1="16" x2="22" y2="22" stroke="#ffaa00" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="8" y1="22" x2="18" y2="26" stroke="#ffaa00" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+          <line x1="12" y1="12" x2="20" y2="18" stroke="#ffaa00" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+          {/* Impact burst */}
+          <circle cx="14" cy="18" r="1" fill="#ffaa00" opacity="0.4"/>
+        </>
       )}
     </svg>
   );
@@ -85,9 +120,30 @@ function BowlerIcon({ className, isSpin }: { className?: string; isSpin?: boolea
 function WicketKeeperIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <ellipse cx="32" cy="36" rx="14" ry="10" fill="#c4956a" stroke="#8B6914" strokeWidth="1.5"/>
-      <path d="M 18 36 Q 18 20 32 20 Q 46 20 46 36" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
-      <circle cx="32" cy="32" r="3" fill="#cc2222" stroke="#991111" strokeWidth="1"/>
+      {/* Left glove */}
+      <path d="M 8 20 Q 8 14 14 12 L 20 12 Q 24 12 24 16 L 24 36 Q 24 42 18 42 L 14 42 Q 8 42 8 36 Z" fill="#d4a574" stroke="#8B6914" strokeWidth="1.2"/>
+      {/* Left glove fingers */}
+      <path d="M 10 14 Q 10 8 14 8 Q 18 8 18 14" fill="#d4a574" stroke="#8B6914" strokeWidth="1"/>
+      <path d="M 16 12 Q 16 6 20 6 Q 24 6 24 12" fill="#d4a574" stroke="#8B6914" strokeWidth="1"/>
+      {/* Left glove padding */}
+      <ellipse cx="16" cy="28" rx="5" ry="6" fill="#c4956a" stroke="#8B6914" strokeWidth="0.8" opacity="0.6"/>
+      {/* Right glove */}
+      <path d="M 40 20 Q 40 14 46 12 L 50 12 Q 56 12 56 16 L 56 36 Q 56 42 50 42 L 46 42 Q 40 42 40 36 Z" fill="#d4a574" stroke="#8B6914" strokeWidth="1.2"/>
+      {/* Right glove fingers */}
+      <path d="M 40 12 Q 40 6 44 6 Q 48 6 48 12" fill="#d4a574" stroke="#8B6914" strokeWidth="1"/>
+      <path d="M 46 14 Q 46 8 50 8 Q 54 8 54 14" fill="#d4a574" stroke="#8B6914" strokeWidth="1"/>
+      {/* Right glove padding */}
+      <ellipse cx="48" cy="28" rx="5" ry="6" fill="#c4956a" stroke="#8B6914" strokeWidth="0.8" opacity="0.6"/>
+      {/* Ball caught between gloves */}
+      <circle cx="32" cy="28" r="6" fill="#cc2222" stroke="#8B1A1A" strokeWidth="1"/>
+      <path d="M 26 28 Q 32 24 38 28" stroke="#f5f5dc" strokeWidth="0.8" fill="none"/>
+      <path d="M 26 28 Q 32 32 38 28" stroke="#f5f5dc" strokeWidth="0.8" fill="none"/>
+      {/* Webbing between gloves */}
+      <path d="M 24 24 Q 28 22 32 22 Q 36 22 40 24" stroke="#8B6914" strokeWidth="0.8" fill="none" opacity="0.4"/>
+      {/* Stumps behind */}
+      <rect x="28" y="44" width="1.5" height="14" rx="0.5" fill="#d4d4d4" opacity="0.5"/>
+      <rect x="31" y="44" width="1.5" height="14" rx="0.5" fill="#d4d4d4" opacity="0.5"/>
+      <rect x="34" y="44" width="1.5" height="14" rx="0.5" fill="#d4d4d4" opacity="0.5"/>
     </svg>
   );
 }
@@ -95,35 +151,90 @@ function WicketKeeperIcon({ className }: { className?: string }) {
 function AllRounderIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <rect x="16" y="10" width="6" height="28" rx="3" fill="#d4a574" stroke="#8B6914" strokeWidth="1"/>
-      <rect x="14" y="34" width="10" height="14" rx="2" fill="#c4956a" stroke="#8B6914" strokeWidth="1"/>
-      <circle cx="44" cy="28" r="8" fill="#cc2222" stroke="#991111" strokeWidth="1.5"/>
-      <path d="M 36 28 Q 44 20 52 28" stroke="white" strokeWidth="1.2" fill="none"/>
-      <path d="M 28 52 L 32 48 L 36 52" stroke="#ffaa00" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      {/* Bat (left side) */}
+      <rect x="10" y="6" width="5" height="8" rx="1.5" fill="#6B4226" stroke="#4A2C17" strokeWidth="0.8"/>
+      <path d="M 8 14 L 8 40 Q 8 44 12.5 44 Q 17 44 17 40 L 17 14 Q 17 12 12.5 12 Q 8 12 8 14 Z" fill="#e8c88a" stroke="#B8860B" strokeWidth="1"/>
+      <ellipse cx="12.5" cy="28" rx="3" ry="6" fill="#f5deb3" opacity="0.3"/>
+      {/* Ball (right side) */}
+      <circle cx="46" cy="20" r="9" fill="#cc2222" stroke="#8B1A1A" strokeWidth="1.2"/>
+      <path d="M 37 20 Q 42 13 51 16" stroke="#f5f5dc" strokeWidth="1.2" fill="none"/>
+      <path d="M 37 20 Q 42 27 51 24" stroke="#f5f5dc" strokeWidth="1.2" fill="none"/>
+      <ellipse cx="43" cy="17" rx="1.5" ry="1" fill="white" opacity="0.2"/>
+      {/* Lightning bolt connecting bat and ball — symbolizing dual skill */}
+      <path d="M 22 24 L 28 20 L 26 26 L 34 22" stroke="#ffaa00" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Star badge at bottom */}
+      <path d="M 32 48 L 34 52 L 38 53 L 35 56 L 36 60 L 32 58 L 28 60 L 29 56 L 26 53 L 30 52 Z" fill="#ffaa00" stroke="#cc8800" strokeWidth="0.8"/>
     </svg>
   );
 }
 
-function TrophyIcon({ className, color = "#FFD700" }: { className?: string; color?: string }) {
+function TrophyIcon({ className, variant = "gold" }: { className?: string; variant?: "gold" | "silver" | "bronze" | "platinum" }) {
+  const colors = {
+    gold:     { cup: "#FFD700", dark: "#B8860B", shine: "#FFF8DC", base: "#DAA520" },
+    silver:   { cup: "#C0C0C0", dark: "#808080", shine: "#F5F5F5", base: "#A9A9A9" },
+    bronze:   { cup: "#CD7F32", dark: "#8B4513", shine: "#DEB887", base: "#A0522D" },
+    platinum: { cup: "#E5C100", dark: "#B8960B", shine: "#FFFACD", base: "#CDB200" },
+  };
+  const c = colors[variant];
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <path d="M 20 12 L 20 30 Q 20 42 32 44 Q 44 42 44 30 L 44 12 Z" fill={color} stroke="#B8860B" strokeWidth="1.5"/>
-      <path d="M 20 16 Q 10 16 10 24 Q 10 30 20 30" fill="none" stroke="#B8860B" strokeWidth="1.5"/>
-      <path d="M 44 16 Q 54 16 54 24 Q 54 30 44 30" fill="none" stroke="#B8860B" strokeWidth="1.5"/>
-      <rect x="28" y="44" width="8" height="6" fill="#B8860B"/>
-      <rect x="24" y="50" width="16" height="4" rx="1" fill="#B8860B"/>
-      <path d="M 26 20 L 32 16 L 38 20 L 36 28 L 28 28 Z" fill="#FFF8DC" opacity="0.4"/>
+      {/* Glow effect */}
+      <ellipse cx="32" cy="30" rx="18" ry="16" fill={c.cup} opacity="0.08"/>
+      {/* Cup body */}
+      <path d="M 18 10 L 18 28 Q 18 40 32 42 Q 46 40 46 28 L 46 10 Z" fill={c.cup} stroke={c.dark} strokeWidth="1.5"/>
+      {/* Cup inner shine */}
+      <path d="M 22 12 L 22 26 Q 22 36 32 38" stroke={c.shine} strokeWidth="1.5" fill="none" opacity="0.5"/>
+      {/* Left handle */}
+      <path d="M 18 14 Q 8 14 8 22 Q 8 30 18 30" fill="none" stroke={c.dark} strokeWidth="2"/>
+      <path d="M 18 16 Q 10 16 10 22 Q 10 28 18 28" fill="none" stroke={c.cup} strokeWidth="1" opacity="0.5"/>
+      {/* Right handle */}
+      <path d="M 46 14 Q 56 14 56 22 Q 56 30 46 30" fill="none" stroke={c.dark} strokeWidth="2"/>
+      <path d="M 46 16 Q 54 16 54 22 Q 54 28 46 28" fill="none" stroke={c.cup} strokeWidth="1" opacity="0.5"/>
+      {/* Stem */}
+      <rect x="29" y="42" width="6" height="8" fill={c.dark} rx="1"/>
+      {/* Base */}
+      <path d="M 22 50 L 22 54 Q 22 56 24 56 L 40 56 Q 42 56 42 54 L 42 50 Z" fill={c.base} stroke={c.dark} strokeWidth="1"/>
+      <rect x="24" y="50" width="16" height="2" fill={c.cup} opacity="0.4" rx="0.5"/>
+      {/* Star on cup */}
+      <path d="M 32 18 L 33.5 22 L 38 22.5 L 34.5 25.5 L 35.5 30 L 32 27.5 L 28.5 30 L 29.5 25.5 L 26 22.5 L 30.5 22 Z" fill={c.shine} opacity="0.6"/>
     </svg>
   );
 }
 
-function StatsIcon({ className, label }: { className?: string; label: string }) {
+function RunsIcon({ className, label }: { className?: string; label: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <rect x="10" y="38" width="10" height="18" rx="2" fill="#22c55e" opacity="0.7"/>
-      <rect x="24" y="26" width="10" height="30" rx="2" fill="#22c55e" opacity="0.85"/>
-      <rect x="38" y="14" width="10" height="42" rx="2" fill="#22c55e"/>
-      <text x="32" y="10" textAnchor="middle" fontSize="7" fill="#94a3b8" fontFamily="Oswald,sans-serif" fontWeight="600">{label}</text>
+      {/* Cricket bat silhouette */}
+      <path d="M 14 8 L 14 36 Q 14 40 18 40 L 20 40 Q 24 40 24 36 L 24 8 Q 24 6 19 6 Q 14 6 14 8 Z" fill="#e8c88a" stroke="#B8860B" strokeWidth="1" opacity="0.6"/>
+      {/* Runs counter display */}
+      <rect x="28" y="14" width="26" height="18" rx="3" fill="#0f172a" stroke="#22c55e" strokeWidth="1.5"/>
+      <text x="41" y="27" textAnchor="middle" fontSize="10" fill="#22c55e" fontFamily="monospace" fontWeight="700">{label}</text>
+      {/* LED dots on scoreboard */}
+      <circle cx="31" cy="17" r="1" fill="#22c55e" opacity="0.4"/>
+      <circle cx="51" cy="17" r="1" fill="#22c55e" opacity="0.4"/>
+      {/* Rising graph line below */}
+      <path d="M 10 50 L 20 46 L 30 48 L 40 42 L 50 38 L 56 34" stroke="#22c55e" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <circle cx="56" cy="34" r="2" fill="#22c55e"/>
+    </svg>
+  );
+}
+
+function WicketsIcon({ className, label }: { className?: string; label: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      {/* Three stumps */}
+      <rect x="18" y="16" width="3" height="34" rx="1" fill="#d4d4d4" stroke="#a1a1aa" strokeWidth="0.8"/>
+      <rect x="30" y="16" width="3" height="34" rx="1" fill="#d4d4d4" stroke="#a1a1aa" strokeWidth="0.8"/>
+      <rect x="42" y="16" width="3" height="34" rx="1" fill="#d4d4d4" stroke="#a1a1aa" strokeWidth="0.8"/>
+      {/* Bails flying off */}
+      <rect x="16" y="12" width="14" height="3" rx="1" fill="#e8c88a" stroke="#B8860B" strokeWidth="0.8" transform="rotate(-15 23 13.5)"/>
+      <rect x="33" y="10" width="14" height="3" rx="1" fill="#e8c88a" stroke="#B8860B" strokeWidth="0.8" transform="rotate(20 40 11.5)"/>
+      {/* Impact burst */}
+      <circle cx="32" cy="18" r="3" fill="#ff6b6b" opacity="0.3"/>
+      <path d="M 28 14 L 26 10" stroke="#ff6b6b" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+      <path d="M 36 14 L 38 10" stroke="#ff6b6b" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+      {/* Counter */}
+      <text x="32" y="60" textAnchor="middle" fontSize="9" fill="#f87171" fontFamily="monospace" fontWeight="700">{label}</text>
     </svg>
   );
 }
@@ -131,13 +242,49 @@ function StatsIcon({ className, label }: { className?: string; label: string }) 
 function StadiumIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
-      <ellipse cx="32" cy="44" rx="26" ry="10" fill="#166534" stroke="#15803d" strokeWidth="1.5"/>
-      <path d="M 6 44 L 6 24 Q 6 14 16 10 L 20 8" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
-      <path d="M 58 44 L 58 24 Q 58 14 48 10 L 44 8" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
-      <path d="M 20 8 Q 32 4 44 8" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
-      <rect x="14" y="34" width="2" height="10" fill="#d4d4d4"/>
-      <rect x="48" y="34" width="2" height="10" fill="#d4d4d4"/>
-      <rect x="31" y="34" width="2" height="10" fill="#d4d4d4"/>
+      {/* Stadium oval */}
+      <ellipse cx="32" cy="40" rx="28" ry="12" fill="#166534" stroke="#15803d" strokeWidth="1.5"/>
+      {/* Pitch strip */}
+      <rect x="29" y="34" width="6" height="12" rx="1" fill="#22c55e" opacity="0.4"/>
+      {/* Stadium stands - left */}
+      <path d="M 4 40 L 4 18 Q 4 10 12 8 L 18 6" stroke="#64748b" strokeWidth="2" fill="none"/>
+      <path d="M 4 22 L 16 18" stroke="#475569" strokeWidth="0.8" opacity="0.4"/>
+      <path d="M 4 28 L 16 24" stroke="#475569" strokeWidth="0.8" opacity="0.4"/>
+      {/* Stadium stands - right */}
+      <path d="M 60 40 L 60 18 Q 60 10 52 8 L 46 6" stroke="#64748b" strokeWidth="2" fill="none"/>
+      <path d="M 60 22 L 48 18" stroke="#475569" strokeWidth="0.8" opacity="0.4"/>
+      <path d="M 60 28 L 48 24" stroke="#475569" strokeWidth="0.8" opacity="0.4"/>
+      {/* Stadium roof arc */}
+      <path d="M 18 6 Q 32 0 46 6" stroke="#64748b" strokeWidth="2" fill="none"/>
+      {/* Floodlight towers */}
+      <rect x="10" y="28" width="2" height="14" fill="#94a3b8"/>
+      <circle cx="11" cy="26" r="3" fill="#fef08a" opacity="0.6"/>
+      <rect x="52" y="28" width="2" height="14" fill="#94a3b8"/>
+      <circle cx="53" cy="26" r="3" fill="#fef08a" opacity="0.6"/>
+      {/* Stumps on pitch */}
+      <rect x="31" y="36" width="0.8" height="4" fill="#d4d4d4" opacity="0.6"/>
+      <rect x="32.5" y="36" width="0.8" height="4" fill="#d4d4d4" opacity="0.6"/>
+    </svg>
+  );
+}
+
+function CenturiesIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      {/* "100" text prominent */}
+      <text x="32" y="28" textAnchor="middle" fontSize="18" fill="#fbbf24" fontFamily="monospace" fontWeight="900">100</text>
+      {/* Star burst behind */}
+      <path d="M 32 6 L 34 14 L 42 10 L 38 18 L 46 20 L 38 24" stroke="#fbbf24" strokeWidth="1" fill="none" opacity="0.3"/>
+      <path d="M 32 6 L 30 14 L 22 10 L 26 18 L 18 20 L 26 24" stroke="#fbbf24" strokeWidth="1" fill="none" opacity="0.3"/>
+      {/* Bat below */}
+      <path d="M 24 34 L 24 50 Q 24 52 28 52 L 36 52 Q 40 52 40 50 L 40 34 Z" fill="#e8c88a" stroke="#B8860B" strokeWidth="0.8" opacity="0.5"/>
+      {/* Raised bat gesture */}
+      <path d="M 32 34 L 32 54" stroke="#B8860B" strokeWidth="0.5" opacity="0.3"/>
+      {/* Celebration sparks */}
+      <circle cx="16" cy="14" r="1.5" fill="#fbbf24" opacity="0.5"/>
+      <circle cx="48" cy="14" r="1.5" fill="#fbbf24" opacity="0.5"/>
+      <circle cx="12" cy="30" r="1" fill="#fbbf24" opacity="0.3"/>
+      <circle cx="52" cy="30" r="1" fill="#fbbf24" opacity="0.3"/>
     </svg>
   );
 }
@@ -149,16 +296,16 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   "ALL-RTR":  <AllRounderIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   WK:         <WicketKeeperIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   BAT:        <CricketBatIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
-  IPL:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" color="#FFD700" />,
-  CWC:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" color="#C0C0C0" />,
-  T20WC:      <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" color="#CD7F32" />,
-  CT:         <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" color="#E5C100" />,
-  "10K RUNS": <StatsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="10K" />,
-  "5K ODI":   <StatsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="5K" />,
-  "300 WKTS": <StatsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="300" />,
-  "100s":     <StatsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="100" />,
+  IPL:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" variant="gold" />,
+  CWC:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" variant="silver" />,
+  T20WC:      <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" variant="bronze" />,
+  CT:         <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" variant="platinum" />,
+  "10K RUNS": <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="10K" />,
+  "5K ODI":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="5K" />,
+  "300 WKTS": <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="300" />,
+  "100s":     <CenturiesIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   "50 TESTS": <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
-  "1K IPL":   <StatsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="1K" />,
+  "1K IPL":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="1K" />,
 };
 
 // --- Team abbr map for combo lookups ---
