@@ -313,9 +313,10 @@ function UserManager() {
       snap.forEach((d) => {
         list.push({ uid: d.id, ...d.data() } as FirestoreUser);
       });
+      console.log("[Admin] Loaded users from Firestore:", list.length, list.map((u) => u.email));
       list.sort((a, b) => {
         if (a.role !== b.role) return a.role === "admin" ? -1 : 1;
-        return a.email.localeCompare(b.email);
+        return (a.email ?? "").localeCompare(b.email ?? "");
       });
       setUsers(list);
     } catch (err) {
