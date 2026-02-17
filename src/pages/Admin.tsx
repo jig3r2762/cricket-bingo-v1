@@ -312,9 +312,10 @@ function UserManager() {
       const list: FirestoreUser[] = [];
       snap.forEach((d) => {
         const data = d.data();
+        if (!data.email) return; // skip users with no email
         list.push({
           uid: d.id,
-          email: data.email ?? "",
+          email: data.email,
           displayName: data.displayName ?? "",
           photoURL: data.photoURL ?? "",
           role: data.role ?? "user",
