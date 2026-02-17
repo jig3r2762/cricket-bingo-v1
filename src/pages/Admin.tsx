@@ -297,6 +297,7 @@ function GridManager() {
 function UserManager() {
   const [users, setUsers] = useState<FirestoreUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
 
   useEffect(() => {
@@ -305,13 +306,13 @@ function UserManager() {
 
   const loadUsers = async () => {
     setLoading(true);
+    setError(null);
     try {
       const snap = await getDocs(collection(db, "users"));
       const list: FirestoreUser[] = [];
       snap.forEach((d) => {
         list.push({ uid: d.id, ...d.data() } as FirestoreUser);
       });
-      // Sort: admins first, then by email
       list.sort((a, b) => {
         if (a.role !== b.role) return a.role === "admin" ? -1 : 1;
         return a.email.localeCompare(b.email);
@@ -319,6 +320,12 @@ function UserManager() {
       setUsers(list);
     } catch (err) {
       console.error("Failed to load users:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("permission") || msg.includes("PERMISSION_DENIED")) {
+        setError("Permission denied. Deploy Firestore rules: firebase deploy --only firestore:rules");
+      } else {
+        setError(`Failed to load users: ${msg}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -342,6 +349,22 @@ function UserManager() {
     return (
       <div className="text-center py-12 text-muted-foreground text-sm">
         Loading users...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+          <p className="text-red-400 text-sm">{error}</p>
+          <button
+            onClick={loadUsers}
+            className="mt-3 text-xs font-display uppercase tracking-wider px-3 py-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
