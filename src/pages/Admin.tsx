@@ -311,12 +311,20 @@ function UserManager() {
       const snap = await getDocs(collection(db, "users"));
       const list: FirestoreUser[] = [];
       snap.forEach((d) => {
-        list.push({ uid: d.id, ...d.data() } as FirestoreUser);
+        const data = d.data();
+        list.push({
+          uid: d.id,
+          email: data.email ?? "",
+          displayName: data.displayName ?? "",
+          photoURL: data.photoURL ?? "",
+          role: data.role ?? "user",
+          createdAt: data.createdAt ?? null,
+        });
       });
       console.log("[Admin] Loaded users from Firestore:", list.length, list.map((u) => u.email));
       list.sort((a, b) => {
         if (a.role !== b.role) return a.role === "admin" ? -1 : 1;
-        return (a.email ?? "").localeCompare(b.email ?? "");
+        return a.email.localeCompare(b.email);
       });
       setUsers(list);
     } catch (err) {
