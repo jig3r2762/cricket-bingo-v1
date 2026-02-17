@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded square -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Cricket ball -->
+  <circle cx="32" cy="28" r="13" fill="#dc2626" stroke="#b91c1c" stroke-width="1"/>
+  <!-- Ball seam -->
+  <path d="M24 22c3 4 3 10 0 13" fill="none" stroke="#fef2f2" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M40 22c-3 4-3 10 0 13" fill="none" stroke="#fef2f2" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Stitch marks left -->
+  <line x1="22.5" y1="23" x2="24.5" y2="24" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="22" y1="26" x2="24" y2="26.5" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="22" y1="29" x2="24" y2="29.5" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="22.5" y1="32" x2="24.5" y2="32" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <!-- Stitch marks right -->
+  <line x1="41.5" y1="23" x2="39.5" y2="24" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="42" y1="26" x2="40" y2="26.5" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="42" y1="29" x2="40" y2="29.5" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="41.5" y1="32" x2="39.5" y2="32" stroke="#fef2f2" stroke-width="0.8" stroke-linecap="round"/>
+  <!-- BINGO text -->
+  <text x="32" y="54" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="12" fill="url(#accent)" letter-spacing="1.5">BINGO</text>
+</svg>
