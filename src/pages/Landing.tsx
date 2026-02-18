@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { isInIframe } from "@/lib/iframeUtils";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
 
 const floatingEmojis = ["🏏", "🏆", "⭐", "🎯", "🔥"];
 
@@ -33,9 +33,9 @@ export default function Landing() {
   const navigate = useNavigate();
   const { playAsGuest } = useAuth();
 
-  // In iframe (CrazyGames), skip the marketing landing page and go straight to the game
+  // On CrazyGames (external host or iframe), skip the marketing page and go straight to game
   useEffect(() => {
-    if (isInIframe()) {
+    if (shouldUseHashRouter()) {
       playAsGuest();
       navigate("/play", { replace: true });
     }

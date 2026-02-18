@@ -19,9 +19,9 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
 import { ArrowLeft, Menu, X } from "lucide-react";
 import type { GridCategory } from "@/types/game";
-import { isInIframe } from "@/lib/iframeUtils";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
 
-const IN_IFRAME = isInIframe();
+const IN_IFRAME = shouldUseHashRouter();
 
 const Index = () => {
   const { loading: playersLoading, error: playersError } = usePlayers();

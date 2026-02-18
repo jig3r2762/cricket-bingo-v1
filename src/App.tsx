@@ -4,11 +4,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, HashRouter, Routes, Route } from "react-router-dom";
-import { isInIframe } from "@/lib/iframeUtils";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
 
-// Use HashRouter in iframe (CrazyGames static hosting) so /play doesn't 404.
-// BrowserRouter is used on Vercel where server handles all routes.
-const Router = isInIframe() ? HashRouter : BrowserRouter;
+// Use HashRouter on CrazyGames (external hostname or iframe) so /play doesn't 404.
+// BrowserRouter is used on Vercel where server handles all routes normally.
+const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PlayersProvider } from "@/contexts/PlayersContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";

@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
 import { CountdownTimer } from "./CountdownTimer";
-import { isInIframe } from "@/lib/iframeUtils";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
 
-const IN_IFRAME = isInIframe();
+const IN_IFRAME = shouldUseHashRouter();
 
 // Confetti animation
 function triggerConfetti() {
