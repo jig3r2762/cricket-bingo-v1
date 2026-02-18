@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { isInIframe } from "@/lib/iframeUtils";
 
 const floatingEmojis = ["🏏", "🏆", "⭐", "🎯", "🔥"];
 
@@ -30,6 +32,14 @@ const fadeUp = {
 export default function Landing() {
   const navigate = useNavigate();
   const { playAsGuest } = useAuth();
+
+  // In iframe (CrazyGames), skip the marketing landing page and go straight to the game
+  useEffect(() => {
+    if (isInIframe()) {
+      playAsGuest();
+      navigate("/play", { replace: true });
+    }
+  }, []);
 
   const handlePlayNow = () => navigate("/play");
 
