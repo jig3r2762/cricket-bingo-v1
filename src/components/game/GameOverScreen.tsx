@@ -61,21 +61,34 @@ function buildEmojiGrid(state: GameState): string {
   return rows;
 }
 
+function formatGameDate(dailyGameId: string): string {
+  // dailyGameId is like "2026-02-18" or "2026-02-18-3"
+  const dateStr = dailyGameId.split("-").slice(0, 3).join("-");
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d.getTime())) return dailyGameId;
+  return d.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+}
+
 function buildShareText(state: GameState, streak: number): string {
   const { gridSize, placements, status, score } = state;
   const n = gridSize;
   const filledCount = Object.values(placements).filter(Boolean).length;
   const total = n * n;
-  const turnsUsed = state.history.length;
+  const won = status === "won";
+  const dateLabel = formatGameDate(state.dailyGameId);
 
-  let text = `\u{1F3CF} Cricket Bingo — ${state.dailyGameId}\n`;
-  text += `${status === "won" ? "\u{1F3C6} BINGO!" : "\u{274C} Game Over"} | ${n}x${n}\n`;
-  text += `Score: ${score} | Cells: ${filledCount}/${total} | Turns: ${turnsUsed}\n`;
-  if (state.maxStreak > 0) text += `\u{1F525} Best Streak: ${state.maxStreak}\n`;
-  if (streak >= 2) text += `\u{1F4C5} Day Streak: ${streak}\n`;
+  let text = `\u{1F3CF} Cricket Bingo \u2013 ${dateLabel}\n`;
+  text += `${won ? "\u{1F3C6} BINGO!" : "\u{274C} Game Over"} | ${n}\u00D7${n} Grid\n`;
   text += "\n";
   text += buildEmojiGrid(state);
-  text += "\nPlay: cricket-bingo.in";
+  text += "\n";
+  text += `Score: ${score}`;
+  if (filledCount < total) text += ` \u00B7 Cells: ${filledCount}/${total}`;
+  if (streak >= 2) text += ` \u00B7 \u{1F525}${streak} days`;
+  text += "\n";
+  text += won
+    ? `Can you beat my score? \u{1F447}\ncricket-bingo.in`
+    : `Think you can do better? \u{1F447}\ncricket-bingo.in`;
 
   return text;
 }
@@ -116,7 +129,8 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
   }, [gameState, currentStreak]);
 
   const handleChallenge = useCallback(async () => {
-    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo (${gameState.gridSize}x${gameState.gridSize})! Can you beat me?\n\nPlay: cricket-bingo.in`;
+    const dateLabel = formatGameDate(gameState.dailyGameId);
+    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo today (${dateLabel})!\nThink you know cricket better than me? \u{1F914}\nProve it \u{1F449} cricket-bingo.in`;
 
     if (navigator.share) {
       try {
@@ -128,7 +142,7 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
     await navigator.clipboard.writeText(text).catch(() => {});
     setChallengeCopied(true);
     setTimeout(() => setChallengeCopied(false), 2000);
-  }, [gameState.score, gameState.gridSize]);
+  }, [gameState.score, gameState.dailyGameId]);
 
   const handleDownloadCard = useCallback(() => {
     const canvas = document.createElement("canvas");

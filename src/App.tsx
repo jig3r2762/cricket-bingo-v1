@@ -19,6 +19,9 @@ const Index = lazy(() => import("./pages/Index"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Stats = lazy(() => import("./pages/Stats"));
+const IplQuiz = lazy(() => import("./pages/IplQuiz"));
+const CricketQuiz = lazy(() => import("./pages/CricketQuiz"));
+const CricketWordle = lazy(() => import("./pages/CricketWordle"));
 
 const queryClient = new QueryClient();
 
@@ -78,6 +81,10 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* SEO landing pages */}
+                <Route path="/ipl-quiz" element={<IplQuiz />} />
+                <Route path="/cricket-quiz" element={<CricketQuiz />} />
+                <Route path="/cricket-wordle" element={<CricketWordle />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

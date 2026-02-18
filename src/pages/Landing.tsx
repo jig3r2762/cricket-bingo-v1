@@ -370,7 +370,21 @@ export default function Landing() {
         </section>
 
         {/* ─── FOOTER ─── */}
-        <footer className="border-t border-border/20 py-8 text-center px-4">
+        <footer className="border-t border-border/20 py-8 text-center px-4 space-y-3">
+          <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground/50">
+            <button onClick={() => navigate("/ipl-quiz")} className="hover:text-primary transition-colors">
+              IPL Quiz
+            </button>
+            <button onClick={() => navigate("/cricket-quiz")} className="hover:text-primary transition-colors">
+              Cricket Quiz
+            </button>
+            <button onClick={() => navigate("/cricket-wordle")} className="hover:text-primary transition-colors">
+              Cricket Wordle
+            </button>
+            <button onClick={() => navigate("/leaderboard")} className="hover:text-primary transition-colors">
+              Leaderboard
+            </button>
+          </div>
           <p className="text-muted-foreground/50 text-xs">
             Cricket Bingo &copy; 2025 &middot; Free online cricket quiz game &middot; Data from{" "}
             <a href="https://cricsheet.org" target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary transition-colors">
