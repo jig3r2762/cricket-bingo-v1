@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
 import { CountdownTimer } from "./CountdownTimer";
+import { isInIframe } from "@/lib/iframeUtils";
+
+const IN_IFRAME = isInIframe();
 
 // Confetti animation
 function triggerConfetti() {
@@ -388,7 +391,7 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
           </button>
         </div>
 
-        {/* Guest sign-in prompt */}
+        {/* Guest sign-in prompt / iframe CTA */}
         {isGuest && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -396,16 +399,35 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
             transition={{ delay: 0.8 }}
             className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/5"
           >
-            <p className="text-xs text-muted-foreground mb-2">
-              Sign in to save your scores, track streaks & compete on the leaderboard!
-            </p>
-            <button
-              onClick={() => signInWithGoogle().catch(() => {})}
-              className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
-              style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
-            >
-              Sign in with Google
-            </button>
+            {IN_IFRAME ? (
+              <>
+                <p className="text-xs text-muted-foreground mb-2">
+                  🏏 Play the full version to save your scores, track streaks & compete on the global leaderboard!
+                </p>
+                <a
+                  href="https://cricket-bingo.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
+                  style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
+                >
+                  Play at cricket-bingo.in
+                </a>
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Sign in to save your scores, track streaks & compete on the leaderboard!
+                </p>
+                <button
+                  onClick={() => signInWithGoogle().catch(() => {})}
+                  className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
+                  style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
+                >
+                  Sign in with Google
+                </button>
+              </>
+            )}
           </motion.div>
         )}
       </div>

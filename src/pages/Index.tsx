@@ -19,6 +19,9 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
 import { ArrowLeft, Menu, X } from "lucide-react";
 import type { GridCategory } from "@/types/game";
+import { isInIframe } from "@/lib/iframeUtils";
+
+const IN_IFRAME = isInIframe();
 
 const Index = () => {
   const { loading: playersLoading, error: playersError } = usePlayers();
@@ -188,88 +191,106 @@ function GameBoard({
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-3">
-              {isGuest ? (
-                <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
-                  🎮
-                </div>
-              ) : user?.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt=""
-                  className="w-8 h-8 rounded-full ring-2 ring-primary/30"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center text-sm text-primary font-bold">
-                  {(user?.displayName || user?.email || "?")[0].toUpperCase()}
-                </div>
-              )}
-              <div className="flex flex-col">
-                <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
-                  {isGuest ? "Guest" : (user?.displayName || "Player")}
-                  {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
-                    <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
+
+            {IN_IFRAME ? (
+              /* CrazyGames / iframe mode — show branding link instead of auth */
+              <a
+                href="https://cricket-bingo.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
+              >
+                <span className="text-base leading-none">🏏</span>
+                <span className="text-[10px] font-display uppercase tracking-wider text-primary">
+                  cricket-bingo.in
+                </span>
+              </a>
+            ) : (
+              <>
+                <div className="flex items-center gap-3">
+                  {isGuest ? (
+                    <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
+                      🎮
+                    </div>
+                  ) : user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt=""
+                      className="w-8 h-8 rounded-full ring-2 ring-primary/30"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center text-sm text-primary font-bold">
+                      {(user?.displayName || user?.email || "?")[0].toUpperCase()}
+                    </div>
                   )}
-                </span>
-                <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
-                  {isGuest ? "Sign in to save progress" : user?.email}
-                </span>
-              </div>
-            </div>
-            {/* Desktop nav buttons */}
-            <div className="hidden sm:flex items-center gap-2">
-              {!isGuest && (
-                <>
-                  <button
-                    onClick={() => navigate("/stats")}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                  >
-                    Stats
-                  </button>
-                  <button
-                    onClick={() => navigate("/leaderboard")}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
-                  >
-                    Ranks
-                  </button>
-                </>
-              )}
-              {isAdmin && (
+                  <div className="flex flex-col">
+                    <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
+                      {isGuest ? "Guest" : (user?.displayName || "Player")}
+                      {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
+                        <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
+                      )}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
+                      {isGuest ? "Sign in to save progress" : user?.email}
+                    </span>
+                  </div>
+                </div>
+                {/* Desktop nav buttons */}
+                <div className="hidden sm:flex items-center gap-2">
+                  {!isGuest && (
+                    <>
+                      <button
+                        onClick={() => navigate("/stats")}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                      >
+                        Stats
+                      </button>
+                      <button
+                        onClick={() => navigate("/leaderboard")}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
+                      >
+                        Ranks
+                      </button>
+                    </>
+                  )}
+                  {isAdmin && (
+                    <button
+                      onClick={() => navigate("/admin")}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                    >
+                      Admin
+                    </button>
+                  )}
+                  {isGuest ? (
+                    <button
+                      onClick={() => signInWithGoogle().catch(() => {})}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                    >
+                      Sign In
+                    </button>
+                  ) : (
+                    <button
+                      onClick={signOut}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  )}
+                </div>
+                {/* Mobile hamburger */}
                 <button
-                  onClick={() => navigate("/admin")}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                  onClick={() => setMenuOpen((v) => !v)}
+                  className="sm:hidden p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
                 >
-                  Admin
+                  {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
-              )}
-              {isGuest ? (
-                <button
-                  onClick={() => signInWithGoogle().catch(() => {})}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                >
-                  Sign In
-                </button>
-              ) : (
-                <button
-                  onClick={signOut}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-                >
-                  Sign Out
-                </button>
-              )}
-            </div>
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="sm:hidden p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-            >
-              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+              </>
+            )}
           </div>
 
-          {/* Mobile dropdown menu */}
-          {menuOpen && (
+          {/* Mobile dropdown menu — only in non-iframe mode */}
+          {!IN_IFRAME && menuOpen && (
             <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card/95 backdrop-blur-md border border-border/30 rounded-xl py-2 px-3 z-50 space-y-1">
               {!isGuest && (
                 <>

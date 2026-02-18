@@ -19,6 +19,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
+import { isInIframe } from "@/lib/iframeUtils";
 
 export type UserRole = "user" | "admin";
 
@@ -73,6 +74,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUserData(data);
         } else {
           setUserData(null);
+          // Auto-guest when embedded in an iframe (e.g. CrazyGames) so
+          // ProtectedRoute doesn't redirect to a login page that can't work.
+          if (isInIframe()) {
+            setIsGuest(true);
+          }
         }
       } catch (err) {
         console.error("Auth state change error:", err);
