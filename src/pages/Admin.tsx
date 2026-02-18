@@ -420,6 +420,7 @@ function UserManager() {
                       <img
                         src={u.photoURL}
                         alt=""
+                        referrerPolicy="no-referrer"
                         className="w-6 h-6 rounded-full"
                       />
                     ) : (

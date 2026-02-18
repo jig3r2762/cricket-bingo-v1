@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { GridSelection } from "@/components/game/GridSelection";
 import { PlayerCard } from "@/components/game/PlayerCard";
 import { BingoGrid } from "@/components/game/BingoGrid";
@@ -8,7 +9,7 @@ import { GameHeader } from "@/components/game/GameHeader";
 import { HowToPlayModal } from "@/components/game/HowToPlayModal";
 import { GameOverScreen } from "@/components/game/GameOverScreen";
 import { TurnTimer } from "@/components/game/TurnTimer";
-import { OnboardingOverlay } from "@/components/game/OnboardingOverlay";
+import { InteractiveTutorial, TUTORIAL_DONE_KEY } from "@/components/game/InteractiveTutorial";
 import { NotificationPrompt } from "@/components/game/NotificationPrompt";
 import { useGameState, type AdminGrid } from "@/hooks/useGameState";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,11 +22,26 @@ import type { GridCategory } from "@/types/game";
 
 const Index = () => {
   const { loading: playersLoading, error: playersError } = usePlayers();
-  const [gridSize, setGridSize] = useState<3 | 4 | null>(null);
+  const [gridSize, setGridSize] = useState<3 | 4 | null>(() => {
+    try {
+      const s = localStorage.getItem("cricket-bingo-gridsize");
+      return s === "3" ? 3 : s === "4" ? 4 : null;
+    } catch { return null; }
+  });
   const [timed, setTimed] = useState(false);
   const [howToPlay, setHowToPlay] = useState(false);
   const [adminGrid, setAdminGrid] = useState<AdminGrid | undefined>(undefined);
   const [loadingGrid, setLoadingGrid] = useState(false);
+  const [tutorialDone, setTutorialDone] = useState(() => {
+    try {
+      return (
+        localStorage.getItem(TUTORIAL_DONE_KEY) === "true" ||
+        localStorage.getItem("cricket-bingo-onboarded") === "true"
+      );
+    } catch {
+      return true;
+    }
+  });
 
   // Listen for admin-set grid in real time (updates live when admin saves)
   useEffect(() => {
@@ -91,8 +107,16 @@ const Index = () => {
   if (!gridSize) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <OnboardingOverlay />
-        <GridSelection onSelect={(size, timedMode) => { setGridSize(size); setTimed(timedMode ?? false); }} />
+        <GridSelection onSelect={(size, timedMode) => {
+          setGridSize(size);
+          setTimed(timedMode ?? false);
+          try { localStorage.setItem("cricket-bingo-gridsize", String(size)); } catch {}
+        }} />
+        <AnimatePresence>
+          {!tutorialDone && (
+            <InteractiveTutorial onComplete={() => setTutorialDone(true)} />
+          )}
+        </AnimatePresence>
       </div>
     );
   }
@@ -107,7 +131,11 @@ const Index = () => {
     );
   }
 
-  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => { setGridSize(null); setTimed(false); }} />;
+  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => {
+    setGridSize(null);
+    setTimed(false);
+    try { localStorage.removeItem("cricket-bingo-gridsize"); } catch {}
+  }} />;
 };
 
 function GameBoard({
