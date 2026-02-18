@@ -27,7 +27,7 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/players.json")
+    fetch(`${import.meta.env.BASE_URL}players.json`)
       .then((res) => {
         if (!res.ok) throw new Error(`Failed to load players: ${res.status}`);
         return res.json();
