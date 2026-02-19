@@ -180,7 +180,10 @@ function GameBoard({
 
   return (
     <div className="min-h-screen stadium-bg flex flex-col">
-      <div className="flex-1 flex flex-col items-center gap-4 px-3 pt-3 pb-24 sm:pb-4 max-w-xl mx-auto w-full">
+      <div
+        className={`flex-1 flex flex-col items-center px-3 max-w-xl mx-auto w-full ${IN_IFRAME ? "gap-2 pt-2 pb-4" : "gap-4 pt-3 pb-24 sm:pb-4"}`}
+        style={IN_IFRAME ? { zoom: 0.88 } : undefined}
+      >
         {/* User bar with back button */}
         <div className="w-full relative z-30 bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
@@ -193,18 +196,13 @@ function GameBoard({
             </button>
 
             {IN_IFRAME ? (
-              /* CrazyGames / iframe mode — show branding link instead of auth */
-              <a
-                href="https://cricket-bingo.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
-              >
+              /* CrazyGames / iframe mode — show branding text only (no external link) */
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5">
                 <span className="text-base leading-none">🏏</span>
                 <span className="text-[10px] font-display uppercase tracking-wider text-primary">
-                  cricket-bingo.in
+                  Cricket Bingo
                 </span>
-              </a>
+              </span>
             ) : (
               <>
                 <div className="flex items-center gap-3">

@@ -400,20 +400,9 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
             className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/5"
           >
             {IN_IFRAME ? (
-              <>
-                <p className="text-xs text-muted-foreground mb-2">
-                  🏏 Play the full version to save your scores, track streaks & compete on the global leaderboard!
-                </p>
-                <a
-                  href="https://cricket-bingo.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
-                  style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
-                >
-                  Play at cricket-bingo.in
-                </a>
-              </>
+              <p className="text-xs text-muted-foreground">
+                🏏 Sign in to save your scores, track streaks & compete on the global leaderboard!
+              </p>
             ) : (
               <>
                 <p className="text-xs text-muted-foreground mb-2">
