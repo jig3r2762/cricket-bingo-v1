@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Grid3X3, LayoutGrid, Timer, TimerOff, Zap, ChevronLeft, Trophy } from "lucide-react";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
+
+const IN_CRAZYGAMES = shouldUseHashRouter();
 
 interface GridSelectionProps {
   onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
@@ -62,8 +65,8 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
                 <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
               </motion.button>
 
-              {/* IPL Mode */}
-              <motion.button
+              {/* IPL Mode — hidden on CrazyGames until approved */}
+              {!IN_CRAZYGAMES && <motion.button
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -83,7 +86,7 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
                   <p className="text-xs text-muted-foreground font-body mt-0.5">Pure IPL · All 10 teams · IPL legends only</p>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
-              </motion.button>
+              </motion.button>}
             </motion.div>
           )}
 
