@@ -222,3 +222,55 @@ export function generateRandomGame(
 
   return { date: gameId, gridSize, grid, deck, seed: Date.now() };
 }
+
+// --- IPL Game Generator ---
+// Uses IPL-only player pool and a balanced easy/medium/hard grid layout.
+
+import { IPL_EASY_POOL, IPL_MEDIUM_POOL, IPL_HARD_POOL } from "@/data/categories";
+
+export function generateIPLGame(
+  gridSize: 3 | 4,
+  allPlayers: CricketPlayer[]
+): DailyGame {
+  // Filter to IPL players only
+  const iplPlayers = allPlayers.filter(
+    (p) => p.iplTeams && p.iplTeams.length > 0
+  );
+
+  const cellCount = gridSize * gridSize;
+  const gameId = `ipl-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+  // Balanced pick per grid size:
+  // 3×3 → 3 easy + 3 medium + 3 hard
+  // 4×4 → 4 easy + 6 medium + 6 hard
+  const easyCount   = gridSize === 3 ? 3 : 4;
+  const mediumCount = gridSize === 3 ? 3 : 6;
+  const hardCount   = gridSize === 3 ? 3 : 6;
+
+  let grid: GridCategory[] = [];
+  let attempts = 0;
+  const maxAttempts = 80;
+
+  while (attempts < maxAttempts) {
+    const easy   = randomShuffle(IPL_EASY_POOL).slice(0, easyCount);
+    const medium = randomShuffle(IPL_MEDIUM_POOL).slice(0, mediumCount);
+    const hard   = randomShuffle(IPL_HARD_POOL).slice(0, hardCount);
+    const candidate = randomShuffle([...easy, ...medium, ...hard]);
+
+    if (candidate.length === cellCount && isSolvable(candidate, iplPlayers)) {
+      grid = candidate;
+      break;
+    }
+    attempts++;
+  }
+
+  // Fallback: pure team grid if solvability never passed
+  if (grid.length === 0) {
+    grid = randomShuffle(IPL_EASY_POOL).slice(0, cellCount);
+  }
+
+  const deckSize = Math.max(60, cellCount * 6);
+  const deck = buildCoverDeck(grid, iplPlayers, deckSize, randomShuffle);
+
+  return { date: gameId, gridSize, grid, deck, seed: Date.now() };
+}

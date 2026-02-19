@@ -3,6 +3,15 @@ import type { CricketPlayer, GridCategory } from "@/types/game";
 // --- Validation ---
 
 function validateSingle(player: CricketPlayer, key: string): boolean {
+  // Standalone validators (no colon pattern)
+  if (key === "overseas") {
+    return player.country !== "India" && (player.iplTeams?.length ?? 0) > 0;
+  }
+  const iplTeamsMatch = key.match(/^iplTeams>=(\d+)$/);
+  if (iplTeamsMatch) {
+    return (player.iplTeams?.length ?? 0) >= parseInt(iplTeamsMatch[1], 10);
+  }
+
   const [type, ...rest] = key.split(":");
   const value = rest.join(":"); // rejoin in case value has colons
 

@@ -1,13 +1,17 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CricketPlayer, GameState, GridCategory } from "@/types/game";
 import { validate, calculateScore, checkBingo, getEligibleCells, getRecommendedCell, findNextPlayableIndex } from "@/lib/gameEngine";
-import { generateDailyGame, getTodayDateString, generateRandomGame } from "@/lib/dailyGame";
+import { generateDailyGame, getTodayDateString, generateRandomGame, generateIPLGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { playCorrect, playWrong, playSkip, playWildcard, playBingo, playGameOver } from "@/lib/sounds";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
+
+const IN_CRAZYGAMES = shouldUseHashRouter();
 
 // --- Storage helpers ---
 
@@ -64,7 +68,7 @@ export interface AdminGrid {
   deckPlayerIds: string[];
 }
 
-function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminGrid?: AdminGrid): GameState {
+function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily"): GameState {
   const date = getTodayDateString();
   const remaining = gridSize === 3 ? 20 : 25;
 
@@ -95,13 +99,19 @@ function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminG
     };
   }
 
-  const daily = generateDailyGame(date, gridSize, allPlayers, FULL_CATEGORY_POOL);
+  // Pick game source based on mode and context
+  const source =
+    mode === "ipl"
+      ? generateIPLGame(gridSize, allPlayers)
+      : IN_CRAZYGAMES
+        ? generateRandomGame(gridSize, allPlayers, FULL_CATEGORY_POOL)
+        : generateDailyGame(date, gridSize, allPlayers, FULL_CATEGORY_POOL);
 
   return {
-    dailyGameId: date,
+    dailyGameId: source.date ?? date,
     gridSize,
-    grid: daily.grid,
-    deck: daily.deck,
+    grid: source.grid,
+    deck: source.deck,
     deckIndex: 0,
     placements: {},
     remainingPlayers: remaining,
@@ -121,10 +131,13 @@ function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminG
 // Hook
 // =============================================================
 
-export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
+export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily") {
   const { players: allPlayers } = usePlayers();
 
   const [gameState, setGameState] = useState<GameState>(() => {
+    // IPL mode and CrazyGames: always fresh random/ipl game, skip localStorage restore
+    if (IN_CRAZYGAMES || mode === "ipl") return createInitialState(gridSize, allPlayers, adminGrid, mode);
+
     const date = getTodayDateString();
     const saved = loadState(date, gridSize);
 
@@ -149,9 +162,9 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
 
   const { user, isGuest, userData, refreshUserData } = useAuth();
 
-  // Persist on every state change
+  // Persist on every state change (skip for CrazyGames — unlimited random games)
   useEffect(() => {
-    saveState(gameState);
+    if (!IN_CRAZYGAMES) saveState(gameState);
   }, [gameState]);
 
   // Save score to Firestore and update streak when game ends
@@ -226,6 +239,16 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     else if (prevStatusRef.current === "playing" && gameState.status === "lost") playGameOver();
     prevStatusRef.current = gameState.status;
   }, [gameState.feedbackStates, gameState.status]);
+
+  // CrazyGames gameplay hooks
+  useEffect(() => {
+    if (!IN_CRAZYGAMES) return;
+    if (gameState.status === "playing") {
+      cgGameplayStart();
+    } else if (gameState.status === "won" || gameState.status === "lost") {
+      cgGameplayStop();
+    }
+  }, [gameState.status]);
 
   // Feedback timer ref (avoids useEffect dependency issues)
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -385,12 +408,19 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     setGameState((prev) => ({ ...prev, wildcardMode: false }));
   }, []);
 
+  const grantWildcard = useCallback(() => {
+    setGameState((prev) => {
+      if (prev.status !== "playing") return prev;
+      return { ...prev, wildcardsLeft: prev.wildcardsLeft + 1 };
+    });
+  }, []);
+
   const resetGame = useCallback(() => {
     const date = getTodayDateString();
     const key = storageKey(date, gridSize);
     try { localStorage.removeItem(key); } catch { /* ok */ }
-    setGameState(createInitialState(gridSize, allPlayers, adminGrid));
-  }, [gridSize, allPlayers, adminGrid]);
+    setGameState(createInitialState(gridSize, allPlayers, adminGrid, mode));
+  }, [gridSize, allPlayers, adminGrid, mode]);
 
   // Play a new random game (shuffled grid & deck) for endless play after game over
   const playRandomGame = useCallback(() => {
@@ -398,7 +428,9 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     const date = getTodayDateString();
     const key = storageKey(date, gridSize);
     try { localStorage.removeItem(key); } catch { /* ok */ }
-    const randomGame = generateRandomGame(gridSize, allPlayers, FULL_CATEGORY_POOL);
+    const randomGame = mode === "ipl"
+      ? generateIPLGame(gridSize, allPlayers)
+      : generateRandomGame(gridSize, allPlayers, FULL_CATEGORY_POOL);
     const newState: GameState = {
       dailyGameId: randomGame.date,
       gridSize,
@@ -431,6 +463,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid) {
     handleSkip,
     handleWildcard,
     cancelWildcard,
+    grantWildcard,
     resetGame,
     playRandomGame,
     filledCount,

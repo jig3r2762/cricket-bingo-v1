@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { GridSelection } from "@/components/game/GridSelection";
@@ -20,11 +20,17 @@ import { getTodayDateString } from "@/lib/dailyGame";
 import { ArrowLeft, Menu, X } from "lucide-react";
 import type { GridCategory } from "@/types/game";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } from "@/lib/crazyGamesSDK";
 
 const IN_IFRAME = shouldUseHashRouter();
 
 const Index = () => {
-  const { loading: playersLoading, error: playersError } = usePlayers();
+  const { loading: playersLoading, error: playersError, players: allPlayers } = usePlayers();
+
+  // Signal CrazyGames SDK that loading is complete once players are ready
+  useEffect(() => {
+    if (allPlayers.length > 0) cgGameLoadingStop();
+  }, [allPlayers.length]);
   const [gridSize, setGridSize] = useState<3 | 4 | null>(() => {
     try {
       const s = localStorage.getItem("cricket-bingo-gridsize");
@@ -32,6 +38,7 @@ const Index = () => {
     } catch { return null; }
   });
   const [timed, setTimed] = useState(false);
+  const [gameMode, setGameMode] = useState<"daily" | "ipl">("daily");
   const [howToPlay, setHowToPlay] = useState(false);
   const [adminGrid, setAdminGrid] = useState<AdminGrid | undefined>(undefined);
   const [loadingGrid, setLoadingGrid] = useState(false);
@@ -110,9 +117,10 @@ const Index = () => {
   if (!gridSize) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <GridSelection onSelect={(size, timedMode) => {
+        <GridSelection onSelect={(size, timedMode, mode) => {
           setGridSize(size);
           setTimed(timedMode ?? false);
+          setGameMode(mode ?? "daily");
           try { localStorage.setItem("cricket-bingo-gridsize", String(size)); } catch {}
         }} />
         <AnimatePresence>
@@ -134,9 +142,10 @@ const Index = () => {
     );
   }
 
-  return <GameBoard gridSize={gridSize} timed={timed} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => {
+  return <GameBoard gridSize={gridSize} timed={timed} mode={gameMode} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => {
     setGridSize(null);
     setTimed(false);
+    setGameMode("daily");
     try { localStorage.removeItem("cricket-bingo-gridsize"); } catch {}
   }} />;
 };
@@ -144,6 +153,7 @@ const Index = () => {
 function GameBoard({
   gridSize,
   timed,
+  mode,
   howToPlay,
   setHowToPlay,
   adminGrid,
@@ -151,6 +161,7 @@ function GameBoard({
 }: {
   gridSize: 3 | 4;
   timed: boolean;
+  mode: "daily" | "ipl";
   howToPlay: boolean;
   setHowToPlay: (v: boolean) => void;
   adminGrid?: AdminGrid;
@@ -167,12 +178,20 @@ function GameBoard({
     handleSkip,
     handleWildcard,
     cancelWildcard,
+    grantWildcard,
     resetGame,
     playRandomGame,
     filledCount,
     remaining,
     isGameOver,
-  } = useGameState(gridSize, adminGrid);
+  } = useGameState(gridSize, adminGrid, mode);
+
+  const handleWatchAdForWildcard = useCallback(async () => {
+    cgGameplayStop();
+    const rewarded = await cgShowRewardedAd();
+    cgGameplayStart();
+    if (rewarded) grantWildcard();
+  }, [grantWildcard]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const categories = gameState.grid;
@@ -202,6 +221,11 @@ function GameBoard({
                 <span className="text-[10px] font-display uppercase tracking-wider text-primary">
                   Cricket Bingo
                 </span>
+                {mode === "ipl" && (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-amber-500/50 text-amber-400 bg-amber-500/10">
+                    IPL
+                  </span>
+                )}
               </span>
             ) : (
               <>
@@ -358,6 +382,7 @@ function GameBoard({
             wildcardsLeft={gameState.wildcardsLeft}
             wildcardMode={gameState.wildcardMode}
             onCancelWildcard={cancelWildcard}
+            onWatchAdForWildcard={handleWatchAdForWildcard}
           />
           </div>
         ) : null}

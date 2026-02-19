@@ -13,6 +13,8 @@ const FLAG_IMAGES: Record<string, string> = {
   country_pak: "https://flagcdn.com/w160/pk.png",
   country_sl:  "https://flagcdn.com/w160/lk.png",
   country_wi:  "https://flagcdn.com/w160/jm.png", // Jamaica flag for West Indies
+  // IPL Mode country categories use category.id directly
+  ipl_indian: "https://flagcdn.com/w160/in.png",
 };
 
 // --- IPL team logos (official iplt20.com CDN) ---
@@ -27,6 +29,17 @@ const TEAM_LOGOS: Record<string, string> = {
   team_pbks: "https://documents.iplt20.com/ipl/PBKS/Logos/Logooutline/PBKSoutline.png",
   team_gt:   "https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png",
   team_lsg:  "https://documents.iplt20.com/ipl/LSG/Logos/Logooutline/LSGoutline.png",
+  // IPL Mode uses ipl_team_* IDs — same logos
+  ipl_team_mi:   "https://documents.iplt20.com/ipl/MI/Logos/Logooutline/MIoutline.png",
+  ipl_team_csk:  "https://documents.iplt20.com/ipl/CSK/logos/Logooutline/CSKoutline.png",
+  ipl_team_rcb:  "https://documents.iplt20.com/ipl/RCB/Logos/Logooutline/RCBoutline.png",
+  ipl_team_dc:   "https://documents.iplt20.com/ipl/DC/Logos/LogoOutline/DCoutline.png",
+  ipl_team_srh:  "https://documents.iplt20.com/ipl/SRH/Logos/Logooutline/SRHoutline.png",
+  ipl_team_rr:   "https://documents.iplt20.com/ipl/RR/Logos/Logooutline/RRoutline.png",
+  ipl_team_kkr:  "https://documents.iplt20.com/ipl/KKR/Logos/Logooutline/KKRoutline.png",
+  ipl_team_pbks: "https://documents.iplt20.com/ipl/PBKS/Logos/Logooutline/PBKSoutline.png",
+  ipl_team_gt:   "https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png",
+  ipl_team_lsg:  "https://documents.iplt20.com/ipl/LSG/Logos/Logooutline/LSGoutline.png",
 };
 
 // --- Teammate player images (Wikimedia Commons, CC licensed) ---
@@ -43,16 +56,40 @@ const PLAYER_IMAGES: Record<string, { url: string; name: string }> = {
     url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg/250px-The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg",
     name: "Sachin",
   },
+  // IPL Mode uses ipl_with_* IDs — same images + ABD/Rohit
+  ipl_with_dhoni: {
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/MS_Dhoni_%28Prabhav_%2723_-_RiGI_2023%29.jpg/250px-MS_Dhoni_%28Prabhav_%2723_-_RiGI_2023%29.jpg",
+    name: "Dhoni",
+  },
+  ipl_with_kohli: {
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Virat_Kohli_in_PMO_New_Delhi.jpg/250px-Virat_Kohli_in_PMO_New_Delhi.jpg",
+    name: "Kohli",
+  },
+  ipl_with_abd: {
+    url: "https://media.gettyimages.com/id/514874528/photo/mumbai-india-ab-devilliers-of-south-africa-poses-during-the-official-photocall-for-the-icc.jpg?s=612x612&w=0&k=20&c=T2OHJLp9nFpdBAJHA7DbLSlzyIgR7zAa-IxaJizzCRo=",
+    name: "ABD",
+  },
+  ipl_with_sachin: {
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg/250px-The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg",
+    name: "Sachin",
+  },
+  ipl_with_rohit: {
+    url: "https://media.gettyimages.com/id/2200260514/photo/dubai-united-arab-emirates-rohit-sharma-of-india-poses-for-a-portrait-during-the-icc.jpg?s=612x612&w=0&k=20&c=v9a4tBPIcnpFMTh-ZHcKQ45PRBkSA9_kPbNWCM3zPAk=",
+    name: "Rohit",
+  },
 };
 
 // --- Achievement category badges (local SVG assets) ---
+const BASE = import.meta.env.BASE_URL;
 const ACHIEVEMENT_BADGES: Record<string, string> = {
-  ach_captains: "/badges/captains.svg",
-  ach_century_makers: "/badges/century-makers.svg",
-  ach_fastest_bowling: "/badges/fastest-bowling.svg",
-  ach_aggressive_batsmen: "/badges/aggressive-batsmen.svg",
-  ach_world_cup_winners: "/badges/world-cup-winners.svg",
-  ach_ipl_superstars: "/badges/ipl-superstars.svg",
+  ach_captains: `${BASE}badges/captains.svg`,
+  ach_century_makers: `${BASE}badges/century-makers.svg`,
+  ach_fastest_bowling: `${BASE}badges/fastest-bowling.svg`,
+  ach_aggressive_batsmen: `${BASE}badges/aggressive-batsmen.svg`,
+  ach_world_cup_winners: `${BASE}badges/world-cup-winners.svg`,
+  ach_ipl_superstars: `${BASE}badges/ipl-superstars.svg`,
+  // IPL Mode captain category — same badge as regular captains
+  ipl_captain: `${BASE}badges/captains.svg`,
 };
 
 // --- SVG icons for roles, stats, trophies ---
@@ -268,6 +305,42 @@ function StadiumIcon({ className }: { className?: string }) {
   );
 }
 
+function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <circle cx="32" cy="32" r="22" fill="#1e3a5f" opacity="0.3" stroke="#60a5fa" strokeWidth="2"/>
+      {/* Equator */}
+      <path d="M 10 32 Q 21 24 32 32 Q 43 40 54 32" stroke="#60a5fa" strokeWidth="1.5" fill="none" opacity="0.8"/>
+      {/* Top lat arc */}
+      <path d="M 14 20 Q 23 15 32 20 Q 41 25 50 20" stroke="#60a5fa" strokeWidth="1" fill="none" opacity="0.5"/>
+      {/* Bottom lat arc */}
+      <path d="M 14 44 Q 23 49 32 44 Q 41 39 50 44" stroke="#60a5fa" strokeWidth="1" fill="none" opacity="0.5"/>
+      {/* Left meridian */}
+      <path d="M 32 10 Q 22 20 22 32 Q 22 44 32 54" stroke="#60a5fa" strokeWidth="1.5" fill="none" opacity="0.6"/>
+      {/* Right meridian */}
+      <path d="M 32 10 Q 42 20 42 32 Q 42 44 32 54" stroke="#60a5fa" strokeWidth="1.5" fill="none" opacity="0.6"/>
+      {/* Shine dot */}
+      <circle cx="24" cy="22" r="2" fill="#93c5fd" opacity="0.5"/>
+    </svg>
+  );
+}
+
+function MultiTeamIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      {/* Left shield */}
+      <path d="M 8 10 L 8 28 Q 8 36 16 40 Q 24 36 24 28 L 24 10 Z" fill="#3b82f6" stroke="#60a5fa" strokeWidth="1.5" opacity="0.75"/>
+      {/* Centre shield (raised, most prominent) */}
+      <path d="M 22 6 L 22 26 Q 22 36 32 41 Q 42 36 42 26 L 42 6 Z" fill="#8b5cf6" stroke="#a78bfa" strokeWidth="1.5"/>
+      {/* Right shield */}
+      <path d="M 40 10 L 40 28 Q 40 36 48 40 Q 56 36 56 28 L 56 10 Z" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.5" opacity="0.75"/>
+      {/* 3+ badge */}
+      <circle cx="49" cy="52" r="8" fill="#0f172a" stroke="#a78bfa" strokeWidth="1.5"/>
+      <text x="49" y="56" textAnchor="middle" fontSize="9" fill="#a78bfa" fontFamily="monospace" fontWeight="700">3+</text>
+    </svg>
+  );
+}
+
 function CenturiesIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
@@ -291,6 +364,7 @@ function CenturiesIcon({ className }: { className?: string }) {
 
 // Map shortLabel → icon component
 const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
+  // --- Regular mode ---
   PACER:      <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   SPINNER:    <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12" isSpin />,
   "ALL-RTR":  <AllRounderIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
@@ -306,6 +380,13 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   "100s":     <CenturiesIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   "50 TESTS": <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
   "1K IPL":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="1K" />,
+  // --- IPL Mode shortLabels ---
+  "IPL WIN":   <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12" variant="gold" />,
+  "100 GAMES": <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
+  "3K RUNS":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="3K" />,
+  "50 WKTS":   <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12" label="50" />,
+  OVERSEAS:    <GlobeIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
+  "3+ CLUBS":  <MultiTeamIcon className="w-10 h-10 sm:w-12 sm:h-12" />,
 };
 
 // --- Team abbr map for combo lookups ---
@@ -332,6 +413,22 @@ const CATEGORY_DEFINITIONS: Record<string, string> = {
   "100s": "Hit 100+ centuries in career",
   "50 TESTS": "Played 50+ Test matches",
   "1K IPL": "Scored 1,000+ runs in IPL career",
+  // IPL Mode tooltips
+  "IPL WIN": "Won the IPL title at least once",
+  "100 GAMES": "Played 100+ matches in IPL",
+  "3K RUNS": "Scored 3,000+ runs in IPL career",
+  "50 WKTS": "Took 50+ wickets in IPL career",
+  "OVERSEAS": "Overseas (non-Indian) IPL player",
+  "INDIA": "Indian national player in IPL",
+  CAPTAIN: "Has captained an IPL team",
+  "3+ CLUBS": "Played for 3 or more different IPL teams",
+  "w/ DHONI": "Played in the same IPL team as MS Dhoni",
+  "w/ KOHLI": "Played in the same IPL team as Virat Kohli",
+  "w/ ABD": "Played in the same IPL team as AB de Villiers",
+  "w/ SACHIN": "Played in the same IPL team as Sachin Tendulkar",
+  "w/ ROHIT": "Played in the same IPL team as Rohit Sharma",
+  "CSK+MI": "Played for both CSK and MI in IPL",
+  "MI+KKR": "Played for both MI and KKR in IPL",
 };
 
 // --- Combo visual ---

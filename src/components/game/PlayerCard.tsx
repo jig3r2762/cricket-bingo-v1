@@ -3,6 +3,9 @@ import { SkipForward, Sparkles, Info } from "lucide-react";
 import type { CricketPlayer } from "@/types/game";
 import { TEAM_COLORS } from "@/data/categories";
 import { useState } from "react";
+import { shouldUseHashRouter } from "@/lib/iframeUtils";
+
+const IN_IFRAME = shouldUseHashRouter();
 
 interface PlayerCardProps {
   player: CricketPlayer;
@@ -14,11 +17,12 @@ interface PlayerCardProps {
   wildcardsLeft: number;
   wildcardMode: boolean;
   onCancelWildcard: () => void;
+  onWatchAdForWildcard?: () => void;
 }
 
 export function PlayerCard({
   player, remaining, total, onSkip, onWildcard, onInfo,
-  wildcardsLeft, wildcardMode, onCancelWildcard,
+  wildcardsLeft, wildcardMode, onCancelWildcard, onWatchAdForWildcard,
 }: PlayerCardProps) {
   const teamColor = TEAM_COLORS[player.iplTeams?.[0]] || "#6366f1";
   const [imageError, setImageError] = useState(false);
@@ -124,6 +128,14 @@ export function PlayerCard({
                   <Sparkles className="w-3 h-3" />
                   Wild ({wildcardsLeft})
                 </button>
+                {IN_IFRAME && wildcardsLeft === 0 && !wildcardMode && onWatchAdForWildcard && (
+                  <button
+                    onClick={onWatchAdForWildcard}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full font-display text-xs uppercase tracking-wider border border-yellow-400/30 text-yellow-400 hover:bg-yellow-400/10 transition-all active:scale-95"
+                  >
+                    📺 +1 Wild
+                  </button>
+                )}
                 <button
                   onClick={onInfo}
                   className="w-7 h-7 rounded-full border border-glass-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"

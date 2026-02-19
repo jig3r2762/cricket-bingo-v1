@@ -6,6 +6,7 @@ import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
 import { CountdownTimer } from "./CountdownTimer";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
 
 const IN_IFRAME = shouldUseHashRouter();
 
@@ -383,7 +384,13 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
             </button>
           )}
           <button
-            onClick={onReset}
+            onClick={async () => {
+              if (IN_IFRAME) {
+                cgGameplayStop();
+                await cgShowMidgameAd();
+              }
+              onReset();
+            }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/15 border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/25 transition-all active:scale-95"
           >
             <RotateCcw className="w-4 h-4" />

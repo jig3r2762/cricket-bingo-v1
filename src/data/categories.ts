@@ -43,7 +43,54 @@ export const COUNTRY_CODE_MAP: Record<string, string> = {
   IRE: "Ireland",
 };
 
-// Full pool of ~42 categories for daily grid generation
+// ─── IPL Mode Category Pool ───────────────────────────────────────────────────
+// Player pool for IPL mode is filtered to iplTeams.length > 0 only.
+// Categories are split by difficulty so the generator can build balanced grids.
+
+export const IPL_EASY_POOL: GridCategory[] = [
+  // All 10 IPL teams — anchor cells, every IPL player fits at least one
+  { id: "ipl_team_mi",   label: "Mumbai Indians",         shortLabel: "MI",   icon: "shield", type: "team", validatorKey: "team:MI" },
+  { id: "ipl_team_csk",  label: "Chennai Super Kings",     shortLabel: "CSK",  icon: "shield", type: "team", validatorKey: "team:CSK" },
+  { id: "ipl_team_rcb",  label: "Royal Challengers",       shortLabel: "RCB",  icon: "shield", type: "team", validatorKey: "team:RCB" },
+  { id: "ipl_team_dc",   label: "Delhi Capitals",          shortLabel: "DC",   icon: "shield", type: "team", validatorKey: "team:DC" },
+  { id: "ipl_team_srh",  label: "Sunrisers Hyderabad",     shortLabel: "SRH",  icon: "shield", type: "team", validatorKey: "team:SRH" },
+  { id: "ipl_team_rr",   label: "Rajasthan Royals",        shortLabel: "RR",   icon: "shield", type: "team", validatorKey: "team:RR" },
+  { id: "ipl_team_kkr",  label: "Kolkata Knight Riders",   shortLabel: "KKR",  icon: "shield", type: "team", validatorKey: "team:KKR" },
+  { id: "ipl_team_pbks", label: "Punjab Kings",            shortLabel: "PBKS", icon: "shield", type: "team", validatorKey: "team:PBKS" },
+  { id: "ipl_team_gt",   label: "Gujarat Titans",          shortLabel: "GT",   icon: "shield", type: "team", validatorKey: "team:GT" },
+  { id: "ipl_team_lsg",  label: "Lucknow Super Giants",    shortLabel: "LSG",  icon: "shield", type: "team", validatorKey: "team:LSG" },
+];
+
+export const IPL_MEDIUM_POOL: GridCategory[] = [
+  { id: "ipl_winner",      label: "IPL Winner",          shortLabel: "IPL WIN",  icon: "trophy",     type: "trophy",      validatorKey: "trophy:IPL" },
+  { id: "ipl_100_matches", label: "100+ IPL Matches",    shortLabel: "100 GAMES",icon: "target",     type: "stat",        validatorKey: "stat:iplMatches>=100" },
+  { id: "ipl_3k_runs",     label: "3000+ IPL Runs",      shortLabel: "3K RUNS",  icon: "target",     type: "stat",        validatorKey: "stat:iplRuns>=3000" },
+  { id: "ipl_50_wickets",  label: "50+ IPL Wickets",     shortLabel: "50 WKTS",  icon: "circle-dot", type: "stat",        validatorKey: "stat:iplWickets>=50" },
+  { id: "ipl_allrounder",  label: "All-Rounder",         shortLabel: "ALL-RTR",  icon: "star",       type: "role",        validatorKey: "role:All-Rounder" },
+  { id: "ipl_overseas",    label: "Overseas Player",     shortLabel: "OVERSEAS", icon: "flag",       type: "country",     validatorKey: "overseas" },
+  { id: "ipl_indian",      label: "Indian Player",       shortLabel: "INDIA",    icon: "flag",       type: "country",     validatorKey: "country:India" },
+  { id: "ipl_captain",     label: "IPL Captain",         shortLabel: "CAPTAIN",  icon: "crown",      type: "achievement", validatorKey: "category:Captains" },
+  { id: "ipl_wk",          label: "Wicketkeeper",        shortLabel: "WK",       icon: "shield",     type: "role",        validatorKey: "role:WK-Bat" },
+  { id: "ipl_3_teams",     label: "Played 3+ Teams",     shortLabel: "3+ CLUBS", icon: "shuffle",    type: "stat",        validatorKey: "iplTeams>=3" },
+];
+
+export const IPL_HARD_POOL: GridCategory[] = [
+  { id: "ipl_with_dhoni",  label: "Played w/ Dhoni",  shortLabel: "w/ DHONI",  icon: "users",  type: "teammate", validatorKey: "teammate:ind_ms_dhoni" },
+  { id: "ipl_with_kohli",  label: "Played w/ Kohli",  shortLabel: "w/ KOHLI",  icon: "users",  type: "teammate", validatorKey: "teammate:ind_virat_kohli" },
+  { id: "ipl_with_abd",    label: "Teammate of ABD",   shortLabel: "w/ ABD",    icon: "users",  type: "teammate", validatorKey: "teammate:sa_ab_de_villiers" },
+  { id: "ipl_with_sachin", label: "Played w/ Sachin",  shortLabel: "w/ SACHIN", icon: "users",  type: "teammate", validatorKey: "teammate:ind_sachin_tendulkar" },
+  { id: "ipl_with_rohit",  label: "Played w/ Rohit",   shortLabel: "w/ ROHIT",  icon: "users",  type: "teammate", validatorKey: "teammate:ind_rohit_sharma" },
+  { id: "ipl_csk_mi",      label: "CSK & MI",          shortLabel: "CSK+MI",    icon: "shield", type: "combo",    validatorKey: "combo:team:CSK+team:MI" },
+];
+
+// Combined pool (used by generateIPLGame internally)
+export const IPL_CATEGORY_POOL: GridCategory[] = [
+  ...IPL_EASY_POOL,
+  ...IPL_MEDIUM_POOL,
+  ...IPL_HARD_POOL,
+];
+
+// ─── Full pool of ~42 categories for daily grid generation ───────────────────
 export const FULL_CATEGORY_POOL: GridCategory[] = [
   // --- TEAM (10) ---
   { id: "team_mi", label: "Mumbai Indians", shortLabel: "MI", icon: "shield", type: "team", validatorKey: "team:MI" },
