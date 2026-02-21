@@ -382,18 +382,18 @@ export default function Landing() {
         {/* ─── FOOTER ─── */}
         <footer className="border-t border-border/20 py-8 text-center px-4 space-y-3">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground/50">
-            <button onClick={() => navigate("/ipl-quiz")} className="hover:text-primary transition-colors">
+            <a href="/ipl-quiz" className="hover:text-primary transition-colors">
               IPL Quiz
-            </button>
-            <button onClick={() => navigate("/cricket-quiz")} className="hover:text-primary transition-colors">
+            </a>
+            <a href="/cricket-quiz" className="hover:text-primary transition-colors">
               Cricket Quiz
-            </button>
-            <button onClick={() => navigate("/cricket-wordle")} className="hover:text-primary transition-colors">
+            </a>
+            <a href="/cricket-wordle" className="hover:text-primary transition-colors">
               Cricket Wordle
-            </button>
-            <button onClick={() => navigate("/leaderboard")} className="hover:text-primary transition-colors">
+            </a>
+            <a href="/leaderboard" className="hover:text-primary transition-colors">
               Leaderboard
-            </button>
+            </a>
           </div>
           <p className="text-muted-foreground/50 text-xs">
             Cricket Bingo &copy; 2025 &middot; Free online cricket quiz game &middot; Data from{" "}
