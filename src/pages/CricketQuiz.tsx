@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSeoHead } from "@/lib/useSeoHead";
 
 const stagger = {
   hidden: {},
@@ -43,9 +44,30 @@ const FAQ = [
   },
 ];
 
+const CRICKET_QUIZ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export default function CricketQuiz() {
   const navigate = useNavigate();
   const { playAsGuest } = useAuth();
+
+  useSeoHead({
+    title: "Cricket Quiz — Free Online Cricket GK Questions & Answers | Cricket Bingo",
+    description:
+      "Play the best free online cricket quiz! Test your cricket general knowledge with 3,600+ real player cards. Match players to 42 categories — IPL teams, stats, trophies, roles & countries. New puzzle every day.",
+    canonical: "https://cricket-bingo.in/cricket-quiz",
+    ogTitle: "Cricket Quiz — Free Online Cricket GK Questions | Cricket Bingo",
+    ogDescription:
+      "The best free cricket quiz online! 3,600+ real player cards, 42 cricket GK categories — IPL teams, stats, trophies & more. New puzzle every day. No download needed.",
+    jsonLd: CRICKET_QUIZ_JSON_LD,
+  });
 
   const handlePlay = () => navigate("/play");
   const handleGuest = () => { playAsGuest(); navigate("/play"); };
@@ -180,10 +202,10 @@ export default function CricketQuiz() {
             className="space-y-3 max-w-2xl mx-auto"
           >
             {FAQ.map((item, i) => (
-              <motion.div key={i} variants={fadeUp} className="glass-card rounded-xl p-5">
+              <motion.article key={i} variants={fadeUp} className="glass-card rounded-xl p-5">
                 <h3 className="font-display text-sm font-bold text-secondary uppercase tracking-wider mb-2">{item.q}</h3>
                 <p className="text-muted-foreground text-sm">{item.a}</p>
-              </motion.div>
+              </motion.article>
             ))}
           </motion.div>
         </section>
@@ -211,21 +233,21 @@ export default function CricketQuiz() {
             >
               Play Now — Free
             </motion.button>
-            <button
-              onClick={() => navigate("/")}
-              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors"
+            <a
+              href="/"
+              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors inline-flex items-center justify-center"
             >
               Learn More
-            </button>
+            </a>
           </div>
         </motion.div>
 
-        {/* Footer nav */}
-        <div className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
-          <button onClick={() => navigate("/")} className="hover:text-secondary transition-colors">Home</button>
-          <button onClick={() => navigate("/ipl-quiz")} className="hover:text-secondary transition-colors">IPL Quiz</button>
-          <button onClick={() => navigate("/cricket-wordle")} className="hover:text-secondary transition-colors">Cricket Wordle</button>
-        </div>
+        {/* Footer nav — anchor tags so Google can crawl these links */}
+        <nav className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
+          <a href="/" className="hover:text-secondary transition-colors">Home</a>
+          <a href="/ipl-quiz" className="hover:text-secondary transition-colors">IPL Quiz</a>
+          <a href="/cricket-wordle" className="hover:text-secondary transition-colors">Cricket Wordle</a>
+        </nav>
       </div>
     </div>
   );

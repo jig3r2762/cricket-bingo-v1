@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSeoHead } from "@/lib/useSeoHead";
 
 const stagger = {
   hidden: {},
@@ -32,9 +33,51 @@ const SAMPLE_QUESTIONS = [
   { q: "Which IPL franchise has won the title the most times?", a: "Mumbai Indians (5 titles)" },
 ];
 
+const IPL_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is the best free IPL quiz game online?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Cricket Bingo is the best free IPL quiz game online. Match 3,600+ real IPL player cards to their teams — MI, CSK, RCB, KKR, DC, SRH, RR, PBKS, GT, LSG — on a live bingo grid. New puzzle every day at midnight. No download needed, play free at cricket-bingo.in.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How many IPL teams are in Cricket Bingo?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Cricket Bingo includes all 10 IPL teams: Mumbai Indians (MI), Chennai Super Kings (CSK), Royal Challengers Bengaluru (RCB), Kolkata Knight Riders (KKR), Delhi Capitals (DC), Sunrisers Hyderabad (SRH), Rajasthan Royals (RR), Punjab Kings (PBKS), Gujarat Titans (GT), and Lucknow Super Giants (LSG).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is this IPL quiz free to play?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, Cricket Bingo IPL Quiz is 100% free. Play instantly as a guest or sign in with Google to track your stats, daily streaks, and rank on the global leaderboard. No app download required — just open cricket-bingo.in in your browser.",
+      },
+    },
+  ],
+};
+
 export default function IplQuiz() {
   const navigate = useNavigate();
   const { playAsGuest } = useAuth();
+
+  useSeoHead({
+    title: "IPL Quiz — Free IPL Cricket Quiz Questions | Cricket Bingo",
+    description:
+      "Test your IPL knowledge with the best free IPL quiz game! Match 3,600+ real player cards to IPL teams — MI, CSK, RCB, KKR, DC, SRH, RR, PBKS, GT, LSG. New puzzle every day at cricket-bingo.in.",
+    canonical: "https://cricket-bingo.in/ipl-quiz",
+    ogTitle: "IPL Quiz — Free IPL Cricket Quiz Game | Cricket Bingo",
+    ogDescription:
+      "The best free IPL quiz online! Match real IPL players to their teams on a bingo grid. All 10 IPL teams, 3,600+ player cards. Play free — no download.",
+    jsonLd: IPL_JSON_LD,
+  });
 
   const handlePlay = () => navigate("/play");
   const handleGuest = () => { playAsGuest(); navigate("/play"); };
@@ -195,21 +238,21 @@ export default function IplQuiz() {
             >
               Start IPL Quiz
             </motion.button>
-            <button
-              onClick={() => navigate("/")}
-              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors"
+            <a
+              href="/"
+              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors inline-flex items-center justify-center"
             >
               Learn More
-            </button>
+            </a>
           </div>
         </motion.div>
 
-        {/* Footer nav */}
-        <div className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
-          <button onClick={() => navigate("/")} className="hover:text-secondary transition-colors">Home</button>
-          <button onClick={() => navigate("/cricket-quiz")} className="hover:text-secondary transition-colors">Cricket Quiz</button>
-          <button onClick={() => navigate("/cricket-wordle")} className="hover:text-secondary transition-colors">Cricket Wordle</button>
-        </div>
+        {/* Footer nav — anchor tags so Google can crawl these links */}
+        <nav className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
+          <a href="/" className="hover:text-secondary transition-colors">Home</a>
+          <a href="/cricket-quiz" className="hover:text-secondary transition-colors">Cricket Quiz</a>
+          <a href="/cricket-wordle" className="hover:text-secondary transition-colors">Cricket Wordle</a>
+        </nav>
       </div>
     </div>
   );

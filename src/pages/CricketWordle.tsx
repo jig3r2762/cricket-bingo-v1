@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSeoHead } from "@/lib/useSeoHead";
 
 const stagger = {
   hidden: {},
@@ -27,9 +28,51 @@ const COMPARISONS = [
   { feature: "Compete", wordle: "Share your grid", bingo: "Global leaderboard + streaks" },
 ];
 
+const WORDLE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is Cricket Wordle?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Cricket Bingo is a Wordle-style daily cricket puzzle game. Instead of guessing words, you match 3,600+ real cricket player cards to categories on a bingo grid. Like Wordle, there's a new puzzle every day and you can share your emoji result with friends. Play free at cricket-bingo.in.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How is Cricket Bingo different from Wordle?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Wordle has you guess a 5-letter word using letter clues. Cricket Bingo gives you real cricket player cards (Virat Kohli, MS Dhoni, Rohit Sharma, etc.) and you must match them to categories on a bingo grid — IPL teams, countries, player roles, career stats, and trophies. Both games are free, daily, and shareable via emoji grids.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is there a free cricket puzzle game like Wordle?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes! Cricket Bingo is the best free cricket puzzle game inspired by Wordle. Play a new daily cricket challenge every day at midnight, match 3,600+ real player cards to categories, and share your emoji grid score just like Wordle. No download needed — play at cricket-bingo.in.",
+      },
+    },
+  ],
+};
+
 export default function CricketWordle() {
   const navigate = useNavigate();
   const { playAsGuest } = useAuth();
+
+  useSeoHead({
+    title: "Cricket Wordle — Free Daily Cricket Puzzle Game | Cricket Bingo",
+    description:
+      "Love Wordle? Play Cricket Bingo — the best free daily cricket puzzle game! Match 3,600+ real cricket player cards on a bingo grid. Share your emoji result like Wordle. New puzzle every midnight, no download needed.",
+    canonical: "https://cricket-bingo.in/cricket-wordle",
+    ogTitle: "Cricket Wordle — Free Daily Cricket Puzzle | Cricket Bingo",
+    ogDescription:
+      "The Wordle for cricket fans! Daily cricket puzzle — match real players to a bingo grid and share your emoji score. Free, no download, new puzzle every day.",
+    jsonLd: WORDLE_JSON_LD,
+  });
 
   const handlePlay = () => navigate("/play");
   const handleGuest = () => { playAsGuest(); navigate("/play"); };
@@ -208,21 +251,21 @@ export default function CricketWordle() {
             >
               Play Now — Free
             </motion.button>
-            <button
-              onClick={() => navigate("/")}
-              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors"
+            <a
+              href="/"
+              className="px-8 py-3 rounded-xl border border-border/50 text-muted-foreground text-sm hover:text-secondary transition-colors inline-flex items-center justify-center"
             >
               Learn More
-            </button>
+            </a>
           </div>
         </motion.div>
 
-        {/* Footer nav */}
-        <div className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
-          <button onClick={() => navigate("/")} className="hover:text-secondary transition-colors">Home</button>
-          <button onClick={() => navigate("/ipl-quiz")} className="hover:text-secondary transition-colors">IPL Quiz</button>
-          <button onClick={() => navigate("/cricket-quiz")} className="hover:text-secondary transition-colors">Cricket Quiz</button>
-        </div>
+        {/* Footer nav — anchor tags so Google can crawl these links */}
+        <nav className="text-center mt-8 text-xs text-muted-foreground/50 space-x-4">
+          <a href="/" className="hover:text-secondary transition-colors">Home</a>
+          <a href="/ipl-quiz" className="hover:text-secondary transition-colors">IPL Quiz</a>
+          <a href="/cricket-quiz" className="hover:text-secondary transition-colors">Cricket Quiz</a>
+        </nav>
       </div>
     </div>
   );
