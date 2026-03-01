@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Grid3X3, LayoutGrid, Timer, TimerOff, Zap, ChevronLeft, Trophy } from "lucide-react";
+import { Grid3X3, LayoutGrid, Timer, TimerOff, Zap, ChevronLeft, Trophy, Swords } from "lucide-react";
 
 interface GridSelectionProps {
   onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
+  onBattle?: () => void;
 }
 
 type Step = "mode" | "grid";
@@ -14,7 +15,7 @@ const slide = {
   exit:    { opacity: 0, x: -40 },
 };
 
-export function GridSelection({ onSelect }: GridSelectionProps) {
+export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
   const [step, setStep] = useState<Step>("mode");
   const [timed, setTimed] = useState(false);
   const [pendingMode, setPendingMode] = useState<"daily" | "ipl">("daily");
@@ -84,6 +85,31 @@ export function GridSelection({ onSelect }: GridSelectionProps) {
                 </div>
                 <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
               </motion.button>
+
+              {/* vs Player */}
+              {onBattle && (
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={onBattle}
+                  className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98]"
+                >
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border border-purple-500/40 bg-purple-500/10">
+                    <Swords className="w-7 h-7 text-purple-400" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display text-lg font-bold text-foreground tracking-wider">VS PLAYER</h3>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-purple-500/50 text-purple-400 bg-purple-500/10">
+                        LIVE
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground font-body mt-0.5">Real-time · Same grid · First to fill wins</p>
+                  </div>
+                  <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
+                </motion.button>
+              )}
             </motion.div>
           )}
 

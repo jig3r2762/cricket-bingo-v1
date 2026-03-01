@@ -24,6 +24,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Stats = lazy(() => import("./pages/Stats"));
+const Battle = lazy(() => import("./pages/Battle"));
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <Stats />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/battle"
+                  element={
+                    <ProtectedRoute>
+                      <Battle />
                     </ProtectedRoute>
                   }
                 />

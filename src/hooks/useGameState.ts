@@ -37,7 +37,7 @@ function loadState(date: string, gridSize: 3 | 4): GameState | null {
 
 // --- Pure post-turn logic (module-level, no closure deps) ---
 
-function postTurn(state: GameState): GameState {
+export function postTurn(state: GameState): GameState {
   // Check win
   const winLine = checkBingo(state.placements, state.grid, state.gridSize);
   if (winLine) {

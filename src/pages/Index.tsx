@@ -17,7 +17,7 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft, Menu, X } from "lucide-react";
+import { ArrowLeft, Menu, X, Swords } from "lucide-react";
 import type { GridCategory } from "@/types/game";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } from "@/lib/crazyGamesSDK";
@@ -25,6 +25,7 @@ import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } 
 const IN_IFRAME = shouldUseHashRouter();
 
 const Index = () => {
+  const navigate = useNavigate();
   const { loading: playersLoading, error: playersError, players: allPlayers } = usePlayers();
 
   // Signal CrazyGames SDK that loading is complete once players are ready
@@ -39,6 +40,14 @@ const Index = () => {
   });
   const [timed, setTimed] = useState(false);
   const [gameMode, setGameMode] = useState<"daily" | "ipl">("daily");
+  const [sessionGameCount, setSessionGameCount] = useState(1);
+
+  // CrazyGames: auto-start with 3x3, no grid selection friction
+  useEffect(() => {
+    if (IN_IFRAME && gridSize === null) {
+      setGridSize(3);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [howToPlay, setHowToPlay] = useState(false);
   const [adminGrid, setAdminGrid] = useState<AdminGrid | undefined>(undefined);
   const [loadingGrid, setLoadingGrid] = useState(false);
@@ -117,12 +126,15 @@ const Index = () => {
   if (!gridSize) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <GridSelection onSelect={(size, timedMode, mode) => {
-          setGridSize(size);
-          setTimed(timedMode ?? false);
-          setGameMode(mode ?? "daily");
-          try { localStorage.setItem("cricket-bingo-gridsize", String(size)); } catch {}
-        }} />
+        <GridSelection
+          onSelect={(size, timedMode, mode) => {
+            setGridSize(size);
+            setTimed(timedMode ?? false);
+            setGameMode(mode ?? "daily");
+            try { localStorage.setItem("cricket-bingo-gridsize", String(size)); } catch {}
+          }}
+          onBattle={() => navigate("/battle")}
+        />
         <AnimatePresence>
           {!tutorialDone && (
             <InteractiveTutorial onComplete={() => setTutorialDone(true)} />
@@ -142,10 +154,11 @@ const Index = () => {
     );
   }
 
-  return <GameBoard gridSize={gridSize} timed={timed} mode={gameMode} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} onBack={() => {
+  return <GameBoard gridSize={gridSize} timed={timed} mode={gameMode} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} gameNumber={sessionGameCount} onPlayAgain={() => setSessionGameCount(c => c + 1)} onBack={() => {
     setGridSize(null);
     setTimed(false);
     setGameMode("daily");
+    setSessionGameCount(1);
     try { localStorage.removeItem("cricket-bingo-gridsize"); } catch {}
   }} />;
 };
@@ -158,6 +171,8 @@ function GameBoard({
   setHowToPlay,
   adminGrid,
   onBack,
+  gameNumber = 1,
+  onPlayAgain,
 }: {
   gridSize: 3 | 4;
   timed: boolean;
@@ -166,6 +181,8 @@ function GameBoard({
   setHowToPlay: (v: boolean) => void;
   adminGrid?: AdminGrid;
   onBack: () => void;
+  gameNumber?: number;
+  onPlayAgain?: () => void;
 }) {
   const { user, userData, signOut, isAdmin, isGuest, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -192,6 +209,11 @@ function GameBoard({
     cgGameplayStart();
     if (rewarded) grantWildcard();
   }, [grantWildcard]);
+
+  const handlePlayAgain = useCallback(() => {
+    playRandomGame();
+    onPlayAgain?.();
+  }, [playRandomGame, onPlayAgain]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const categories = gameState.grid;
@@ -260,6 +282,13 @@ function GameBoard({
                 </div>
                 {/* Desktop nav buttons */}
                 <div className="hidden sm:flex items-center gap-2">
+                  <button
+                    onClick={() => navigate("/battle")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors"
+                  >
+                    <Swords className="w-3.5 h-3.5" />
+                    vs Bot
+                  </button>
                   {!isGuest && (
                     <>
                       <button
@@ -314,6 +343,13 @@ function GameBoard({
           {/* Mobile dropdown menu — only in non-iframe mode */}
           {!IN_IFRAME && menuOpen && (
             <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card/95 backdrop-blur-md border border-border/30 rounded-xl py-2 px-3 z-50 space-y-1">
+              <button
+                onClick={() => { setMenuOpen(false); navigate("/battle"); }}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center gap-2"
+              >
+                <Swords className="w-3.5 h-3.5" />
+                vs Bot
+              </button>
               {!isGuest && (
                 <>
                   <button
@@ -369,7 +405,7 @@ function GameBoard({
         )}
 
         {isGameOver ? (
-          <GameOverScreen gameState={gameState} onReset={playRandomGame} />
+          <GameOverScreen gameState={gameState} onReset={handlePlayAgain} gameNumber={IN_IFRAME ? gameNumber : undefined} />
         ) : currentPlayer ? (
           <div className="relative z-10 w-full">
           <PlayerCard

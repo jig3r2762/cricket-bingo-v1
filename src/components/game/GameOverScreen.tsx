@@ -1,49 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check } from "lucide-react";
+import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check, Star, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
 import { CountdownTimer } from "./CountdownTimer";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
+import { triggerConfetti } from "@/lib/confetti";
+
+const CG_BEST_KEY = "cg-best-score";
 
 const IN_IFRAME = shouldUseHashRouter();
-
-// Confetti animation
-function triggerConfetti() {
-  if (typeof window === "undefined") return;
-  const emojis = ["🎉", "🏏", "🏆", "⭐", "🎊"];
-
-  for (let i = 0; i < 50; i++) {
-    const confetti = document.createElement("div");
-    confetti.className = "fixed pointer-events-none";
-    confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-    confetti.style.left = Math.random() * window.innerWidth + "px";
-    confetti.style.top = "-20px";
-    confetti.style.fontSize = (Math.random() * 20 + 10) + "px";
-    confetti.style.opacity = "1";
-    confetti.style.zIndex = "9999";
-    document.body.appendChild(confetti);
-
-    const duration = Math.random() * 3 + 2;
-    const xOffset = (Math.random() - 0.5) * 400;
-
-    confetti.animate(
-      [
-        { transform: "translateY(0) translateX(0) rotate(0deg)", opacity: 1 },
-        { transform: `translateY(${window.innerHeight + 50}px) translateX(${xOffset}px) rotate(360deg)`, opacity: 0 }
-      ],
-      { duration: duration * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
-    );
-
-    setTimeout(() => confetti.remove(), duration * 1000);
-  }
-}
 
 interface GameOverScreenProps {
   gameState: GameState;
   onReset: () => void;
+  /** Session game number (CrazyGames only — undefined on regular site) */
+  gameNumber?: number;
 }
 
 function buildEmojiGrid(state: GameState): string {
@@ -97,7 +71,7 @@ function buildShareText(state: GameState, streak: number): string {
   return text;
 }
 
-export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
+export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScreenProps) {
   const isWin = gameState.status === "won";
   const navigate = useNavigate();
   const { userData, isGuest, signInWithGoogle } = useAuth();
@@ -106,6 +80,45 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
   const total = gameState.gridSize * gameState.gridSize;
   const [copied, setCopied] = useState(false);
   const [challengeCopied, setChallengeCopied] = useState(false);
+
+  // --- CrazyGames: best score tracking ---
+  const [prevBest] = useState(() => {
+    if (!IN_IFRAME) return 0;
+    try { return parseInt(localStorage.getItem(CG_BEST_KEY) ?? "0", 10) || 0; } catch { return 0; }
+  });
+  const isNewBest = IN_IFRAME && gameState.score > 0 && gameState.score > prevBest;
+
+  // Persist new best on mount (game just ended)
+  useEffect(() => {
+    if (!IN_IFRAME || gameState.score === 0) return;
+    const newBest = Math.max(gameState.score, prevBest);
+    try { localStorage.setItem(CG_BEST_KEY, String(newBest)); } catch { /* ok */ }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // --- CrazyGames: auto-countdown to next game ---
+  const [autoStartIn, setAutoStartIn] = useState<number | null>(IN_IFRAME ? 5 : null);
+  const autoStartTriggered = useRef(false);
+
+  useEffect(() => {
+    if (autoStartIn === null || autoStartIn <= 0) return;
+    const t = setTimeout(() => setAutoStartIn(n => (n ?? 1) - 1), 1000);
+    return () => clearTimeout(t);
+  }, [autoStartIn]);
+
+  const handlePlayAgainFull = useCallback(async () => {
+    if (autoStartTriggered.current) return;
+    autoStartTriggered.current = true;
+    setAutoStartIn(null);
+    if (IN_IFRAME) {
+      cgGameplayStop();
+      await cgShowMidgameAd();
+    }
+    onReset();
+  }, [onReset]);
+
+  useEffect(() => {
+    if (autoStartIn === 0) handlePlayAgainFull();
+  }, [autoStartIn, handlePlayAgainFull]);
 
   useEffect(() => {
     if (isWin) {
@@ -251,6 +264,34 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
       className="w-full max-w-md mx-auto"
     >
       <div className="glass-card rounded-2xl p-6 text-center space-y-4">
+        {/* CrazyGames: game number chip */}
+        {IN_IFRAME && gameNumber !== undefined && gameNumber > 1 && (
+          <div className="flex items-center justify-center gap-2">
+            <span className="px-3 py-1 rounded-full text-[10px] font-display uppercase tracking-widest border border-primary/30 text-primary/70 bg-primary/5">
+              Game #{gameNumber}
+            </span>
+            {prevBest > 0 && !isNewBest && (
+              <span className="px-3 py-1 rounded-full text-[10px] font-display uppercase tracking-widest border border-amber-500/30 text-amber-400/70 bg-amber-500/5">
+                Best: {prevBest}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* New best celebration */}
+        {isNewBest && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.3 }}
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-amber-400/15 border border-amber-400/50"
+          >
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <span className="font-display text-sm uppercase tracking-wider text-amber-400 font-bold">New Best Score!</span>
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+          </motion.div>
+        )}
+
         {isWin ? (
           <>
             <motion.div
@@ -338,8 +379,8 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
           </div>
         )}
 
-        {/* Countdown to next puzzle */}
-        <CountdownTimer />
+        {/* Countdown to next puzzle — only on main site (CrazyGames plays random games) */}
+        {!IN_IFRAME && <CountdownTimer />}
 
         {/* Challenge CTA */}
         <motion.p
@@ -352,51 +393,99 @@ export function GameOverScreen({ gameState, onReset }: GameOverScreenProps) {
         </motion.p>
 
         {/* Action buttons */}
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
-          >
-            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-            {copied ? "Copied!" : "Share"}
-          </button>
-          <button
-            onClick={handleChallenge}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
-          >
-            {challengeCopied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
-            {challengeCopied ? "Copied!" : "Challenge"}
-          </button>
-          <button
-            onClick={handleDownloadCard}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/50 text-emerald-400 font-display text-xs uppercase tracking-wider hover:bg-emerald-500/25 transition-all active:scale-95"
-          >
-            <Download className="w-4 h-4" />
-            Card
-          </button>
-          {!isGuest && (
+        {IN_IFRAME ? (
+          /* CrazyGames layout: Play Again is the hero CTA */
+          <div className="space-y-2">
             <button
-              onClick={() => navigate("/leaderboard")}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-400 font-display text-xs uppercase tracking-wider hover:bg-amber-500/25 transition-all active:scale-95"
+              onClick={handlePlayAgainFull}
+              className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-secondary/20 border-2 border-secondary/60 text-secondary font-display text-sm uppercase tracking-wider hover:bg-secondary/30 transition-all active:scale-95"
             >
-              <BarChart3 className="w-4 h-4" />
-              Ranks
+              <RotateCcw className="w-5 h-5" />
+              {autoStartIn !== null && autoStartIn > 0
+                ? `Play Again (${autoStartIn})`
+                : "Play Again"}
             </button>
-          )}
-          <button
-            onClick={async () => {
-              if (IN_IFRAME) {
-                cgGameplayStop();
-                await cgShowMidgameAd();
-              }
-              onReset();
-            }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/15 border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/25 transition-all active:scale-95"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Play Again
-          </button>
-        </div>
+            {autoStartIn !== null && autoStartIn > 0 && (
+              <button
+                onClick={() => setAutoStartIn(null)}
+                className="w-full text-center text-[10px] text-muted-foreground/60 font-display uppercase tracking-wider hover:text-muted-foreground transition-colors"
+              >
+                Cancel auto-start
+              </button>
+            )}
+            <div className="flex items-center justify-center gap-2 flex-wrap pt-1">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
+              >
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                {copied ? "Copied!" : "Share"}
+              </button>
+              <button
+                onClick={handleChallenge}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
+              >
+                {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                {challengeCopied ? "Copied!" : "Challenge"}
+              </button>
+              <button
+                onClick={handleDownloadCard}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/50 text-emerald-400 font-display text-xs uppercase tracking-wider hover:bg-emerald-500/25 transition-all active:scale-95"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Card
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Normal site layout */
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
+            >
+              {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+              {copied ? "Copied!" : "Share"}
+            </button>
+            <button
+              onClick={handleChallenge}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
+            >
+              {challengeCopied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+              {challengeCopied ? "Copied!" : "Challenge"}
+            </button>
+            <button
+              onClick={handleDownloadCard}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/50 text-emerald-400 font-display text-xs uppercase tracking-wider hover:bg-emerald-500/25 transition-all active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              Card
+            </button>
+            {!isGuest && (
+              <button
+                onClick={() => navigate("/leaderboard")}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-400 font-display text-xs uppercase tracking-wider hover:bg-amber-500/25 transition-all active:scale-95"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Ranks
+              </button>
+            )}
+            <button
+              onClick={handlePlayAgainFull}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/15 border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/25 transition-all active:scale-95"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Play Again
+            </button>
+            <button
+              onClick={() => navigate("/battle")}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500/15 border border-purple-500/50 text-purple-400 font-display text-xs uppercase tracking-wider hover:bg-purple-500/25 transition-all active:scale-95"
+            >
+              <Swords className="w-4 h-4" />
+              vs Bot
+            </button>
+          </div>
+        )}
 
         {/* Guest sign-in prompt / iframe CTA */}
         {isGuest && (
