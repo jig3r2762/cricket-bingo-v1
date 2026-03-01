@@ -382,15 +382,6 @@ export default function Landing() {
         {/* ─── FOOTER ─── */}
         <footer className="border-t border-border/20 py-8 text-center px-4 space-y-3">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground/50">
-            <a href="/ipl-quiz" className="hover:text-primary transition-colors">
-              IPL Quiz
-            </a>
-            <a href="/cricket-quiz" className="hover:text-primary transition-colors">
-              Cricket Quiz
-            </a>
-            <a href="/cricket-wordle" className="hover:text-primary transition-colors">
-              Cricket Wordle
-            </a>
             <a href="/leaderboard" className="hover:text-primary transition-colors">
               Leaderboard
             </a>
