@@ -142,7 +142,7 @@ export default function Leaderboard() {
   const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
 
   return (
-    <div className="min-h-screen stadium-bg flex flex-col items-center p-4">
+    <div className="min-h-screen warm-bg flex flex-col items-center p-4">
       <div className="w-full max-w-lg space-y-4">
         {/* Header */}
         <motion.div
@@ -201,7 +201,7 @@ export default function Leaderboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="glass-card rounded-2xl overflow-hidden"
+          className="candy-card rounded-2xl overflow-hidden"
         >
           {loading ? (
             <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest animate-pulse">
@@ -296,7 +296,7 @@ export default function Leaderboard() {
                       key={entry.score}
                       initial={{ y: -8, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className={`scoreboard-font text-lg w-16 text-right ${isMe ? "text-primary" : "text-secondary"}`}
+                      className={`font-display text-lg w-16 text-right ${isMe ? "text-primary" : "text-secondary"}`}
                     >
                       {entry.score}
                     </motion.div>

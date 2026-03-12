@@ -17,7 +17,9 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft, Menu, X, Swords } from "lucide-react";
+import { ArrowLeft, Menu, X, Swords, Coins } from "lucide-react";
+import { CoinBalance } from "@/components/wallet/CoinBalance";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { GridCategory } from "@/types/game";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } from "@/lib/crazyGamesSDK";
@@ -92,7 +94,7 @@ const Index = () => {
 
   if (playersLoading) {
     return (
-      <div className="min-h-screen stadium-bg flex items-center justify-center">
+      <div className="min-h-screen warm-bg flex items-center justify-center">
         <div className="text-center space-y-3">
           <div className="text-4xl animate-bounce">🏏</div>
           <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
@@ -105,7 +107,7 @@ const Index = () => {
 
   if (playersError) {
     return (
-      <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
+      <div className="min-h-screen warm-bg flex items-center justify-center p-4">
         <div className="text-center space-y-3 max-w-sm">
           <div className="text-4xl">⚠️</div>
           <p className="text-destructive font-display text-sm uppercase tracking-wider">
@@ -125,7 +127,8 @@ const Index = () => {
 
   if (!gridSize) {
     return (
-      <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
+      <div className="min-h-screen warm-bg flex items-center justify-center p-4">
+        <div className="fixed top-4 right-4 z-50"><ThemeToggle /></div>
         <GridSelection
           onSelect={(size, timedMode, mode) => {
             setGridSize(size);
@@ -146,7 +149,7 @@ const Index = () => {
 
   if (loadingGrid) {
     return (
-      <div className="min-h-screen stadium-bg flex items-center justify-center">
+      <div className="min-h-screen warm-bg flex items-center justify-center">
         <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
           Loading today's grid...
         </div>
@@ -220,17 +223,18 @@ function GameBoard({
   const total = gameState.deck.length;
 
   return (
-    <div className="min-h-screen stadium-bg flex flex-col">
+    <div className="min-h-screen warm-bg flex flex-col">
       <div
-        className={`flex-1 flex flex-col items-center px-3 max-w-xl mx-auto w-full ${IN_IFRAME ? "gap-2 pt-2 pb-4" : "gap-4 pt-3 pb-24 sm:pb-4"}`}
+        className={`flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
         style={IN_IFRAME ? { zoom: 0.88 } : undefined}
       >
         {/* User bar with back button */}
-        <div className="w-full relative z-30 bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl px-3 py-2">
+        <div className="w-full relative z-30 bg-white border-2 border-gray-200 rounded-2xl px-3 py-2" style={{ boxShadow: "0 3px 0 #e5e7eb" }}>
           <div className="flex items-center justify-between">
             <button
               onClick={onBack}
-              className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+              className="p-2 rounded-xl border-2 border-gray-200 bg-white text-gray-500 hover:text-gray-700 transition-colors"
+              style={{ boxShadow: "0 2px 0 #e5e7eb" }}
               title="Back to Grid Selection"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -282,6 +286,7 @@ function GameBoard({
                 </div>
                 {/* Desktop nav buttons */}
                 <div className="hidden sm:flex items-center gap-2">
+                  <CoinBalance />
                   <button
                     onClick={() => navigate("/battle")}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors"
@@ -289,6 +294,15 @@ function GameBoard({
                     <Swords className="w-3.5 h-3.5" />
                     vs Bot
                   </button>
+                  {!isGuest && (
+                    <button
+                      onClick={() => navigate("/paid-battle")}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
+                    >
+                      <Coins className="w-3.5 h-3.5" />
+                      Paid
+                    </button>
+                  )}
                   {!isGuest && (
                     <>
                       <button
@@ -342,7 +356,10 @@ function GameBoard({
 
           {/* Mobile dropdown menu — only in non-iframe mode */}
           {!IN_IFRAME && menuOpen && (
-            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card/95 backdrop-blur-md border border-border/30 rounded-xl py-2 px-3 z-50 space-y-1">
+            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-white border-2 border-gray-200 rounded-2xl py-2 px-3 z-50 space-y-1" style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }}>
+              <div className="px-3 py-2.5">
+                <CoinBalance />
+              </div>
               <button
                 onClick={() => { setMenuOpen(false); navigate("/battle"); }}
                 className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center gap-2"
@@ -350,6 +367,15 @@ function GameBoard({
                 <Swords className="w-3.5 h-3.5" />
                 vs Bot
               </button>
+              {!isGuest && (
+                <button
+                  onClick={() => { setMenuOpen(false); navigate("/paid-battle"); }}
+                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-amber-400 hover:bg-amber-500/10 transition-colors flex items-center gap-2"
+                >
+                  <Coins className="w-3.5 h-3.5" />
+                  Paid Battle
+                </button>
+              )}
               {!isGuest && (
                 <>
                   <button
@@ -393,78 +419,96 @@ function GameBoard({
           )}
         </div>
 
-        <GameHeader score={gameState.score} streak={gameState.streak} onHowToPlay={() => setHowToPlay(true)} />
+        {/* Two-column on desktop, single column on mobile / iframe */}
+        <div className={IN_IFRAME ? "contents" : "w-full flex flex-col sm:flex-row sm:items-start sm:gap-6"}>
 
-        {timed && !isGameOver && currentPlayer && (
-          <TurnTimer
-            duration={10}
-            turnKey={gameState.deckIndex}
-            onTimeUp={handleSkip}
-            paused={isGameOver}
-          />
-        )}
+          {/* Left panel — header, player card, bingo meter */}
+          <div className={IN_IFRAME ? "contents" : "flex flex-col gap-4 w-full sm:w-72 lg:w-80 sm:flex-shrink-0"}>
+            <GameHeader score={gameState.score} streak={gameState.streak} onHowToPlay={() => setHowToPlay(true)} />
 
-        {isGameOver ? (
-          <GameOverScreen gameState={gameState} onReset={handlePlayAgain} gameNumber={IN_IFRAME ? gameNumber : undefined} />
-        ) : currentPlayer ? (
-          <div className="relative z-10 w-full">
-          <PlayerCard
-            player={currentPlayer}
-            remaining={remaining}
-            total={total}
-            onSkip={handleSkip}
-            onWildcard={handleWildcard}
-            onInfo={() => setHowToPlay(true)}
-            wildcardsLeft={gameState.wildcardsLeft}
-            wildcardMode={gameState.wildcardMode}
-            onCancelWildcard={cancelWildcard}
-            onWatchAdForWildcard={handleWatchAdForWildcard}
-          />
+            {timed && !isGameOver && currentPlayer && (
+              <TurnTimer
+                duration={10}
+                turnKey={gameState.deckIndex}
+                onTimeUp={handleSkip}
+                paused={isGameOver}
+              />
+            )}
+
+            {isGameOver ? (
+              <GameOverScreen gameState={gameState} onReset={handlePlayAgain} gameNumber={IN_IFRAME ? gameNumber : undefined} />
+            ) : currentPlayer ? (
+              <div className="relative z-10 w-full">
+              <PlayerCard
+                player={currentPlayer}
+                remaining={remaining}
+                total={total}
+                onSkip={handleSkip}
+                onWildcard={handleWildcard}
+                onInfo={() => setHowToPlay(true)}
+                wildcardsLeft={gameState.wildcardsLeft}
+                wildcardMode={gameState.wildcardMode}
+                onCancelWildcard={cancelWildcard}
+                onWatchAdForWildcard={handleWatchAdForWildcard}
+              />
+              </div>
+            ) : null}
+
+            <BingoMeter
+              filled={filledCount}
+              total={categories.length}
+              gridSize={gridSize}
+            />
           </div>
-        ) : null}
 
-        <BingoMeter
-          filled={filledCount}
-          total={categories.length}
-          gridSize={gridSize}
-        />
+          {/* Right panel — bingo grid (fills remaining width on desktop) */}
+          <div className={IN_IFRAME ? "contents" : "flex-1"}>
+            <BingoGrid
+              categories={categories}
+              gridSize={gridSize}
+              placements={gameState.placements}
+              feedbackStates={gameState.feedbackStates}
+              onCellClick={handleCellClick}
+              eligibleCells={eligibleCells}
+              recommendedCell={recommendedCell}
+              wildcardMode={gameState.wildcardMode}
+              winLine={gameState.winLine}
+            />
+          </div>
 
-        <BingoGrid
-          categories={categories}
-          gridSize={gridSize}
-          placements={gameState.placements}
-          feedbackStates={gameState.feedbackStates}
-          onCellClick={handleCellClick}
-          eligibleCells={eligibleCells}
-          recommendedCell={recommendedCell}
-          wildcardMode={gameState.wildcardMode}
-          winLine={gameState.winLine}
-        />
+        </div>
       </div>
 
       {/* Mobile bottom bar */}
       {!isGameOver && currentPlayer && (
-        <div className="fixed bottom-0 left-0 right-0 sm:hidden player-bar border-t border-border/50 p-3 flex items-center justify-between px-5 z-50">
+        <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t-2 border-gray-200 p-3 flex items-center justify-between px-5 z-50"
+          style={{ boxShadow: "0 -4px 16px rgba(0,0,0,0.08)" }}>
           <button
             onClick={handleSkip}
-            className="px-5 py-2.5 rounded-xl border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider active:scale-95 transition-transform"
+            className="px-5 py-2.5 rounded-2xl border-2 border-gray-300 text-gray-600 font-body font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform bg-white"
+            style={{ boxShadow: "0 3px 0 #d1d5db" }}
           >
             Skip
           </button>
           <div className="text-center">
-            <div className="scoreboard-font text-xl text-secondary leading-none">{gameState.score}</div>
-            <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-display">Score</div>
+            <div className="font-display text-2xl leading-none text-candy-orange">{gameState.score}</div>
+            <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-body font-bold">Score</div>
           </div>
           <button
             onClick={gameState.wildcardMode ? cancelWildcard : handleWildcard}
             disabled={gameState.wildcardsLeft <= 0 && !gameState.wildcardMode}
-            className={`px-5 py-2.5 rounded-xl font-display text-xs uppercase tracking-wider active:scale-95 transition-transform
+            className={`px-5 py-2.5 rounded-2xl font-body font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform border-2
               ${gameState.wildcardMode
-                ? "bg-yellow-400/20 border border-yellow-400/50 text-yellow-400"
+                ? "bg-candy-yellow border-yellow-500 text-white"
                 : gameState.wildcardsLeft > 0
-                  ? "bg-primary/15 border border-primary/50 text-primary"
-                  : "bg-muted/30 border border-muted/30 text-muted-foreground cursor-not-allowed"
+                  ? "bg-candy-green border-green-600 text-white"
+                  : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
               }`}
+            style={gameState.wildcardMode
+              ? { boxShadow: "0 3px 0 hsl(45 90% 38%)" }
+              : gameState.wildcardsLeft > 0
+                ? { boxShadow: "0 3px 0 hsl(134 55% 30%)" }
+                : {}}
           >
             {gameState.wildcardMode ? "Cancel" : "Wild"}
           </button>

@@ -44,10 +44,11 @@ export function PlayerCard({
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
         className="w-full max-w-md mx-auto"
       >
-        <div className="relative player-bar rounded-2xl overflow-hidden">
+        <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-200"
+          style={{ boxShadow: "0 4px 0 #e5e7eb, 0 8px 20px rgba(0,0,0,0.06)" }}>
           {/* Team color accent line */}
           <div
-            className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+            className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl"
             style={{ background: `linear-gradient(90deg, ${teamColor}, ${teamColor}88)` }}
           />
 
@@ -80,7 +81,7 @@ export function PlayerCard({
 
               {/* Name block */}
               <div className="flex-1 min-w-0">
-                <h2 className="font-display text-xl font-extrabold text-foreground uppercase tracking-wider leading-tight truncate">
+                <h2 className="font-display text-xl text-foreground leading-tight truncate">
                   {player.name}
                 </h2>
               </div>
@@ -88,7 +89,7 @@ export function PlayerCard({
               {/* Skip button */}
               <button
                 onClick={onSkip}
-                className="flex items-center gap-1 text-muted-foreground hover:text-foreground font-display text-sm uppercase tracking-wider transition-colors shrink-0"
+                className="flex items-center gap-1 text-gray-400 hover:text-gray-600 font-body font-bold text-sm uppercase tracking-wider transition-colors shrink-0"
               >
                 SKIP <SkipForward className="w-4 h-4" />
               </button>
@@ -99,14 +100,15 @@ export function PlayerCard({
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-2 px-3 py-1.5 rounded-lg bg-yellow-400/15 border border-yellow-400/40 text-center"
+                className="mt-2 px-3 py-2 rounded-xl bg-yellow-50 border-2 border-yellow-300 text-center"
+                style={{ boxShadow: "0 2px 0 hsl(45 90% 50%)" }}
               >
-                <span className="font-display text-xs text-yellow-400 uppercase tracking-wider">
-                  Wildcard Active — tap any empty cell
+                <span className="font-body font-bold text-xs text-yellow-600 uppercase tracking-wider">
+                  ⭐ Wildcard Active — tap any empty cell
                 </span>
                 <button
                   onClick={onCancelWildcard}
-                  className="ml-2 text-[10px] text-yellow-400/70 underline uppercase"
+                  className="ml-2 text-[10px] text-yellow-500/80 underline uppercase font-bold"
                 >
                   Cancel
                 </button>
@@ -119,11 +121,12 @@ export function PlayerCard({
                 <button
                   onClick={onWildcard}
                   disabled={wildcardsLeft <= 0 || wildcardMode}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-xs uppercase tracking-wider transition-all active:scale-95
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-body font-bold text-xs uppercase tracking-wider transition-all active:scale-95
                     ${wildcardsLeft > 0 && !wildcardMode
-                      ? "bg-primary/15 border border-primary/40 text-primary hover:bg-primary/25 hover:border-primary/60"
-                      : "bg-muted/30 border border-muted/30 text-muted-foreground cursor-not-allowed"
+                      ? "bg-candy-green text-white border-2 border-green-600"
+                      : "bg-gray-100 border-2 border-gray-200 text-gray-400 cursor-not-allowed"
                     }`}
+              style={wildcardsLeft > 0 && !wildcardMode ? { boxShadow: "0 2px 0 hsl(134 55% 30%)" } : {}}
                 >
                   <Sparkles className="w-3 h-3" />
                   Wild ({wildcardsLeft})
@@ -144,8 +147,8 @@ export function PlayerCard({
                 </button>
               </div>
 
-              <div className="scoreboard-font text-xs text-muted-foreground uppercase">
-                <span className="text-foreground font-bold">{remaining}</span> remaining
+              <div className="font-body text-xs text-muted-foreground font-semibold">
+                <span className="text-candy-orange font-bold">{remaining}</span> remaining
               </div>
             </div>
           </div>

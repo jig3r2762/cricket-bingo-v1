@@ -263,7 +263,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
       animate={{ opacity: 1, scale: 1 }}
       className="w-full max-w-md mx-auto"
     >
-      <div className="glass-card rounded-2xl p-6 text-center space-y-4">
+      <div className="candy-card rounded-2xl p-6 text-center space-y-4">
         {/* CrazyGames: game number chip */}
         {IN_IFRAME && gameNumber !== undefined && gameNumber > 1 && (
           <div className="flex items-center justify-center gap-2">
@@ -310,7 +310,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="font-display text-4xl font-extrabold text-yellow-400 uppercase tracking-wider"
+              className="font-display text-5xl text-yellow-500"
             >
               BINGO!
             </motion.h2>
@@ -318,15 +318,15 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-green-400 text-sm font-semibold"
+              className="text-candy-green font-body font-bold text-sm"
             >
               You completed a line! +500 bonus
             </motion.p>
           </>
         ) : (
           <>
-            <XCircle className="w-16 h-16 text-destructive/70 mx-auto" />
-            <h2 className="font-display text-3xl font-extrabold text-destructive/80 uppercase tracking-wider">
+            <XCircle className="w-16 h-16 text-candy-red mx-auto" />
+            <h2 className="font-display text-4xl text-candy-red">
               Game Over
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -340,10 +340,10 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-primary/10 border border-primary/30 rounded-xl p-3"
+          className="bg-green-50 border-2 border-green-200 rounded-xl p-3"
         >
-          <div className="text-sm font-display uppercase tracking-wider">
-            <span className="text-primary font-bold">{percentile}%</span> of players today
+          <div className="text-sm font-body font-bold">
+            <span className="text-candy-green font-bold">{percentile}%</span> of players today
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {percentile >= 90 ? '🔥 Top performer!' : percentile >= 70 ? '💪 Great job!' : percentile >= 50 ? '👍 Above average' : '🎯 Keep improving!'}
@@ -352,21 +352,21 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
 
         <div className="flex items-center justify-center gap-6 pt-2">
           <div className="text-center">
-            <div className="scoreboard-font text-3xl text-secondary">{gameState.score}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-display">
+            <div className="font-display text-3xl text-candy-orange">{gameState.score}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
               Final Score
             </div>
           </div>
           <div className="text-center">
-            <div className="scoreboard-font text-3xl text-secondary">{filledCount}/{total}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-display">
+            <div className="font-display text-3xl text-candy-blue">{filledCount}/{total}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
               Cells Filled
             </div>
           </div>
           {gameState.maxStreak > 0 && (
             <div className="text-center">
-              <div className="scoreboard-font text-3xl text-secondary">{gameState.maxStreak}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-display">
+              <div className="font-display text-3xl text-candy-purple">{gameState.maxStreak}</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
                 Best Streak
               </div>
             </div>
@@ -493,7 +493,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/5"
+            className="mt-2 p-3 rounded-xl border-2 border-green-200 bg-green-50"
           >
             {IN_IFRAME ? (
               <p className="text-xs text-muted-foreground">

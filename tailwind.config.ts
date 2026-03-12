@@ -12,9 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Oswald", "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        mono: ["Share Tech Mono", "monospace"],
+        display: ["Lilita One", "cursive"],
+        body: ["Nunito", "sans-serif"],
+        mono: ["Nunito", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,25 +60,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        cricket: {
-          green: "hsl(var(--cricket-green))",
-        },
-        golden: {
-          DEFAULT: "hsl(var(--golden-trophy))",
-        },
-        cyan: {
-          electric: "hsl(var(--electric-cyan))",
-        },
-        midnight: {
-          DEFAULT: "hsl(var(--midnight))",
-          deep: "hsl(var(--midnight-deep))",
-        },
-        glass: {
-          DEFAULT: "hsl(var(--glass))",
-          border: "hsl(var(--glass-border))",
-        },
-        neon: {
-          green: "hsl(var(--neon-green))",
+        candy: {
+          green: "hsl(var(--candy-green))",
+          orange: "hsl(var(--candy-orange))",
+          blue: "hsl(var(--candy-blue))",
+          purple: "hsl(var(--candy-purple))",
+          red: "hsl(var(--candy-red))",
+          yellow: "hsl(var(--candy-yellow))",
+          pink: "hsl(var(--candy-pink))",
         },
       },
       borderRadius: {

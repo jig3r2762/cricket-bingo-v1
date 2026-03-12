@@ -70,7 +70,7 @@ export default function Stats() {
   ];
 
   return (
-    <div className="min-h-screen stadium-bg flex flex-col items-center p-4">
+    <div className="min-h-screen warm-bg flex flex-col items-center p-4">
       <div className="w-full max-w-lg space-y-4">
         {/* Header */}
         <motion.div
@@ -94,7 +94,7 @@ export default function Stats() {
             Loading...
           </div>
         ) : !user ? (
-          <div className="glass-card rounded-2xl p-8 text-center space-y-3">
+          <div className="candy-card rounded-2xl p-8 text-center space-y-3">
             <p className="text-muted-foreground text-sm">Sign in to see your stats</p>
           </div>
         ) : (
@@ -107,10 +107,10 @@ export default function Stats() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="glass-card rounded-xl p-4 text-center"
+                  className="candy-card rounded-xl p-4 text-center"
                 >
                   <stat.icon className={`w-5 h-5 mx-auto mb-1 ${stat.color}`} />
-                  <div className={`scoreboard-font text-2xl ${stat.color}`}>{stat.value}</div>
+                  <div className={`font-display text-2xl ${stat.color}`}>{stat.value}</div>
                   <div className="text-[9px] text-muted-foreground uppercase tracking-widest font-display mt-1">
                     {stat.label}
                   </div>
@@ -124,12 +124,12 @@ export default function Stats() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="glass-card rounded-xl p-4 text-center"
+                className="candy-card rounded-xl p-4 text-center"
               >
                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-display mb-1">
                   Personal Best
                 </div>
-                <div className="scoreboard-font text-4xl text-yellow-400">{bestScore}</div>
+                <div className="font-display text-4xl text-yellow-400">{bestScore}</div>
               </motion.div>
             )}
 
@@ -139,7 +139,7 @@ export default function Stats() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="glass-card rounded-xl p-4"
+                className="candy-card rounded-xl p-4"
               >
                 <h3 className="font-display text-xs uppercase tracking-wider text-secondary mb-3">
                   Score Distribution
@@ -172,7 +172,7 @@ export default function Stats() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="glass-card rounded-xl p-4"
+                className="candy-card rounded-xl p-4"
               >
                 <h3 className="font-display text-xs uppercase tracking-wider text-secondary mb-3">
                   Recent Games
@@ -189,7 +189,7 @@ export default function Stats() {
                         <span className="text-xs text-muted-foreground">{s.date}</span>
                         <span className="text-[10px] text-muted-foreground/60">{s.gridSize}x{s.gridSize}</span>
                       </div>
-                      <span className="scoreboard-font text-sm text-secondary">{s.score}</span>
+                      <span className="font-display text-sm text-secondary">{s.score}</span>
                     </div>
                   ))}
                 </div>

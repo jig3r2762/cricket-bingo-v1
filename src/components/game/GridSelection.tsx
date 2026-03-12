@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Grid3X3, LayoutGrid, Timer, TimerOff, Zap, ChevronLeft, Trophy, Swords } from "lucide-react";
+import { Grid3X3, LayoutGrid, Timer, TimerOff, ChevronLeft } from "lucide-react";
 
 interface GridSelectionProps {
   onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
@@ -24,17 +24,25 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
     <div className="flex flex-col items-center gap-8 w-full max-w-sm mx-auto px-4">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: -30, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="text-center"
       >
-        <h1 className="font-display text-5xl sm:text-6xl font-extrabold text-foreground uppercase tracking-[0.15em] leading-none">
+        <motion.span
+          animate={{ rotate: [-5, 5, -5] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          className="text-6xl block mb-3"
+        >
+          🏏
+        </motion.span>
+        <h1 className="font-display text-5xl sm:text-6xl leading-none" style={{ color: "hsl(25 30% 18%)" }}>
           Cricket
         </h1>
-        <h1 className="font-display text-5xl sm:text-6xl font-extrabold text-primary uppercase tracking-[0.15em] leading-none">
+        <h1 className="font-display text-5xl sm:text-6xl leading-none text-candy-green">
           Bingo
         </h1>
-        <p className="text-muted-foreground font-body text-sm mt-3 tracking-wide">
+        <p className="text-muted-foreground font-body text-sm mt-3 font-semibold">
           Place legends. Complete the grid.
         </p>
       </motion.div>
@@ -47,41 +55,43 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
             <motion.div key="mode" {...slide} transition={{ duration: 0.22 }} className="flex flex-col gap-3 w-full">
               {/* Quick Match */}
               <motion.button
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 }}
                 onClick={() => { setPendingMode("daily"); setStep("grid"); }}
-                className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="mode-card"
               >
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border border-[hsl(var(--cricket-green)/0.4)] bg-[hsl(var(--cricket-green)/0.1)]">
-                  <Zap className="w-7 h-7" style={{ color: "hsl(var(--cricket-green))" }} />
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-candy-green"
+                  style={{ boxShadow: "0 3px 0 hsl(134 55% 30%)" }}>
+                  <span className="text-2xl">⚡</span>
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="font-display text-lg font-bold text-foreground tracking-wider">QUICK MATCH</h3>
-                  <p className="text-xs text-muted-foreground font-body mt-0.5">3×3 or 4×4 · Daily puzzle · Play at your pace</p>
+                  <h3 className="font-display text-xl text-foreground">QUICK MATCH</h3>
+                  <p className="text-xs text-muted-foreground font-body mt-0.5 font-semibold">3×3 or 4×4 · Daily puzzle · Play at your pace</p>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
               </motion.button>
 
               {/* IPL Mode */}
               <motion.button
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
                 onClick={() => { setPendingMode("ipl"); setStep("grid"); }}
-                className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="mode-card"
               >
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border border-amber-500/40 bg-amber-500/10">
-                  <Trophy className="w-7 h-7 text-amber-400" />
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-candy-yellow"
+                  style={{ boxShadow: "0 3px 0 hsl(45 90% 38%)" }}>
+                  <span className="text-2xl">🏆</span>
                 </div>
                 <div className="flex-1 text-left">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-display text-lg font-bold text-foreground tracking-wider">IPL MODE</h3>
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-amber-500/50 text-amber-400 bg-amber-500/10">
+                    <h3 className="font-display text-xl text-foreground">IPL MODE</h3>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-body font-bold uppercase tracking-wider bg-candy-yellow text-white">
                       NEW
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground font-body mt-0.5">Pure IPL · All 10 teams · IPL legends only</p>
+                  <p className="text-xs text-muted-foreground font-body mt-0.5 font-semibold">Pure IPL · All 10 teams · IPL legends only</p>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
               </motion.button>
@@ -91,21 +101,22 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.22 }}
                   onClick={onBattle}
-                  className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98]"
+                  className="mode-card"
                 >
-                  <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border border-purple-500/40 bg-purple-500/10">
-                    <Swords className="w-7 h-7 text-purple-400" />
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-candy-purple"
+                    style={{ boxShadow: "0 3px 0 hsl(262 78% 42%)" }}>
+                    <span className="text-2xl">⚔️</span>
                   </div>
                   <div className="flex-1 text-left">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-display text-lg font-bold text-foreground tracking-wider">VS PLAYER</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-purple-500/50 text-purple-400 bg-purple-500/10">
+                      <h3 className="font-display text-xl text-foreground">VS PLAYER</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-body font-bold uppercase tracking-wider bg-candy-purple text-white">
                         LIVE
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground font-body mt-0.5">Real-time · Same grid · First to fill wins</p>
+                    <p className="text-xs text-muted-foreground font-body mt-0.5 font-semibold">Real-time · Same grid · First to fill wins</p>
                   </div>
                   <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
                 </motion.button>
@@ -113,18 +124,19 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
             </motion.div>
           )}
 
-          {/* Step 2 — Grid size + Timer on same screen */}
+          {/* Step 2 — Grid size + Timer */}
           {step === "grid" && (
             <motion.div key="grid" {...slide} transition={{ duration: 0.22 }} className="flex flex-col gap-4 w-full">
               {/* Back + label */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setStep("mode")}
-                  className="p-1.5 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+                  className="p-2 rounded-xl bg-white border-2 border-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                  style={{ boxShadow: "0 2px 0 #d1d5db" }}
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-display uppercase tracking-wider text-muted-foreground">
+                <span className="text-sm font-display text-muted-foreground">
                   Choose your grid
                 </span>
               </div>
@@ -136,18 +148,19 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 }}
                   onClick={() => onSelect(3, timed, pendingMode)}
-                  className="glass-card p-5 flex flex-col items-center gap-3 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97]"
+                  className="candy-card p-5 flex flex-col items-center gap-3 cursor-pointer hover:scale-[1.02] transition-transform"
                 >
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${pendingMode === "ipl" ? "border-amber-500/40 bg-amber-500/10" : "border-[hsl(var(--cricket-green)/0.4)] bg-[hsl(var(--cricket-green)/0.1)]"}`}>
-                    <Grid3X3 className="w-6 h-6" style={{ color: pendingMode === "ipl" ? "#f59e0b" : "hsl(var(--cricket-green))" }} />
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${pendingMode === "ipl" ? "bg-candy-yellow" : "bg-candy-green"}`}
+                    style={{ boxShadow: pendingMode === "ipl" ? "0 3px 0 hsl(45 90% 38%)" : "0 3px 0 hsl(134 55% 30%)" }}>
+                    <Grid3X3 className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-center">
-                    <div className="font-display text-xl font-bold text-foreground tracking-wider">3 × 3</div>
-                    <div className="text-[10px] text-muted-foreground mt-1">9 cells · Fast</div>
+                    <div className="font-display text-2xl text-foreground">3 × 3</div>
+                    <div className="text-[11px] text-muted-foreground font-body font-semibold mt-1">9 cells · Fast</div>
                   </div>
                   {timed && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-orange-400/40 text-orange-400 bg-orange-400/10">
-                      Timed
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-body font-bold bg-candy-orange text-white">
+                      ⏱ Timed
                     </span>
                   )}
                 </motion.button>
@@ -157,49 +170,51 @@ export function GridSelection({ onSelect, onBattle }: GridSelectionProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   onClick={() => onSelect(4, timed, pendingMode)}
-                  className="glass-card p-5 flex flex-col items-center gap-3 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97]"
+                  className="candy-card p-5 flex flex-col items-center gap-3 cursor-pointer hover:scale-[1.02] transition-transform"
                 >
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${pendingMode === "ipl" ? "border-amber-500/40 bg-amber-500/10" : "border-[hsl(var(--golden-trophy)/0.4)] bg-[hsl(var(--golden-trophy)/0.1)]"}`}>
-                    <LayoutGrid className="w-6 h-6" style={{ color: pendingMode === "ipl" ? "#f59e0b" : "hsl(var(--golden-trophy))" }} />
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${pendingMode === "ipl" ? "bg-candy-yellow" : "bg-candy-blue"}`}
+                    style={{ boxShadow: pendingMode === "ipl" ? "0 3px 0 hsl(45 90% 38%)" : "0 3px 0 hsl(205 85% 38%)" }}>
+                    <LayoutGrid className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-center">
-                    <div className="font-display text-xl font-bold text-foreground tracking-wider">4 × 4</div>
-                    <div className="text-[10px] text-muted-foreground mt-1">16 cells · Full</div>
+                    <div className="font-display text-2xl text-foreground">4 × 4</div>
+                    <div className="text-[11px] text-muted-foreground font-body font-semibold mt-1">16 cells · Full</div>
                   </div>
                   {timed && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-orange-400/40 text-orange-400 bg-orange-400/10">
-                      Timed
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-body font-bold bg-candy-orange text-white">
+                      ⏱ Timed
                     </span>
                   )}
                 </motion.button>
               </div>
 
-              {/* Timer toggle — small, below the cards */}
+              {/* Timer toggle */}
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
                 onClick={() => setTimed((v) => !v)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border-2 transition-all ${
                   timed
-                    ? "border-orange-400/50 bg-orange-400/10"
-                    : "border-border/30 bg-card/30 hover:border-border/50"
+                    ? "border-candy-orange bg-orange-50"
+                    : "border-gray-200 bg-white"
                 }`}
+                style={{ boxShadow: timed ? "0 3px 0 hsl(28 90% 38%)" : "0 3px 0 #d1d5db" }}
               >
                 <div className="flex items-center gap-3">
                   {timed ? (
-                    <Timer className="w-4 h-4 text-orange-400" />
+                    <Timer className="w-5 h-5 text-candy-orange" />
                   ) : (
-                    <TimerOff className="w-4 h-4 text-muted-foreground" />
+                    <TimerOff className="w-5 h-5 text-muted-foreground" />
                   )}
                   <div className="text-left">
-                    <div className="text-xs font-display uppercase tracking-wider text-secondary">
+                    <div className={`text-sm font-body font-bold ${timed ? "text-candy-orange" : "text-muted-foreground"}`}>
                       {timed ? "Timed Mode — 10s per turn" : "Relaxed Mode — no time limit"}
                     </div>
                   </div>
                 </div>
-                <div className={`w-9 h-5 rounded-full transition-colors relative shrink-0 ${timed ? "bg-orange-400" : "bg-muted/40"}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${timed ? "translate-x-4" : "translate-x-0.5"}`} />
+                <div className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${timed ? "bg-candy-orange" : "bg-gray-300"}`}>
+                  <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${timed ? "translate-x-5" : "translate-x-1"}`} />
                 </div>
               </motion.button>
             </motion.div>

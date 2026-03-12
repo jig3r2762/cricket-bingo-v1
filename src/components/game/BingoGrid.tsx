@@ -26,8 +26,8 @@ export function BingoGrid({
     <div
       className={`grid gap-2 w-full mx-auto ${
         gridSize === 3
-          ? "grid-cols-3 max-w-xs"
-          : "grid-cols-4 max-w-sm sm:max-w-md"
+          ? "grid-cols-3 max-w-xs sm:max-w-none"
+          : "grid-cols-4 max-w-sm sm:max-w-none"
       }`}
     >
       {categories.map((cat, i) => (

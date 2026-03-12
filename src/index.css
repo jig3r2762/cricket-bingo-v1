@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,54 +6,103 @@
 
 @layer base {
   :root {
-    --background: 222 71% 4%;
-    --foreground: 210 40% 98%;
+    /* Warm background palette */
+    --background: 33 100% 97%;
+    --foreground: 25 30% 18%;
 
-    --card: 222 50% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 30% 18%;
 
-    --popover: 222 71% 4%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 30% 18%;
 
-    --primary: 142 71% 45%;
-    --primary-foreground: 222 71% 4%;
+    /* Primary: lush green */
+    --primary: 134 61% 41%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 92% 50%;
-    --secondary-foreground: 222 71% 4%;
+    /* Secondary: warm orange */
+    --secondary: 28 95% 55%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 222 40% 14%;
-    --muted-foreground: 215 20% 55%;
+    /* Muted: soft peach */
+    --muted: 33 60% 92%;
+    --muted-foreground: 25 20% 50%;
 
-    --accent: 187 92% 55%;
-    --accent-foreground: 222 71% 4%;
+    /* Accent: sky blue */
+    --accent: 205 90% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 142 71% 45%;
+    --border: 33 30% 85%;
+    --input: 33 30% 85%;
+    --ring: 134 61% 41%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --cricket-green: 142 71% 45%;
-    --golden-trophy: 38 92% 50%;
-    --electric-cyan: 187 92% 55%;
-    --midnight: 222 71% 4%;
-    --midnight-deep: 230 80% 2%;
-    --glass: 222 40% 12%;
-    --glass-border: 222 30% 22%;
-    --neon-green: 142 90% 55%;
+    /* Brand colors */
+    --candy-green: 134 61% 41%;
+    --candy-orange: 28 95% 55%;
+    --candy-blue: 205 90% 55%;
+    --candy-purple: 262 83% 58%;
+    --candy-red: 0 84% 60%;
+    --candy-yellow: 45 98% 55%;
+    --candy-pink: 330 85% 60%;
 
-    --sidebar-background: 222 71% 4%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 222 71% 4%;
-    --sidebar-accent: 222 40% 14%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 142 71% 45%;
+    /* Shadow colors for 3D chunky cards */
+    --shadow-green: 134 55% 30%;
+    --shadow-orange: 28 90% 38%;
+    --shadow-blue: 205 85% 38%;
+    --shadow-purple: 262 78% 42%;
+
+    /* Background gradient stops */
+    --bg-warm: 33 100% 97%;
+    --bg-peach: 24 100% 95%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 25 30% 18%;
+    --sidebar-primary: 134 61% 41%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 33 60% 92%;
+    --sidebar-accent-foreground: 25 30% 18%;
+    --sidebar-border: 33 30% 85%;
+    --sidebar-ring: 134 61% 41%;
   }
+}
+
+/* ── Dark mode overrides ── */
+.dark {
+  --background: 222 71% 4%;
+  --foreground: 210 40% 98%;
+  --card: 222 50% 10%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 71% 4%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 222 71% 4%;
+  --secondary: 38 92% 50%;
+  --secondary-foreground: 222 71% 4%;
+  --muted: 222 40% 14%;
+  --muted-foreground: 215 20% 55%;
+  --accent: 187 92% 55%;
+  --accent-foreground: 222 71% 4%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 222 30% 18%;
+  --input: 222 30% 18%;
+  --ring: 142 71% 45%;
+  --candy-green: 142 71% 45%;
+  --candy-orange: 38 92% 50%;
+  --candy-blue: 187 92% 55%;
+  --candy-purple: 262 75% 65%;
+  --candy-red: 0 84% 60%;
+  --candy-yellow: 45 92% 55%;
+  --candy-pink: 330 80% 65%;
+  --shadow-green: 142 60% 28%;
+  --shadow-orange: 38 85% 32%;
+  --shadow-blue: 187 80% 32%;
+  --shadow-purple: 262 70% 38%;
 }
 
 @layer base {
@@ -62,105 +111,250 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+  }
+  body:not(.dark) {
+    background: linear-gradient(160deg, hsl(33 100% 97%) 0%, hsl(24 100% 94%) 50%, hsl(33 80% 95%) 100%);
+  }
+  body.dark {
+    background: hsl(230 80% 2%);
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Lilita One', cursive;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply backdrop-blur-xl rounded-xl;
-    background: hsl(var(--glass) / 0.6);
-    border: 1px solid hsl(var(--glass-border) / 0.5);
+  /* ── Chunky 3D Card ── */
+  .candy-card {
+    @apply rounded-2xl bg-white;
+    border: 2px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
   }
-  .glass-cell {
-    background: hsl(var(--glass) / 0.4);
-    border: 2px solid hsl(var(--glass-border) / 0.35);
-    backdrop-filter: blur(12px);
+  .candy-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
   }
-  .glass-cell-filled {
-    background: hsl(var(--glass) / 0.7);
-    border: 2px solid hsl(var(--neon-green) / 0.45);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 8px hsl(var(--neon-green) / 0.15), inset 0 0 12px hsl(var(--neon-green) / 0.06);
+
+  /* ── Chunky Button ── */
+  .candy-btn {
+    @apply rounded-2xl font-bold text-white px-6 py-3;
+    font-family: 'Lilita One', cursive;
+    letter-spacing: 0.03em;
+    border: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    cursor: pointer;
   }
-  .glow-green {
-    box-shadow: 0 0 20px hsl(var(--cricket-green) / 0.4), 0 0 60px hsl(var(--cricket-green) / 0.1);
+  .candy-btn:active {
+    transform: translateY(3px);
+    box-shadow: none !important;
   }
-  .glow-gold {
-    box-shadow: 0 0 20px hsl(var(--golden-trophy) / 0.4), 0 0 60px hsl(var(--golden-trophy) / 0.1);
+  .candy-btn-green {
+    background: hsl(var(--candy-green));
+    box-shadow: 0 5px 0 hsl(var(--shadow-green));
   }
-  .stadium-bg {
-    background:
-      radial-gradient(ellipse 100% 60% at 50% -10%, hsl(var(--electric-cyan) / 0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 50% at 90% 80%, hsl(var(--cricket-green) / 0.04) 0%, transparent 50%),
-      hsl(var(--midnight-deep));
+  .candy-btn-orange {
+    background: hsl(var(--candy-orange));
+    box-shadow: 0 5px 0 hsl(var(--shadow-orange));
   }
-  .scoreboard-font {
-    font-family: 'Share Tech Mono', 'Oswald', monospace;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.08em;
+  .candy-btn-blue {
+    background: hsl(var(--candy-blue));
+    box-shadow: 0 5px 0 hsl(var(--shadow-blue));
   }
-  .player-bar {
-    background: linear-gradient(135deg, hsl(var(--glass) / 0.8) 0%, hsl(var(--midnight) / 0.9) 100%);
-    border: 1px solid hsl(var(--glass-border) / 0.6);
+  .candy-btn-purple {
+    background: hsl(var(--candy-purple));
+    box-shadow: 0 5px 0 hsl(var(--shadow-purple));
+  }
+
+  /* ── Mode Card (GridSelection) ── */
+  .mode-card {
+    @apply rounded-2xl p-5 flex items-center gap-4 cursor-pointer w-full;
+    border: 2.5px solid rgba(0,0,0,0.07);
+    box-shadow: 0 5px 0 rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.06);
+    background: white;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .mode-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 rgba(0,0,0,0.1), 0 12px 24px rgba(0,0,0,0.08);
+  }
+  .mode-card:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  /* ── Bingo Cell ── */
+  .bingo-cell {
+    @apply rounded-xl flex flex-col items-center justify-center cursor-pointer select-none;
+    background: white;
+    border: 2.5px solid hsl(33 30% 85%);
+    box-shadow: 0 4px 0 hsl(33 25% 75%), 0 6px 12px rgba(0,0,0,0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .bingo-cell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 hsl(33 25% 72%), 0 10px 16px rgba(0,0,0,0.08);
+  }
+  .bingo-cell:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 hsl(33 25% 75%), 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .bingo-cell-filled {
+    background: hsl(134 61% 41%);
+    border-color: hsl(134 55% 35%);
+    box-shadow: 0 4px 0 hsl(134 55% 28%), 0 6px 16px rgba(50,150,50,0.25);
+  }
+  .bingo-cell-filled:hover {
+    transform: none;
+    cursor: default;
+  }
+
+  /* ── Pill Badge ── */
+  .pill-badge {
+    @apply rounded-full px-2.5 py-0.5 text-xs font-bold;
+    font-family: 'Lilita One', cursive;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-track {
+    @apply rounded-full w-full;
+    background: hsl(134 40% 88%);
+    height: 14px;
+    border: 2px solid hsl(134 35% 78%);
+  }
+  .progress-fill {
+    @apply rounded-full h-full;
+    background: linear-gradient(90deg, hsl(134 61% 41%), hsl(134 65% 52%));
+    box-shadow: 0 2px 0 hsl(134 55% 30%);
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ── Warm app background ── */
+  .warm-bg {
+    background: linear-gradient(160deg, hsl(33 100% 97%) 0%, hsl(24 100% 94%) 50%, hsl(33 80% 95%) 100%);
+    min-height: 100vh;
+  }
+  .dark .warm-bg {
+    background: hsl(230 80% 2%);
+  }
+
+  /* ── Dark mode card / cell overrides ── */
+  .dark .candy-card {
+    background: hsl(222 50% 10%);
+    border-color: hsl(222 30% 20%);
+    box-shadow: 0 4px 0 hsl(222 40% 6%), 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .dark .mode-card {
+    background: hsl(222 50% 10%);
+    border-color: hsl(222 30% 20%);
+    box-shadow: 0 5px 0 hsl(222 40% 6%), 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .dark .mode-card:hover {
+    box-shadow: 0 7px 0 hsl(222 40% 5%), 0 12px 24px rgba(0,0,0,0.35);
+  }
+  .dark .bingo-cell {
+    background: hsl(222 50% 10%);
+    border-color: hsl(222 30% 22%);
+    box-shadow: 0 4px 0 hsl(222 40% 6%), 0 6px 12px rgba(0,0,0,0.25);
+  }
+  .dark .bingo-cell:hover {
+    box-shadow: 0 6px 0 hsl(222 40% 5%), 0 10px 16px rgba(0,0,0,0.3);
+  }
+  .dark .progress-track {
+    background: hsl(222 40% 14%);
+    border-color: hsl(222 30% 20%);
+  }
+
+  /* ── Score display ── */
+  .score-display {
+    font-family: 'Lilita One', cursive;
+    color: hsl(var(--candy-orange));
+  }
+
+  /* ── Dark mode: white cards → dark cards ── */
+  .dark .candy-btn-green { background: hsl(134 61% 36%); }
+  .dark .candy-btn-orange { background: hsl(28 90% 48%); }
+
+  /* inline bg-white overrides for dark mode */
+  .dark [class*="bg-white"] {
+    background-color: hsl(222 50% 10%) !important;
+    border-color: hsl(222 30% 20%) !important;
+    color: hsl(210 40% 92%);
+  }
+  .dark [class*="border-gray-200"] {
+    border-color: hsl(222 30% 22%) !important;
+  }
+  .dark [class*="border-gray-300"] {
+    border-color: hsl(222 30% 25%) !important;
+  }
+  .dark [class*="text-gray-500"],
+  .dark [class*="text-gray-600"] {
+    color: hsl(215 20% 60%) !important;
+  }
+  .dark [class*="text-gray-700"] {
+    color: hsl(210 30% 75%) !important;
   }
 }
 
 @layer utilities {
+  @keyframes bounceIn {
+    0%   { transform: scale(0.3); opacity: 0; }
+    50%  { transform: scale(1.1); }
+    70%  { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes popIn {
+    0%   { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+    60%  { transform: scale(1.15) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes slideUp {
+    0%   { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    20%       { transform: rotate(-12deg); }
+    40%       { transform: rotate(12deg); }
+    60%       { transform: rotate(-8deg); }
+    80%       { transform: rotate(8deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-12px); }
+  }
+  @keyframes pulseBig {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+  }
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
+    0%   { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-  @keyframes sparkle {
-    0% { transform: scale(0) rotate(0deg); opacity: 1; }
-    50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
-    100% { transform: scale(0) rotate(360deg); opacity: 0; }
-  }
   @keyframes cell-correct {
-    0% { box-shadow: 0 0 0 0 hsl(var(--neon-green) / 0.8); }
-    50% { box-shadow: 0 0 30px 10px hsl(var(--neon-green) / 0.4); }
-    100% { box-shadow: 0 0 10px 3px hsl(var(--neon-green) / 0.2); }
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.18) rotate(3deg); }
+    60%  { transform: scale(0.94) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); }
   }
   @keyframes cell-wrong {
     0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
+    20%  { transform: translateX(-8px); }
+    40%  { transform: translateX(8px); }
+    60%  { transform: translateX(-5px); }
+    80%  { transform: translateX(5px); }
   }
-  @keyframes pop-in {
-    0% { transform: scale(0.5); opacity: 0; }
-    70% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  @keyframes slide-in-right {
-    0% { transform: translateX(60px); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-  }
-  .animate-shimmer {
-    animation: shimmer 2s linear infinite;
-    background-size: 200% 100%;
-  }
-  .animate-glow-pulse {
-    animation: glow-pulse 2s ease-in-out infinite;
-  }
-  .animate-sparkle {
-    animation: sparkle 0.6s ease-out forwards;
-  }
-  .animate-cell-correct {
-    animation: cell-correct 0.6s ease-out;
-  }
-  .animate-cell-wrong {
-    animation: cell-wrong 0.4s ease-out;
-  }
-  .animate-pop-in {
-    animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
+
+  .animate-bounce-in  { animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  .animate-pop-in     { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  .animate-slide-up   { animation: slideUp 0.4s ease-out forwards; }
+  .animate-wiggle     { animation: wiggle 0.6s ease-in-out; }
+  .animate-float      { animation: float 3s ease-in-out infinite; }
+  .animate-pulse-big  { animation: pulseBig 1.5s ease-in-out infinite; }
+  .animate-shimmer    { animation: shimmer 2s linear infinite; background-size: 200% 100%; }
+  .animate-cell-correct { animation: cell-correct 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .animate-cell-wrong   { animation: cell-wrong 0.4s ease-out; }
 }
