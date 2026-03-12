@@ -9,6 +9,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  increment,
   serverTimestamp,
 } from "firebase/firestore";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
@@ -22,13 +23,14 @@ interface FirestoreUser {
   displayName: string;
   photoURL: string;
   role: "user" | "admin";
+  coinBalance?: number;
   createdAt: unknown;
 }
 
 export default function Admin() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"grid" | "users">("grid");
+  const [tab, setTab] = useState<"grid" | "users" | "coins">("grid");
 
   return (
     <div className="min-h-screen stadium-bg">
@@ -81,9 +83,21 @@ export default function Admin() {
           >
             User Manager
           </button>
+          <button
+            onClick={() => setTab("coins")}
+            className={`flex-1 px-4 py-2 rounded-md text-xs font-display uppercase tracking-wider transition-colors ${
+              tab === "coins"
+                ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                : "text-muted-foreground hover:text-secondary"
+            }`}
+          >
+            🪙 Coins
+          </button>
         </div>
 
-        {tab === "grid" ? <GridManager /> : <UserManager />}
+        {tab === "grid" && <GridManager />}
+        {tab === "users" && <UserManager />}
+        {tab === "coins" && <CoinsManager />}
       </div>
     </div>
   );
@@ -460,6 +474,155 @@ function UserManager() {
                       {u.role === "admin" ? "Demote" : "Promote"}
                     </button>
                   )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// Coins Manager — grant coins to any user without Razorpay
+// =============================================================
+
+function CoinsManager() {
+  const [users, setUsers] = useState<FirestoreUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [grantAmounts, setGrantAmounts] = useState<Record<string, string>>({});
+  const [grantingUid, setGrantingUid] = useState<string | null>(null);
+  const [successUid, setSuccessUid] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        const list: FirestoreUser[] = [];
+        snap.forEach((d) => {
+          const data = d.data();
+          if (!data.email) return;
+          list.push({
+            uid: d.id,
+            email: data.email,
+            displayName: data.displayName ?? "",
+            photoURL: data.photoURL ?? "",
+            role: data.role ?? "user",
+            coinBalance: data.coinBalance ?? 0,
+            createdAt: data.createdAt ?? null,
+          });
+        });
+        list.sort((a, b) => a.email.localeCompare(b.email));
+        setUsers(list);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUsers();
+  }, []);
+
+  const handleGrant = async (uid: string) => {
+    const raw = grantAmounts[uid] ?? "";
+    const amount = parseInt(raw, 10);
+    if (!amount || amount <= 0) return;
+
+    setGrantingUid(uid);
+    try {
+      await updateDoc(doc(db, "users", uid), {
+        coinBalance: increment(amount),
+      });
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.uid === uid ? { ...u, coinBalance: (u.coinBalance ?? 0) + amount } : u
+        )
+      );
+      setGrantAmounts((prev) => ({ ...prev, [uid]: "" }));
+      setSuccessUid(uid);
+      setTimeout(() => setSuccessUid(null), 2000);
+    } catch (err) {
+      console.error("Failed to grant coins:", err);
+    } finally {
+      setGrantingUid(null);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-12 text-muted-foreground text-sm">Loading users...</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-sm uppercase tracking-wider text-yellow-400">
+          🪙 Grant Coins — No Payment Required
+        </h2>
+        <span className="text-[10px] text-muted-foreground">Admin only · Updates Firestore directly</span>
+      </div>
+
+      <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-3 text-xs text-yellow-400/80">
+        Enter an amount and click Grant to add coins to any user's balance instantly — no Razorpay involved.
+      </div>
+
+      <div className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-border/20">
+              <th className="text-left px-4 py-3 text-[10px] font-display uppercase tracking-wider text-muted-foreground">User</th>
+              <th className="text-left px-4 py-3 text-[10px] font-display uppercase tracking-wider text-muted-foreground hidden sm:table-cell">Email</th>
+              <th className="text-center px-4 py-3 text-[10px] font-display uppercase tracking-wider text-yellow-400">Balance</th>
+              <th className="text-center px-4 py-3 text-[10px] font-display uppercase tracking-wider text-muted-foreground">Grant</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.uid} className="border-b border-border/10 last:border-0">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    {u.photoURL ? (
+                      <img src={u.photoURL} alt="" referrerPolicy="no-referrer" className="w-6 h-6 rounded-full" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] text-primary">
+                        {u.displayName?.[0] || "?"}
+                      </div>
+                    )}
+                    <span className="text-sm text-secondary truncate max-w-[100px]">
+                      {u.displayName || u.email.split("@")[0]}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-xs text-muted-foreground hidden sm:table-cell">{u.email}</td>
+                <td className="px-4 py-3 text-center">
+                  <span className="font-display text-sm text-yellow-400">
+                    🪙 {(u.coinBalance ?? 0).toLocaleString()}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2 justify-center">
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="Amount"
+                      value={grantAmounts[u.uid] ?? ""}
+                      onChange={(e) =>
+                        setGrantAmounts((prev) => ({ ...prev, [u.uid]: e.target.value }))
+                      }
+                      className="w-20 px-2 py-1 rounded-lg text-xs bg-card border border-border/40 text-secondary placeholder:text-muted-foreground/40 focus:outline-none focus:border-yellow-500/50"
+                    />
+                    <button
+                      onClick={() => handleGrant(u.uid)}
+                      disabled={!grantAmounts[u.uid] || grantingUid === u.uid}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-display uppercase tracking-wider transition-colors
+                        ${successUid === u.uid
+                          ? "bg-green-500/20 border border-green-500/40 text-green-400"
+                          : "bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
+                        }`}
+                    >
+                      {grantingUid === u.uid ? "..." : successUid === u.uid ? "✓ Done" : "Grant"}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

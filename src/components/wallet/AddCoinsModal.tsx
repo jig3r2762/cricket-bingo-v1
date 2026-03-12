@@ -8,6 +8,8 @@ import {
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
+import { doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface CoinPack {
   id: string;
@@ -19,10 +21,10 @@ interface CoinPack {
 }
 
 const COIN_PACKS: CoinPack[] = [
-  { id: "starter", label: "Starter", price: 50, coins: 500, bonus: "" },
+  { id: "starter", label: "Starter", price: 50,  coins: 500,  bonus: "" },
   { id: "popular", label: "Popular", price: 100, coins: 1100, bonus: "+10%", highlight: true },
-  { id: "value", label: "Value", price: 250, coins: 3000, bonus: "+20%" },
-  { id: "mega", label: "Mega", price: 500, coins: 7000, bonus: "+40%" },
+  { id: "value",   label: "Value",   price: 250, coins: 3000, bonus: "+20%" },
+  { id: "mega",    label: "Mega",    price: 500, coins: 7000, bonus: "+40%" },
 ];
 
 interface Props {
@@ -31,17 +33,40 @@ interface Props {
 }
 
 export function AddCoinsModal({ open, onClose }: Props) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [loadingPackId, setLoadingPackId] = useState<string | null>(null);
 
+  // ── Admin: grant coins directly without payment ──
+  const handleAdminGrant = async (pack: CoinPack) => {
+    if (!user) return;
+    setLoadingPackId(pack.id);
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        coinBalance: increment(pack.coins),
+      });
+      toast.success(`🔑 Admin granted ${pack.coins.toLocaleString()} coins!`);
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message ?? "Failed to grant coins");
+    } finally {
+      setLoadingPackId(null);
+    }
+  };
+
+  // ── Regular user: go through Razorpay ──
   const handleSelectPack = async (pack: CoinPack) => {
     if (!user) {
       toast.error("Please sign in to buy coins");
       return;
     }
 
-    setLoadingPackId(pack.id);
+    // Admin shortcut
+    if (isAdmin) {
+      await handleAdminGrant(pack);
+      return;
+    }
 
+    setLoadingPackId(pack.id);
     try {
       await loadRazorpayScript();
 
@@ -112,13 +137,20 @@ export function AddCoinsModal({ open, onClose }: Props) {
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="bg-card border border-border/40 text-secondary max-w-sm w-full">
         <DialogHeader>
-          <DialogTitle className="font-display text-base uppercase tracking-wider text-secondary">
+          <DialogTitle className="font-display text-base uppercase tracking-wider text-secondary flex items-center gap-2">
             🪙 Add Coins
+            {isAdmin && (
+              <span className="px-2 py-0.5 rounded text-[9px] font-display uppercase tracking-wider bg-green-500/20 border border-green-500/40 text-green-400">
+                Admin — No Payment
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
         <p className="text-xs text-muted-foreground mb-4">
-          Coins are used in paid battle rooms. All purchases are final.
+          {isAdmin
+            ? "As admin, coins are granted instantly without payment."
+            : "Coins are used in paid battle rooms. All purchases are final."}
         </p>
 
         <div className="grid grid-cols-2 gap-3">
@@ -141,24 +173,28 @@ export function AddCoinsModal({ open, onClose }: Props) {
                   Popular
                 </span>
               )}
-              <span className="text-2xl font-bold text-secondary scoreboard-font">
+              <span className="text-2xl font-bold text-secondary font-display">
                 {pack.coins >= 1000 ? `${pack.coins / 1000}K` : pack.coins}
               </span>
               <span className="text-[10px] text-muted-foreground font-display uppercase tracking-wider">
                 coins{pack.bonus && <span className="ml-1 text-emerald-400">{pack.bonus}</span>}
               </span>
-              <span className="mt-1 text-sm font-semibold text-primary">
-                ₹{pack.price}
+              <span className={`mt-1 text-sm font-semibold ${isAdmin ? "text-green-400" : "text-primary"}`}>
+                {isAdmin ? "Free 🔑" : `₹${pack.price}`}
               </span>
               {loadingPackId === pack.id && (
-                <span className="text-[9px] text-muted-foreground animate-pulse">Opening...</span>
+                <span className="text-[9px] text-muted-foreground animate-pulse">
+                  {isAdmin ? "Granting..." : "Opening..."}
+                </span>
               )}
             </button>
           ))}
         </div>
 
         <p className="text-[10px] text-muted-foreground/60 text-center mt-2">
-          Secure payments via Razorpay · INR only
+          {isAdmin
+            ? "🔑 Admin mode — coins added directly to your account"
+            : "Secure payments via Razorpay · INR only"}
         </p>
       </DialogContent>
     </Dialog>
