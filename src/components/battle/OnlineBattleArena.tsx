@@ -21,6 +21,8 @@ interface OnlineBattleArenaProps {
   myName: string;
   opponentName: string;
   onPlayAgain: () => void;
+  entryFee?: number;
+  onGameOver?: (score: number, filledCount: number, status: string) => Promise<{ coinsEarned: number; outcome: string } | null>;
 }
 
 type Outcome = "win" | "lose" | "draw";
@@ -41,10 +43,12 @@ function computeOutcome(
 }
 
 export function OnlineBattleArena({
-  roomId, myRole, grid, deck, gridSize, myName, opponentName, onPlayAgain,
+  roomId, myRole, grid, deck, gridSize, myName, opponentName, onPlayAgain, entryFee, onGameOver,
 }: OnlineBattleArenaProps) {
   const navigate = useNavigate();
   const total = gridSize * gridSize;
+  const [coinsEarned, setCoinsEarned] = useState<number | null>(null);
+  const gameOverCalledRef = useRef(false);
 
   // Local game (my side)
   const {
@@ -103,6 +107,17 @@ export function OnlineBattleArena({
       setTimeout(() => triggerConfetti(), 300);
     }
   }, [gameState.status]);
+
+  // Call onGameOver when my game ends (paid rooms only)
+  useEffect(() => {
+    if (!onGameOver) return;
+    if (gameState.status === "playing") return;
+    if (gameOverCalledRef.current) return;
+    gameOverCalledRef.current = true;
+    onGameOver(gameState.score, filledCount, gameState.status).then((result) => {
+      if (result !== null) setCoinsEarned(result.coinsEarned);
+    }).catch(() => {});
+  }, [gameState.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Determine if game is over and what the outcome is
   const myDone = gameState.status !== "playing";
@@ -310,6 +325,8 @@ export function OnlineBattleArena({
           total={total}
           onPlayAgain={onPlayAgain}
           onHome={() => navigate("/play")}
+          entryFee={entryFee}
+          coinsEarned={coinsEarned}
         />
       )}
     </div>
@@ -318,7 +335,7 @@ export function OnlineBattleArena({
 
 // ── Result overlay ────────────────────────────────────────────────────────────
 function ResultOverlay({
-  outcome, myName, opponentName, myScore, myFilled, oppScore, oppFilled, total, onPlayAgain, onHome,
+  outcome, myName, opponentName, myScore, myFilled, oppScore, oppFilled, total, onPlayAgain, onHome, entryFee, coinsEarned,
 }: {
   outcome: Outcome;
   myName: string;
@@ -330,6 +347,8 @@ function ResultOverlay({
   total: number;
   onPlayAgain: () => void;
   onHome: () => void;
+  entryFee?: number;
+  coinsEarned?: number | null;
 }) {
   const headline =
     outcome === "win" ? "You Win! 🏆" :
@@ -375,6 +394,33 @@ function ResultOverlay({
         >
           {headline}
         </motion.h2>
+
+        {/* Coin result for paid rooms */}
+        {entryFee ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.28 }}
+            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-sm font-display font-bold
+              ${coinsEarned === null
+                ? "border-border/30 text-muted-foreground"
+                : coinsEarned > 0
+                  ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                  : coinsEarned === 0
+                    ? "border-secondary/30 bg-secondary/10 text-secondary"
+                    : "border-red-500/30 bg-red-500/10 text-red-400"
+              }`}
+          >
+            <span>🪙</span>
+            {coinsEarned === null
+              ? "Processing..."
+              : coinsEarned > 0
+                ? `+${coinsEarned} coins won!`
+                : coinsEarned === 0
+                  ? "Draw — coins refunded"
+                  : `${coinsEarned} coins lost`}
+          </motion.div>
+        ) : null}
 
         {/* Score table */}
         <motion.div

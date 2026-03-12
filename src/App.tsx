@@ -11,6 +11,7 @@ import { shouldUseHashRouter } from "@/lib/iframeUtils";
 const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PlayersProvider } from "@/contexts/PlayersContext";
+import { WalletProvider } from "@/contexts/WalletContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import Login from "./pages/Login";
@@ -25,6 +26,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Stats = lazy(() => import("./pages/Stats"));
 const Battle = lazy(() => import("./pages/Battle"));
+const PaidBattle = lazy(() => import("./pages/PaidBattle"));
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,7 @@ const App = () => (
       <SpeedInsights />
       <Router>
         <AuthProvider>
+          <WalletProvider>
           <PlayersProvider>
             <Suspense fallback={<PageLoader />}>
               <Routes>
@@ -92,11 +95,20 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/paid-battle"
+                  element={
+                    <ProtectedRoute>
+                      <PaidBattle />
+                    </ProtectedRoute>
+                  }
+                />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
           </PlayersProvider>
+          </WalletProvider>
         </AuthProvider>
       </Router>
     </TooltipProvider>

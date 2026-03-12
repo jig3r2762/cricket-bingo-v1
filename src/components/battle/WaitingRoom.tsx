@@ -8,10 +8,23 @@ interface WaitingRoomProps {
   gridSize: 3 | 4;
   onOpponentJoined: (data: RoomData) => void;
   onCancel: () => void;
+  entryFee?: number;
+  onCancelWithRefund?: () => Promise<void>;
 }
 
-export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel }: WaitingRoomProps) {
+export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel, entryFee, onCancelWithRefund }: WaitingRoomProps) {
   const [copied, setCopied] = useState(false);
+  const [refunding, setRefunding] = useState(false);
+
+  const handleCancel = async () => {
+    if (onCancelWithRefund) {
+      setRefunding(true);
+      await onCancelWithRefund().catch(() => {});
+      setRefunding(false);
+    } else {
+      onCancel();
+    }
+  };
 
   useEffect(() => {
     const unsub = subscribeToRoom(roomId, (data) => {
@@ -36,6 +49,11 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel }: Wa
           <p className="text-muted-foreground text-sm">
             Share this code — {gridSize}×{gridSize} grid
           </p>
+          {entryFee ? (
+            <p className="text-amber-400 text-sm font-display">
+              🪙 Pot: {entryFee * 2} coins · Entry held: {entryFee}
+            </p>
+          ) : null}
         </div>
 
         {/* Room code card */}
@@ -69,10 +87,12 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel }: Wa
         </div>
 
         <button
-          onClick={onCancel}
-          className="flex items-center gap-2 mx-auto text-muted-foreground hover:text-secondary transition-colors text-sm font-display uppercase tracking-wider"
+          onClick={handleCancel}
+          disabled={refunding}
+          className="flex items-center gap-2 mx-auto text-muted-foreground hover:text-secondary transition-colors text-sm font-display uppercase tracking-wider disabled:opacity-50"
         >
-          <X className="w-4 h-4" /> Cancel
+          <X className="w-4 h-4" />
+          {refunding ? "Refunding..." : entryFee ? `Cancel & Refund ${entryFee} 🪙` : "Cancel"}
         </button>
       </div>
     </div>

@@ -18,7 +18,7 @@ export interface PlayerProgress {
 }
 
 export interface RoomData {
-  status: "waiting" | "playing" | "finished";
+  status: "waiting" | "playing" | "finished" | "cancelled";
   gridSize: 3 | 4;
   grid: GridCategory[];
   deckIds: string[];
@@ -28,6 +28,7 @@ export interface RoomData {
   guestName: string | null;
   host: PlayerProgress;
   guest: PlayerProgress | null;
+  entryFee?: number;
 }
 
 // Create a new room and return its ID
@@ -105,6 +106,20 @@ export function subscribeToRoom(
   return onSnapshot(doc(db, "rooms", roomId), (snap) => {
     callback(snap.exists() ? (snap.data() as RoomData) : null);
   });
+}
+
+// Peek at a room without joining (for showing entry fee to guest)
+export async function peekRoom(
+  rawCode: string
+): Promise<RoomData | { error: string }> {
+  const roomId = rawCode.toUpperCase().trim();
+  const snap = await getDoc(doc(db, "rooms", roomId));
+  if (!snap.exists()) return { error: "Room not found. Check the code and try again." };
+  const data = snap.data() as RoomData;
+  if (data.status === "cancelled") return { error: "This room has been cancelled." };
+  if (data.status !== "waiting") return { error: "This game has already started." };
+  if (data.guestUid !== null) return { error: "Room is full." };
+  return data;
 }
 
 // Write my current progress after each turn
