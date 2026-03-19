@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Preconnect to speed up Firebase & fonts (reduces LCP) -->
+    <!-- Preconnect to speed up Firebase, fonts & ads -->
     <link rel="preconnect" href="https://firebaseapp.com" crossorigin />
     <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Cricket Bingo — Free Online Cricket Quiz Game | Play Cricket Card Game Free</title>
@@ -153,6 +154,10 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Google AdSense — async so it never blocks page rendering -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7606459883233703"
+         crossorigin="anonymous"></script>
 
     <!-- SEO: Fallback content for crawlers without JS -->
     <noscript>

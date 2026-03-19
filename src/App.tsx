@@ -12,8 +12,9 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 // BrowserRouter is used on Vercel where server handles all routes normally.
 const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
 
-// Landing is code-split but does NOT load Firebase — keeps LCP fast for SEO.
+// Public pages — code-split, no Firebase, keeps LCP fast for SEO.
 const Landing = lazy(() => import("./pages/Landing"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 // AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
 // away from the landing page (login, play, battle, etc.).
@@ -41,8 +42,9 @@ const App = () => (
       <Router>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            {/* Landing page — no Firebase, no AuthProvider */}
+            {/* Public pages — no Firebase, no AuthProvider */}
             <Route path="/" element={<Landing />} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* All other routes — Firebase loads here */}
             <Route path="/*" element={<AuthenticatedApp />} />
           </Routes>
