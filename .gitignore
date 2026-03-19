@@ -29,3 +29,5 @@ scripts/cricsheet_data/
 
 # Claude Code temp files
 tmpclaude-*
+
+.vercel

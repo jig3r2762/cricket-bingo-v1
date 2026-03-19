@@ -142,7 +142,7 @@ export const FULL_CATEGORY_POOL: GridCategory[] = [
 
   // --- ACHIEVEMENT (6) NEW ---
   { id: "ach_captains", label: "Captains", shortLabel: "CAPTAIN", icon: "crown", type: "achievement", validatorKey: "category:Captains" },
-  { id: "ach_century_makers", label: "50+ Century Makers", shortLabel: "50+ 100s", icon: "award", type: "achievement", validatorKey: "category:100+ Century Makers" },
+  { id: "ach_century_makers", label: "50+ Century Makers", shortLabel: "50+ 100s", icon: "award", type: "achievement", validatorKey: "category:50+ Century Makers" },
   { id: "ach_fastest_bowling", label: "Fastest Bowling", shortLabel: "PACE KING", icon: "zap", type: "achievement", validatorKey: "category:Fastest Bowling" },
   { id: "ach_aggressive_batsmen", label: "Aggressive Batsmen", shortLabel: "AGGR BAT", icon: "flame", type: "achievement", validatorKey: "category:Aggressive Batsmen" },
   { id: "ach_world_cup_winners", label: "World Cup Winners", shortLabel: "WC WIN", icon: "trophy", type: "achievement", validatorKey: "category:World Cup Winners" },

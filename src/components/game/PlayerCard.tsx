@@ -81,7 +81,9 @@ export function PlayerCard({
 
               {/* Name block */}
               <div className="flex-1 min-w-0">
-                <h2 className="font-display text-xl text-foreground leading-tight truncate">
+                <h2 className={`font-display text-foreground leading-tight ${
+                  player.name.length > 20 ? 'text-sm' : player.name.length > 15 ? 'text-base' : 'text-xl'
+                }`}>
                   {player.name}
                 </h2>
               </div>
