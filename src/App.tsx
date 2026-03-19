@@ -5,28 +5,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, HashRouter, Routes, Route } from "react-router-dom";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Use HashRouter on CrazyGames (external hostname or iframe) so /play doesn't 404.
 // BrowserRouter is used on Vercel where server handles all routes normally.
 const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
-import { AuthProvider } from "@/contexts/AuthContext";
-import { PlayersProvider } from "@/contexts/PlayersContext";
-import { WalletProvider } from "@/contexts/WalletContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { AdminRoute } from "@/components/auth/AdminRoute";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 
-// Lazy-loaded routes for code splitting
+// Landing is code-split but does NOT load Firebase — keeps LCP fast for SEO.
 const Landing = lazy(() => import("./pages/Landing"));
-const Index = lazy(() => import("./pages/Index"));
-const Admin = lazy(() => import("./pages/Admin"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
-const Stats = lazy(() => import("./pages/Stats"));
-const Battle = lazy(() => import("./pages/Battle"));
-const PaidBattle = lazy(() => import("./pages/PaidBattle"));
+
+// AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
+// away from the landing page (login, play, battle, etc.).
+const AuthenticatedApp = lazy(() => import("./AuthenticatedApp"));
 
 const queryClient = new QueryClient();
 
@@ -48,68 +39,14 @@ const App = () => (
       <Analytics />
       <SpeedInsights />
       <Router>
-        <AuthProvider>
-          <WalletProvider>
-          <PlayersProvider>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/play"
-                  element={
-                    <ProtectedRoute>
-                      <Index />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <Admin />
-                    </AdminRoute>
-                  }
-                />
-                <Route
-                  path="/leaderboard"
-                  element={
-                    <ProtectedRoute>
-                      <Leaderboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/stats"
-                  element={
-                    <ProtectedRoute>
-                      <Stats />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/battle"
-                  element={
-                    <ProtectedRoute>
-                      <Battle />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/paid-battle"
-                  element={
-                    <ProtectedRoute>
-                      <PaidBattle />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </PlayersProvider>
-          </WalletProvider>
-        </AuthProvider>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Landing page — no Firebase, no AuthProvider */}
+            <Route path="/" element={<Landing />} />
+            {/* All other routes — Firebase loads here */}
+            <Route path="/*" element={<AuthenticatedApp />} />
+          </Routes>
+        </Suspense>
       </Router>
     </TooltipProvider>
   </QueryClientProvider>

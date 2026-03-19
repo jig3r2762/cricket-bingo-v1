@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "@/contexts/AuthContext";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -30,13 +29,17 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 28 } },
 };
 
+// Inline guest helper — avoids importing AuthContext which pulls in Firebase SDK.
+function setGuestMode() {
+  try { localStorage.setItem("cricket-bingo-guest", "true"); } catch {}
+}
+
 export default function Landing() {
   const navigate = useNavigate();
-  const { playAsGuest } = useAuth();
 
   useEffect(() => {
     if (shouldUseHashRouter()) {
-      playAsGuest();
+      setGuestMode();
       navigate("/play", { replace: true });
     }
   }, []);
@@ -44,7 +47,7 @@ export default function Landing() {
   const handlePlayNow = () => navigate("/play");
 
   const handleGuestPlay = () => {
-    playAsGuest();
+    setGuestMode();
     navigate("/play");
   };
 
