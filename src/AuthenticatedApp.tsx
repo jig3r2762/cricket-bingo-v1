@@ -24,6 +24,7 @@ const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Stats = lazy(() => import("./pages/Stats"));
 const Battle = lazy(() => import("./pages/Battle"));
 const PaidBattle = lazy(() => import("./pages/PaidBattle"));
+const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
 
 export default function AuthenticatedApp() {
   return (
@@ -78,6 +79,14 @@ export default function AuthenticatedApp() {
                 element={
                   <ProtectedRoute>
                     <PaidBattle />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/guess"
+                element={
+                  <ProtectedRoute>
+                    <GuessPlayer />
                   </ProtectedRoute>
                 }
               />

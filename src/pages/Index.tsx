@@ -137,6 +137,7 @@ const Index = () => {
             try { localStorage.setItem("cricket-bingo-gridsize", String(size)); } catch {}
           }}
           onBattle={() => navigate("/battle")}
+          onGuess={() => navigate("/guess")}
         />
         <AnimatePresence>
           {!tutorialDone && (

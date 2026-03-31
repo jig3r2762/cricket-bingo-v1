@@ -15,6 +15,9 @@ const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
 // Public pages — code-split, no Firebase, keeps LCP fast for SEO.
 const Landing = lazy(() => import("./pages/Landing"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const HowToPlay = lazy(() => import("./pages/HowToPlay"));
+const About = lazy(() => import("./pages/About"));
+const Players = lazy(() => import("./pages/Players"));
 
 // AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
 // away from the landing page (login, play, battle, etc.).
@@ -42,9 +45,12 @@ const App = () => (
       <Router>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            {/* Public pages — no Firebase, no AuthProvider */}
+            {/* Public pages — no Firebase, no AuthProvider, SEO-friendly */}
             <Route path="/" element={<Landing />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/how-to-play" element={<HowToPlay />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/players" element={<Players />} />
             {/* All other routes — Firebase loads here */}
             <Route path="/*" element={<AuthenticatedApp />} />
           </Routes>

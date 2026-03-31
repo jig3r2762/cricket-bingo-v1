@@ -45,6 +45,7 @@ export default function Landing() {
   }, []);
 
   const handlePlayNow = () => navigate("/play");
+  const handleGuess = () => navigate("/guess");
 
   const handleGuestPlay = () => {
     setGuestMode();
@@ -154,6 +155,73 @@ export default function Landing() {
             >
               Scroll to learn more ↓
             </motion.div>
+          </motion.div>
+        </section>
+
+        {/* ─── GAME MODES ─── */}
+        <section className="max-w-4xl mx-auto px-4 py-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="font-display text-3xl sm:text-4xl text-foreground text-center mb-10"
+          >
+            Choose Your Game
+          </motion.h2>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
+            <motion.button
+              variants={fadeUp}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handlePlayNow}
+              className="candy-card p-6 text-left hover:border-candy-green transition-all"
+            >
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 rounded-2xl bg-candy-green flex items-center justify-center"
+                  style={{ boxShadow: "0 4px 0 hsl(134 55% 30%)" }}>
+                  <span className="text-3xl">🎯</span>
+                </div>
+                <div>
+                  <h3 className="font-display text-lg text-foreground">Cricket Bingo</h3>
+                  <span className="font-body font-bold text-[10px] text-candy-green uppercase tracking-widest">Classic Mode</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground font-body text-sm leading-relaxed">
+                Match cricket players to categories on a bingo grid. Fill rows, columns, or diagonals to win!
+              </p>
+            </motion.button>
+
+            <motion.button
+              variants={fadeUp}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleGuess}
+              className="candy-card p-6 text-left hover:border-candy-orange transition-all relative overflow-hidden"
+            >
+              <div className="absolute top-2 right-2">
+                <span className="px-2 py-0.5 rounded-full bg-candy-orange text-white font-body font-bold text-[10px] uppercase">New</span>
+              </div>
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 rounded-2xl bg-candy-orange flex items-center justify-center"
+                  style={{ boxShadow: "0 4px 0 hsl(28 90% 38%)" }}>
+                  <span className="text-3xl">🕵️</span>
+                </div>
+                <div>
+                  <h3 className="font-display text-lg text-foreground">Guess the Cricketer</h3>
+                  <span className="font-body font-bold text-[10px] text-candy-orange uppercase tracking-widest">New Mode</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground font-body text-sm leading-relaxed">
+                5 clues, 1 mystery player. Fewer clues = more points. How well do you know your cricketers?
+              </p>
+            </motion.button>
           </motion.div>
         </section>
 
@@ -378,6 +446,15 @@ export default function Landing() {
         {/* ─── FOOTER ─── */}
         <footer className="border-t-2 border-gray-200 py-8 text-center px-4 space-y-3 bg-white/50">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+            <a href="/how-to-play" className="hover:text-candy-green transition-colors font-body font-bold">
+              How to Play
+            </a>
+            <a href="/about" className="hover:text-candy-green transition-colors font-body font-bold">
+              About
+            </a>
+            <a href="/players" className="hover:text-candy-green transition-colors font-body font-bold">
+              Player Database
+            </a>
             <a href="/leaderboard" className="hover:text-candy-green transition-colors font-body font-bold">
               Leaderboard
             </a>

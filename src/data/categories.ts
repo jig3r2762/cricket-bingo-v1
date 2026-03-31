@@ -72,6 +72,9 @@ export const IPL_MEDIUM_POOL: GridCategory[] = [
   { id: "ipl_captain",     label: "IPL Captain",         shortLabel: "CAPTAIN",  icon: "crown",      type: "achievement", validatorKey: "category:Captains" },
   { id: "ipl_wk",          label: "Wicketkeeper",        shortLabel: "WK",       icon: "shield",     type: "role",        validatorKey: "role:WK-Bat" },
   { id: "ipl_3_teams",     label: "Played 3+ Teams",     shortLabel: "3+ CLUBS", icon: "shuffle",    type: "stat",        validatorKey: "iplTeams>=3" },
+  { id: "ipl_orange_cap",  label: "IPL Orange Cap",      shortLabel: "ORG CAP", icon: "award",      type: "achievement", validatorKey: "category:IPL Orange Cap" },
+  { id: "ipl_purple_cap",  label: "IPL Purple Cap",      shortLabel: "PRP CAP", icon: "award",      type: "achievement", validatorKey: "category:IPL Purple Cap" },
+  { id: "ipl_t20_spl",     label: "T20 Specialist",      shortLabel: "T20 SPL", icon: "zap",        type: "achievement", validatorKey: "category:T20 Specialist" },
 ];
 
 export const IPL_HARD_POOL: GridCategory[] = [
@@ -143,10 +146,20 @@ export const FULL_CATEGORY_POOL: GridCategory[] = [
   // --- ACHIEVEMENT (6) NEW ---
   { id: "ach_captains", label: "Captains", shortLabel: "CAPTAIN", icon: "crown", type: "achievement", validatorKey: "category:Captains" },
   { id: "ach_century_makers", label: "50+ Century Makers", shortLabel: "50+ 100s", icon: "award", type: "achievement", validatorKey: "category:50+ Century Makers" },
-  { id: "ach_fastest_bowling", label: "Fastest Bowling", shortLabel: "PACE KING", icon: "zap", type: "achievement", validatorKey: "category:Fastest Bowling" },
+  { id: "ach_pace_attack", label: "Pace Attack", shortLabel: "PACE ATK", icon: "zap", type: "achievement", validatorKey: "category:Pace Attack" },
   { id: "ach_aggressive_batsmen", label: "Aggressive Batsmen", shortLabel: "AGGR BAT", icon: "flame", type: "achievement", validatorKey: "category:Aggressive Batsmen" },
   { id: "ach_world_cup_winners", label: "World Cup Winners", shortLabel: "WC WIN", icon: "trophy", type: "achievement", validatorKey: "category:World Cup Winners" },
   { id: "ach_ipl_superstars", label: "IPL Superstars", shortLabel: "IPL STAR", icon: "star", type: "achievement", validatorKey: "category:IPL Superstars" },
+
+  // --- NEW ACHIEVEMENT (5) ---
+  { id: "ach_left_arm_pacer", label: "Left-Arm Pacer", shortLabel: "LEFT ARM", icon: "zap", type: "achievement", validatorKey: "category:Left-Arm Pacer" },
+  { id: "ach_orange_cap", label: "IPL Orange Cap", shortLabel: "ORG CAP", icon: "award", type: "achievement", validatorKey: "category:IPL Orange Cap" },
+  { id: "ach_purple_cap", label: "IPL Purple Cap", shortLabel: "PRP CAP", icon: "award", type: "achievement", validatorKey: "category:IPL Purple Cap" },
+  { id: "ach_debut_2018", label: "Debut After 2018", shortLabel: "NEW GEN", icon: "star", type: "achievement", validatorKey: "category:Debut After 2018" },
+  { id: "ach_t20_specialist", label: "T20 Specialist", shortLabel: "T20 SPL", icon: "zap", type: "achievement", validatorKey: "category:T20 Specialist" },
+
+  // --- NEW STAT (1) ---
+  { id: "stat_200_wkts", label: "200+ Wickets", shortLabel: "200 WKTS", icon: "circle-dot", type: "stat", validatorKey: "stat:totalWickets>=200" },
 
   // --- COMBO (6) ---
   { id: "combo_mi_ind", label: "MI + Indian", shortLabel: "MI+IND", icon: "shield", type: "combo", comboIcons: ["shield", "flag"], validatorKey: "combo:team:MI+country:India" },
