@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, limit, getDocsFromServer } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
@@ -82,7 +82,7 @@ export default function Leaderboard() {
         limit(200),
       );
 
-      const snap = await getDocs(q);
+      const snap = await getDocsFromServer(q);
       if (cancelled) return;
 
       const entries: ScoreEntry[] = snap.docs.map((d) => d.data() as ScoreEntry);
