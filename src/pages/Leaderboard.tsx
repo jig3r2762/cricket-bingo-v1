@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, orderBy, limit, getDocsFromServer } from "firebase/firestore";
+import { collection, query, orderBy, limit, where, getDocsFromServer } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
@@ -76,60 +76,34 @@ export default function Leaderboard() {
 
     const fetchScores = async () => {
       const scoresRef = collection(db, "scores");
-      const q = query(
-        scoresRef,
-        orderBy("score", "desc"),
-        limit(200),
-      );
 
-      const snap = await getDocsFromServer(q);
+      // Query each grid size separately so high 4x4 scores don't push out 3x3 scores
+      const q3 = query(scoresRef, where("gridSize", "==", 3), orderBy("score", "desc"), limit(200));
+      const q4 = query(scoresRef, where("gridSize", "==", 4), orderBy("score", "desc"), limit(200));
+
+      const [snap3, snap4] = await Promise.all([
+        getDocsFromServer(q3),
+        getDocsFromServer(q4),
+      ]);
       if (cancelled) return;
 
-      const entries: ScoreEntry[] = snap.docs.map((d) => d.data() as ScoreEntry);
-
-      // Group by user and grid size, keeping only the highest score per grid size
-      const scoresByUserAndGrid: Record<string, Partial<Record<3 | 4, ScoreEntry>>> = {};
-
-      for (const entry of entries) {
-        const key = entry.uid;
-        const size = entry.gridSize;
-        if (!scoresByUserAndGrid[key]) {
-          scoresByUserAndGrid[key] = {};
+      const toPlayerScore = (entries: ScoreEntry[]): PlayerScore[] => {
+        // Keep only best score per user
+        const best = new Map<string, ScoreEntry>();
+        for (const e of entries) {
+          const existing = best.get(e.uid);
+          if (!existing || e.score > existing.score) best.set(e.uid, e);
         }
-        const existing = scoresByUserAndGrid[key][size];
-        if (!existing || entry.score > existing.score) {
-          scoresByUserAndGrid[key][size] = entry;
-        }
-      }
+        return [...best.values()]
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 50)
+          .map(e => ({ uid: e.uid, displayName: e.displayName, photoURL: e.photoURL, score: e.score, status: e.status }));
+      };
 
-      // Convert to arrays and sort — only include entries that actually exist for each grid size
-      const grid3x3 = Object.values(scoresByUserAndGrid)
-        .map(g => g[3])
-        .filter((e): e is ScoreEntry => !!e)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 50)
-        .map(e => ({
-          uid: e.uid,
-          displayName: e.displayName,
-          photoURL: e.photoURL,
-          score: e.score,
-          status: e.status,
-        }));
-
-      const grid4x4 = Object.values(scoresByUserAndGrid)
-        .map(g => g[4])
-        .filter((e): e is ScoreEntry => !!e)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 50)
-        .map(e => ({
-          uid: e.uid,
-          displayName: e.displayName,
-          photoURL: e.photoURL,
-          score: e.score,
-          status: e.status,
-        }));
-
-      setLeaderboards({ grid3x3, grid4x4 });
+      setLeaderboards({
+        grid3x3: toPlayerScore(snap3.docs.map(d => d.data() as ScoreEntry)),
+        grid4x4: toPlayerScore(snap4.docs.map(d => d.data() as ScoreEntry)),
+      });
       setLoading(false);
     };
 
