@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, orderBy, limit, where, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { getTodayDateString } from "@/lib/dailyGame";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
@@ -76,12 +75,9 @@ export default function Leaderboard() {
     setFetchError(false);
 
     const fetchScores = async () => {
-      const today = getTodayDateString();
       const scoresRef = collection(db, "scores");
-      // Filter to today only — keeps the leaderboard fair (same daily puzzle for everyone)
       const q = query(
         scoresRef,
-        where("date", "==", today),
         orderBy("score", "desc"),
         limit(200),
       );
@@ -225,10 +221,10 @@ export default function Leaderboard() {
           ) : scores.length === 0 ? (
             <div className="p-8 text-center space-y-2">
               <div className="text-muted-foreground/60 font-display text-sm uppercase tracking-widest">
-                No scores yet today
+                No scores yet
               </div>
               <div className="text-muted-foreground/50 font-body text-xs">
-                Be the first to complete today&apos;s {gridTab}×{gridTab} puzzle!
+                Be the first to complete the {gridTab}×{gridTab} puzzle!
               </div>
             </div>
           ) : (
