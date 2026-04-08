@@ -155,7 +155,20 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Google AdSense — async so it never blocks page rendering -->
+    <!-- Google AdSense — pause by default on non-content pages to comply with policy.
+         Auto ads are only enabled on public content pages (/, /about, /how-to-play, /players, /privacy, /terms).
+         Game screens, login, admin and battle pages are excluded. -->
+    <script>
+      (function () {
+        var contentPaths = ['/', '/about', '/how-to-play', '/players', '/privacy', '/terms', '/contact'];
+        var path = window.location.pathname.replace(/\/$/, '') || '/';
+        var isContent = contentPaths.indexOf(path) !== -1;
+        window.adsbygoogle = window.adsbygoogle || [];
+        if (!isContent) {
+          window.adsbygoogle.pauseAdRequests = 1;
+        }
+      })();
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7606459883233703"
          crossorigin="anonymous"></script>
 

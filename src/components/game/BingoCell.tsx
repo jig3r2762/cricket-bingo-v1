@@ -362,31 +362,82 @@ function CenturiesIcon({ className }: { className?: string }) {
   );
 }
 
+// Cricket cap icon — used for Orange Cap and Purple Cap awards
+function CricketCapIcon({ className, color, strokeColor }: { className?: string; color: string; strokeColor: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      {/* Cap dome */}
+      <path d="M 14 36 Q 14 14 32 12 Q 50 14 50 36 Z" fill={color} stroke={strokeColor} strokeWidth="1.5"/>
+      {/* Brim */}
+      <path d="M 8 38 L 50 36 L 50 40 L 12 40 Q 8 40 8 38 Z" fill={color} stroke={strokeColor} strokeWidth="1.2"/>
+      {/* Brim tip */}
+      <path d="M 8 38 Q 4 39 6 42 Q 10 43 12 40" fill={color} stroke={strokeColor} strokeWidth="1"/>
+      {/* Button on top */}
+      <circle cx="32" cy="13" r="2.5" fill="white" opacity="0.7"/>
+      {/* Stitching */}
+      <path d="M 22 22 Q 32 20 42 22" stroke="white" strokeWidth="1.2" fill="none" opacity="0.45" strokeLinecap="round"/>
+      {/* Shine highlight */}
+      <path d="M 18 18 Q 28 13 38 16" stroke="white" strokeWidth="1" opacity="0.22" fill="none" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// New generation player icon — debut after 2018
+function NewGenIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      {/* Calendar body */}
+      <rect x="12" y="12" width="40" height="32" rx="4" fill="#1e1b4b" stroke="#6366f1" strokeWidth="1.5" opacity="0.9"/>
+      {/* Calendar header strip */}
+      <rect x="12" y="12" width="40" height="9" rx="4" fill="#6366f1" opacity="0.95"/>
+      {/* 2018+ label */}
+      <text x="32" y="34" textAnchor="middle" fontSize="10" fill="#a5b4fc" fontFamily="monospace" fontWeight="700">2018+</text>
+      {/* Rising arrow below */}
+      <polyline points="20,54 32,44 44,54" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="32" y1="44" x2="32" y2="58" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Stars */}
+      <circle cx="50" cy="8" r="3" fill="#fbbf24" opacity="0.7"/>
+      <circle cx="14" cy="8" r="2" fill="#fbbf24" opacity="0.4"/>
+    </svg>
+  );
+}
+
 // Map shortLabel → icon component
 const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   // --- Regular mode ---
-  PACER:      <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  SPINNER:    <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" isSpin />,
-  "ALL-RTR":  <AllRounderIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  WK:         <WicketKeeperIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  BAT:        <CricketBatIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  IPL:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="gold" />,
-  CWC:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="silver" />,
-  T20WC:      <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="bronze" />,
-  CT:         <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="platinum" />,
-  "10K RUNS": <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="10K" />,
-  "5K ODI":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="5K" />,
-  "300 WKTS": <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="300" />,
-  "100s":     <CenturiesIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  "50 TESTS": <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  "1K IPL":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="1K" />,
+  PACER:        <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  SPINNER:      <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" isSpin />,
+  "ALL-RTR":    <AllRounderIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  WK:           <WicketKeeperIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  BAT:          <CricketBatIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  IPL:          <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="gold" />,
+  CWC:          <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="silver" />,
+  T20WC:        <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="bronze" />,
+  CT:           <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="platinum" />,
+  "10K RUNS":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="10K" />,
+  "5K ODI":     <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="5K" />,
+  "300 WKTS":   <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="300" />,
+  "100s":       <CenturiesIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "50 TESTS":   <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "1K IPL":     <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="1K" />,
+  // --- New achievement categories (added Mar 2026) ---
+  "PACE ATK":   <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "AGGR BAT":   <CricketBatIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "WC WIN":     <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="gold" />,
+  "50+ 100s":   <CenturiesIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "LEFT ARM":   <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "ORG CAP":    <CricketCapIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" color="#f97316" strokeColor="#c2410c" />,
+  "PRP CAP":    <CricketCapIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" color="#7c3aed" strokeColor="#5b21b6" />,
+  "NEW GEN":    <NewGenIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "T20 SPL":    <BowlerIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "200 WKTS":   <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="200" />,
   // --- IPL Mode shortLabels ---
-  "IPL WIN":   <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="gold" />,
-  "100 GAMES": <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  "3K RUNS":   <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="3K" />,
-  "50 WKTS":   <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="50" />,
-  OVERSEAS:    <GlobeIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
-  "3+ CLUBS":  <MultiTeamIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "IPL WIN":    <TrophyIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" variant="gold" />,
+  "100 GAMES":  <StadiumIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "3K RUNS":    <RunsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="3K" />,
+  "50 WKTS":    <WicketsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" label="50" />,
+  OVERSEAS:     <GlobeIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
+  "3+ CLUBS":   <MultiTeamIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16" />,
 };
 
 // --- Team abbr map for combo lookups ---
@@ -413,6 +464,17 @@ const CATEGORY_DEFINITIONS: Record<string, string> = {
   "100s": "Hit 100+ centuries in career",
   "50 TESTS": "Played 50+ Test matches",
   "1K IPL": "Scored 1,000+ runs in IPL career",
+  // New achievement tooltips
+  "PACE ATK": "Elite pace bowlers known for extreme pace and aggression across formats",
+  "AGGR BAT": "Aggressive batsmen known for attacking stroke play and high strike rates",
+  "WC WIN": "Players who have won the Cricket World Cup (50-over format)",
+  "50+ 100s": "Batsmen who have hit 50 or more international centuries in their career",
+  "LEFT ARM": "Left-arm fast bowlers who use swing, angle, and pace",
+  "ORG CAP": "Players who have won the IPL Orange Cap (leading run-scorer in a season)",
+  "PRP CAP": "Players who have won the IPL Purple Cap (leading wicket-taker in a season)",
+  "NEW GEN": "Players who made their international debut after 2018",
+  "T20 SPL": "T20 specialists with exceptional records in the shortest format",
+  "200 WKTS": "Took 200 or more wickets across all international formats",
   // IPL Mode tooltips
   "IPL WIN": "Won the IPL title at least once",
   "100 GAMES": "Played 100+ matches in IPL",

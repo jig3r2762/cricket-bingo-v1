@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, limit, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { getTodayDateString } from "@/lib/dailyGame";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Trophy, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
@@ -67,15 +68,20 @@ export default function Leaderboard() {
   const [gridTab, setGridTab] = useState<GridTab>(3);
   const [leaderboards, setLeaderboards] = useState<LeaderboardData>({ grid3x3: [], grid4x4: [] });
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setFetchError(false);
 
     const fetchScores = async () => {
+      const today = getTodayDateString();
       const scoresRef = collection(db, "scores");
+      // Filter to today only — keeps the leaderboard fair (same daily puzzle for everyone)
       const q = query(
         scoresRef,
+        where("date", "==", today),
         orderBy("score", "desc"),
         limit(200),
       );
@@ -132,7 +138,7 @@ export default function Leaderboard() {
     };
 
     fetchScores().catch(() => {
-      if (!cancelled) setLoading(false);
+      if (!cancelled) { setLoading(false); setFetchError(true); }
     });
 
     return () => { cancelled = true; };
@@ -207,9 +213,23 @@ export default function Leaderboard() {
             <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest animate-pulse">
               Loading...
             </div>
+          ) : fetchError ? (
+            <div className="p-8 text-center space-y-2">
+              <div className="text-destructive/70 font-display text-sm uppercase tracking-widest">
+                Could not load scores
+              </div>
+              <div className="text-muted-foreground/60 font-body text-xs">
+                Check your connection or try again later
+              </div>
+            </div>
           ) : scores.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest">
-              No scores yet
+            <div className="p-8 text-center space-y-2">
+              <div className="text-muted-foreground/60 font-display text-sm uppercase tracking-widest">
+                No scores yet today
+              </div>
+              <div className="text-muted-foreground/50 font-body text-xs">
+                Be the first to complete today&apos;s {gridTab}×{gridTab} puzzle!
+              </div>
             </div>
           ) : (
             <div className="divide-y divide-border/20">

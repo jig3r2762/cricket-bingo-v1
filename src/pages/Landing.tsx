@@ -461,6 +461,9 @@ export default function Landing() {
             <a href="/privacy" className="hover:text-candy-green transition-colors font-body font-bold">
               Privacy Policy
             </a>
+            <a href="/terms" className="hover:text-candy-green transition-colors font-body font-bold">
+              Terms of Service
+            </a>
           </div>
           <p className="text-muted-foreground font-body text-xs">
             Cricket Bingo &copy; 2025 &middot; Free online cricket quiz game &middot; Data from{" "}

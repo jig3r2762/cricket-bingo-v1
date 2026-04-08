@@ -15,6 +15,7 @@ const Router = shouldUseHashRouter() ? HashRouter : BrowserRouter;
 // Public pages — code-split, no Firebase, keeps LCP fast for SEO.
 const Landing = lazy(() => import("./pages/Landing"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 const HowToPlay = lazy(() => import("./pages/HowToPlay"));
 const About = lazy(() => import("./pages/About"));
 const Players = lazy(() => import("./pages/Players"));
@@ -48,6 +49,7 @@ const App = () => (
             {/* Public pages — no Firebase, no AuthProvider, SEO-friendly */}
             <Route path="/" element={<Landing />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="/about" element={<About />} />
             <Route path="/players" element={<Players />} />

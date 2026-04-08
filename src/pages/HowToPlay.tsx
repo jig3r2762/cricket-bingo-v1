@@ -286,6 +286,7 @@ export default function HowToPlay() {
             <Link to="/players" className="hover:text-candy-green transition-colors font-body font-bold">Players</Link>
             <Link to="/leaderboard" className="hover:text-candy-green transition-colors font-body font-bold">Leaderboard</Link>
             <Link to="/privacy" className="hover:text-candy-green transition-colors font-body font-bold">Privacy</Link>
+            <Link to="/terms" className="hover:text-candy-green transition-colors font-body font-bold">Terms</Link>
           </div>
           <p className="text-muted-foreground font-body text-xs">
             Cricket Bingo &copy; 2025 &middot; Free online cricket quiz game

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
-/** Routes where ads should NOT be displayed */
-const NO_AD_ROUTES = ["/login", "/admin"];
+/** Routes where ads should NOT be displayed (game/functional screens, not editorial content) */
+const NO_AD_ROUTES = ["/login", "/admin", "/play", "/battle", "/paid-battle", "/guess", "/leaderboard", "/stats"];
 
 interface AdSenseProps {
   adSlot: string;
