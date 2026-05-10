@@ -518,7 +518,8 @@
     "countryFlag": "🇮🇳",
     "iplTeams": [
       "DCH",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -790,9 +791,10 @@
       "CSK",
       "GL",
       "KTK",
-      "RR"
+      "RR",
+      "GT"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 4075,
       "testWickets": 342,
@@ -1509,7 +1511,8 @@
     "countryFlag": "🇮🇳",
     "iplTeams": [
       "CSK",
-      "GL"
+      "GL",
+      "GT"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -1533,7 +1536,8 @@
     "trophies": [
       "CT",
       "CWC",
-      "IPL"
+      "IPL",
+      "T20WC"
     ],
     "teammates": [
       "aus_aaron_finch",
@@ -2993,7 +2997,8 @@
       "GL",
       "KKR",
       "KTK",
-      "RCB"
+      "RCB",
+      "GT"
     ],
     "primaryRole": "WK-Bat",
     "stats": {
@@ -3838,7 +3843,7 @@
       "KKR",
       "SRH"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 4356,
       "testWickets": 226,
@@ -4035,7 +4040,8 @@
       "DC",
       "PW",
       "RPS",
-      "RR"
+      "RR",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -5594,7 +5600,8 @@
     "iplTeams": [
       "CSK",
       "GL",
-      "MI"
+      "MI",
+      "GT"
     ],
     "primaryRole": "All-Rounder",
     "stats": {
@@ -6182,7 +6189,8 @@
       "KKR",
       "MI",
       "PBKS",
-      "RCB"
+      "RCB",
+      "GT"
     ],
     "primaryRole": "WK-Bat",
     "stats": {
@@ -7792,7 +7800,8 @@
     "iplTeams": [
       "DC",
       "DCH",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "All-Rounder",
     "stats": {
@@ -10360,7 +10369,7 @@
       "KKR",
       "RCB"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 3094,
       "testWickets": 204,
@@ -10965,7 +10974,8 @@
       "DCH",
       "GL",
       "RCB",
-      "SRH"
+      "SRH",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -11694,7 +11704,8 @@
       "PW",
       "RCB",
       "RR",
-      "SRH"
+      "SRH",
+      "GT"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -12370,7 +12381,7 @@
       "DC",
       "PBKS"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 688,
       "testWickets": 57,
@@ -12574,7 +12585,7 @@
       "RR",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 3062,
       "testWickets": 157,
@@ -13355,9 +13366,10 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 401,
       "testWickets": 11,
@@ -13981,7 +13993,8 @@
       "KKR",
       "PBKS",
       "RPS",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -14414,7 +14427,7 @@
       "CSK",
       "MI"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 1085,
       "testWickets": 78,
@@ -15833,7 +15846,8 @@
     "iplTeams": [
       "DC",
       "RCB",
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -16590,7 +16604,7 @@
       "RPS",
       "SRH"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 203,
       "testWickets": 11,
@@ -17626,7 +17640,8 @@
       "LSG",
       "PW",
       "RPS",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "All-Rounder",
     "stats": {
@@ -17841,7 +17856,7 @@
       "DC",
       "KKR"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 2,
       "testWickets": 1,
@@ -19845,7 +19860,7 @@
       "PBKS",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 0,
       "testWickets": 0,
@@ -20036,7 +20051,7 @@
     "iplTeams": [
       "CSK"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 757,
       "testWickets": 48,
@@ -20756,7 +20771,8 @@
     "countryFlag": "🇦🇺",
     "iplTeams": [
       "DCH",
-      "PBKS"
+      "PBKS",
+      "SRH"
     ],
     "primaryRole": "WK-Bat",
     "stats": {
@@ -21194,7 +21210,7 @@
       "RR",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 190,
       "testWickets": 6,
@@ -21960,7 +21976,8 @@
       "RCB",
       "RPS",
       "RR",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Spin Bowler",
     "stats": {
@@ -22286,9 +22303,11 @@
       "GL",
       "PBKS",
       "RPS",
-      "SRH"
+      "SRH",
+      "GT",
+      "CSK"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 744,
       "testWickets": 56,
@@ -22965,7 +22984,7 @@
       "KKR",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 2034,
       "testWickets": 192,
@@ -25411,9 +25430,11 @@
       "CSK",
       "DCH",
       "GL",
-      "MI"
+      "MI",
+      "SRH",
+      "GT"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 66,
       "testWickets": 3,
@@ -25918,7 +25939,8 @@
     "countryFlag": "🇿🇦",
     "iplTeams": [
       "DCH",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -26031,7 +26053,8 @@
       "DC",
       "GL",
       "KKR",
-      "SRH"
+      "SRH",
+      "GT"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -26179,7 +26202,8 @@
     "countryFlag": "🇦🇺",
     "iplTeams": [
       "DCH",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "All-Rounder",
     "stats": {
@@ -26302,7 +26326,8 @@
       "MI",
       "PBKS",
       "RCB",
-      "SRH"
+      "SRH",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -26994,7 +27019,7 @@
       "CSK",
       "PBKS"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 815,
       "testWickets": 47,
@@ -27608,7 +27633,8 @@
     "countryCode": "SL",
     "countryFlag": "🇱🇰",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -27722,7 +27748,7 @@
       "PBKS",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 575,
       "testWickets": 1,
@@ -28033,7 +28059,7 @@
       "RCB",
       "RPS"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 58,
       "testWickets": 1,
@@ -28195,7 +28221,8 @@
     "countryCode": "WI",
     "countryFlag": "🏝️",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -28455,7 +28482,7 @@
       "RCB",
       "RR"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 196,
       "testWickets": 4,
@@ -28599,7 +28626,7 @@
     "iplTeams": [
       "GT"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 140,
       "testWickets": 13,
@@ -28833,7 +28860,7 @@
       "PBKS",
       "RPS"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 377,
       "testWickets": 33,
@@ -29262,7 +29289,7 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 300,
       "testWickets": 14,
@@ -29556,7 +29583,8 @@
     "iplTeams": [
       "GL",
       "MI",
-      "SRH"
+      "SRH",
+      "GT"
     ],
     "primaryRole": "WK-Bat",
     "stats": {
@@ -29878,7 +29906,7 @@
     "countryCode": "BAN",
     "countryFlag": "🇧🇩",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 2103,
       "testWickets": 204,
@@ -32343,7 +32371,8 @@
     "countryFlag": "🇳🇿",
     "iplTeams": [
       "CSK",
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "All-Rounder",
     "stats": {
@@ -32699,7 +32728,7 @@
       "MI",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 0,
       "testWickets": 0,
@@ -33042,9 +33071,10 @@
       "GT",
       "RCB",
       "RPS",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
-    "primaryRole": "Spin Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 885,
       "testWickets": 36,
@@ -34149,7 +34179,9 @@
       "KTK",
       "MI",
       "RCB",
-      "RPS"
+      "RPS",
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -34418,7 +34450,7 @@
       "RR",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "WK-Bat",
     "stats": {
       "testRuns": 775,
       "testWickets": 33,
@@ -34651,7 +34683,8 @@
       "KKR",
       "PBKS",
       "RCB",
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -35055,7 +35088,8 @@
       "PBKS",
       "RCB",
       "RPS",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -35748,7 +35782,7 @@
       "KKR",
       "RR"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 313,
       "testWickets": 17,
@@ -36331,9 +36365,10 @@
       "GL",
       "PBKS",
       "PW",
-      "RR"
+      "RR",
+      "GT"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 45,
       "testWickets": 6,
@@ -37244,7 +37279,7 @@
       "RCB",
       "RR"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 173,
       "testWickets": 12,
@@ -37425,7 +37460,8 @@
     "iplTeams": [
       "GL",
       "MI",
-      "RR"
+      "RR",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -37896,7 +37932,7 @@
       "RCB",
       "RR"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 16,
       "testWickets": 0,
@@ -38999,7 +39035,8 @@
     "countryCode": "AUS",
     "countryFlag": "🇦🇺",
     "iplTeams": [
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -39210,7 +39247,7 @@
     "countryCode": "ENG",
     "countryFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 575,
       "testWickets": 72,
@@ -39412,7 +39449,8 @@
     "countryFlag": "🇮🇳",
     "iplTeams": [
       "DCH",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -39547,7 +39585,8 @@
     "countryCode": "SL",
     "countryFlag": "🇱🇰",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -39651,7 +39690,7 @@
       "KKR",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 1432,
       "testWickets": 49,
@@ -40675,7 +40714,7 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 687,
       "testWickets": 25,
@@ -40988,7 +41027,7 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 144,
       "testWickets": 16,
@@ -41106,7 +41145,8 @@
       "RCB",
       "RPS",
       "RR",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -41565,7 +41605,7 @@
       "MI",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 683,
       "testWickets": 16,
@@ -42007,7 +42047,7 @@
       "RCB",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 0,
       "testWickets": 0,
@@ -43232,7 +43272,7 @@
     "countryCode": "SA",
     "countryFlag": "🇿🇦",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 19,
       "testWickets": 11,
@@ -43657,7 +43697,7 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 349,
       "testWickets": 24,
@@ -43867,7 +43907,8 @@
     "countryFlag": "🇮🇳",
     "iplTeams": [
       "DCH",
-      "KTK"
+      "KTK",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -44420,7 +44461,7 @@
       "MI",
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 1736,
       "testWickets": 39,
@@ -46100,7 +46141,7 @@
       "DC",
       "PBKS"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 0,
       "testWickets": 0,
@@ -46764,7 +46805,8 @@
       "DC",
       "KKR",
       "PBKS",
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -47334,7 +47376,8 @@
     "countryCode": "WI",
     "countryFlag": "🏝️",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -48559,7 +48602,8 @@
     "iplTeams": [
       "GL",
       "MI",
-      "RR"
+      "RR",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -48716,7 +48760,7 @@
     "iplTeams": [
       "MI"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 403,
       "testWickets": 33,
@@ -50286,7 +50330,8 @@
       "KKR",
       "PW",
       "RCB",
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -50600,7 +50645,7 @@
     "countryCode": "NZ",
     "countryFlag": "🇳🇿",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 86,
       "testWickets": 4,
@@ -52788,7 +52833,8 @@
       "DC",
       "MI",
       "RCB",
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -53702,7 +53748,9 @@
       "DC",
       "DCH",
       "RCB",
-      "RPS"
+      "RPS",
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -54934,7 +54982,8 @@
     "countryFlag": "🇦🇺",
     "iplTeams": [
       "DCH",
-      "PBKS"
+      "PBKS",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -56012,7 +56061,8 @@
       "MI",
       "PBKS",
       "RPS",
-      "SRH"
+      "SRH",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -62367,7 +62417,8 @@
       "GL",
       "LSG",
       "PBKS",
-      "RR"
+      "RR",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -64139,7 +64190,8 @@
     "iplTeams": [
       "DCH",
       "KKR",
-      "MI"
+      "MI",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -64622,7 +64674,7 @@
     "countryCode": "NZ",
     "countryFlag": "🇳🇿",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Batsman",
     "stats": {
       "testRuns": 2770,
       "testWickets": 51,
@@ -71364,7 +71416,8 @@
     "iplTeams": [
       "DC",
       "DCH",
-      "PW"
+      "PW",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -72597,7 +72650,8 @@
     "countryCode": "AUS",
     "countryFlag": "🇦🇺",
     "iplTeams": [
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -73043,7 +73097,9 @@
       "CSK",
       "DCH",
       "GL",
-      "PBKS"
+      "PBKS",
+      "SRH",
+      "GT"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -74838,7 +74894,8 @@
     "countryFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     "iplTeams": [
       "DCH",
-      "RR"
+      "RR",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -76483,7 +76540,8 @@
     "countryCode": "AUS",
     "countryFlag": "🇦🇺",
     "iplTeams": [
-      "RPS"
+      "RPS",
+      "CSK"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -77110,7 +77168,7 @@
     "countryCode": "BAN",
     "countryFlag": "🇧🇩",
     "iplTeams": [],
-    "primaryRole": "Batsman",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 358,
       "testWickets": 12,
@@ -88694,7 +88752,8 @@
     "countryCode": "SL",
     "countryFlag": "🇱🇰",
     "iplTeams": [
-      "DCH"
+      "DCH",
+      "SRH"
     ],
     "primaryRole": "Fast Bowler",
     "stats": {
@@ -95675,7 +95734,8 @@
     "countryFlag": "🇮🇳",
     "iplTeams": [
       "DCH",
-      "KKR"
+      "KKR",
+      "SRH"
     ],
     "primaryRole": "Batsman",
     "stats": {
@@ -103931,7 +103991,7 @@
     "countryCode": "PAK",
     "countryFlag": "🇵🇰",
     "iplTeams": [],
-    "primaryRole": "Batsman",
+    "primaryRole": "Fast Bowler",
     "stats": {
       "testRuns": 1010,
       "testWickets": 373,

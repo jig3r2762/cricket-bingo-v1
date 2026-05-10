@@ -1,0 +1,71 @@
+{
+  "_comment": "Manual data corrections for players.json. Run apply-corrections.cjs to apply.",
+
+  "iplTeamSuccessors": {
+    "_comment": "Defunct franchises → current successor. Added to iplTeams (original kept for history).",
+    "DCH": "SRH",
+    "RPS": "CSK",
+    "GL": "GT"
+  },
+
+  "roleCorrections": {
+    "_comment": "primaryRole overrides. Keys are player IDs.",
+
+    "pak_waqar_younis":         "Fast Bowler",
+    "ban_mehedi_hasan_miraz":   "Spin Bowler",
+    "nz_glenn_phillips":        "WK-Bat",
+    "nz_nj_astle":              "Batsman",
+    "sa_johan_botha":           "Spin Bowler",
+    "sa_rj_peterson":           "Spin Bowler",
+
+    "ind_ravindra_jadeja":      "All-Rounder",
+    "ban_shakib_al_hasan":      "All-Rounder",
+    "pak_shahid_afridi":        "All-Rounder",
+    "eng_moeen_ali":            "All-Rounder",
+    "ind_axar_patel":           "All-Rounder",
+    "ind_washington_sundar":    "All-Rounder",
+    "pak_shadab_khan":          "All-Rounder",
+    "nz_mitchell_santner":      "All-Rounder",
+    "sl_thisara_perera":        "All-Rounder",
+    "sl_wanindu_hasaranga":     "All-Rounder",
+
+    "wi_andre_russell":         "All-Rounder",
+    "eng_sam_curran":           "All-Rounder",
+    "wi_jason_holder":          "All-Rounder",
+    "ind_yusuf_pathan":         "All-Rounder",
+    "ind_irfan_pathan":         "All-Rounder",
+    "ind_krunal_pandya":        "All-Rounder",
+    "ind_shardul_thakur":       "All-Rounder",
+    "nz_cj_anderson":           "All-Rounder",
+    "nz_c_de_grandhomme":       "All-Rounder",
+    "nz_gd_elliott":            "All-Rounder",
+    "aus_c_green":              "All-Rounder",
+    "aus_james_faulkner":       "All-Rounder",
+    "aus_jr_hopes":             "All-Rounder",
+    "aus_marcus_stoinis":       "All-Rounder",
+    "sa_albie_morkel":          "All-Rounder",
+    "sa_al_phehlukwayo":        "All-Rounder",
+    "sa_chris_morris":          "All-Rounder",
+    "wi_r_shepherd":            "All-Rounder",
+    "wi_dwayne_smith":          "All-Rounder",
+    "eng_chris_woakes":         "All-Rounder",
+    "eng_tt_bresnan":           "All-Rounder",
+    "eng_ls_livingstone":       "All-Rounder",
+    "eng_ravi_bopara":          "All-Rounder",
+    "sl_dasun_shanaka":         "All-Rounder",
+    "sl_nuwan_kulasekara":      "All-Rounder",
+    "pak_faheem_ashraf":        "All-Rounder",
+    "pak_mohammad_nawaz":       "All-Rounder",
+    "pak_imad_wasim":           "All-Rounder",
+    "ban_farhad_reza":          "All-Rounder"
+  },
+
+  "trophyAdditions": {
+    "_comment": "Trophies to add to specific players (appended if not already present).",
+    "ind_suresh_raina": ["T20WC"]
+  },
+
+  "trophyRemovals": {
+    "_comment": "Trophies to remove from specific players."
+  }
+}
