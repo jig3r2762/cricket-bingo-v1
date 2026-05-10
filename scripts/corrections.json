@@ -57,7 +57,14 @@
     "pak_faheem_ashraf":        "All-Rounder",
     "pak_mohammad_nawaz":       "All-Rounder",
     "pak_imad_wasim":           "All-Rounder",
-    "ban_farhad_reza":          "All-Rounder"
+    "ban_farhad_reza":          "All-Rounder",
+
+    "eng_adil_rashid":          "Spin Bowler",
+    "ind_pp_ojha":              "Spin Bowler",
+    "sl_mdk_perera":            "Spin Bowler",
+    "sl_a_dananjaya":           "Spin Bowler",
+    "ind_r_sai_kishore":        "Spin Bowler",
+    "nz_mg_bracewell":          "All-Rounder"
   },
 
   "trophyAdditions": {

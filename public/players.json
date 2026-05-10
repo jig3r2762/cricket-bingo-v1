@@ -13719,7 +13719,7 @@
       "PBKS",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 540,
       "testWickets": 60,
@@ -39452,7 +39452,7 @@
       "MI",
       "SRH"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 89,
       "testWickets": 113,
@@ -49316,7 +49316,7 @@
     "iplTeams": [
       "RCB"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "All-Rounder",
     "stats": {
       "testRuns": 339,
       "testWickets": 25,
@@ -58340,7 +58340,7 @@
     "iplTeams": [
       "MI"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 135,
       "testWickets": 33,
@@ -66796,7 +66796,7 @@
     "countryCode": "SL",
     "countryFlag": "🇱🇰",
     "iplTeams": [],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 1303,
       "testWickets": 161,
@@ -84146,7 +84146,7 @@
     "iplTeams": [
       "GT"
     ],
-    "primaryRole": "Fast Bowler",
+    "primaryRole": "Spin Bowler",
     "stats": {
       "testRuns": 0,
       "testWickets": 0,
