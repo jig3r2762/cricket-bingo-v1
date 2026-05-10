@@ -19,6 +19,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const HowToPlay = lazy(() => import("./pages/HowToPlay"));
 const About = lazy(() => import("./pages/About"));
 const Players = lazy(() => import("./pages/Players"));
+const PlayerProfile = lazy(() => import("./pages/PlayerProfile"));
 
 // AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
 // away from the landing page (login, play, battle, etc.).
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="/about" element={<About />} />
+            <Route path="/players/:id" element={<PlayerProfile />} />
             <Route path="/players" element={<Players />} />
             {/* All other routes — Firebase loads here */}
             <Route path="/*" element={<AuthenticatedApp />} />

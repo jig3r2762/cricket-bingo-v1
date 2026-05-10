@@ -243,7 +243,9 @@ export default function Players() {
               {paged.map((player) => (
                 <tr key={player.id} className="border-b border-border/20 hover:bg-candy-green/5 transition-colors">
                   <td className="p-3">
-                    <div className="font-body font-bold text-foreground">{player.name}</div>
+                    <Link to={`/players/${player.id}`} className="font-body font-bold text-foreground hover:text-candy-green transition-colors">
+                      {player.name}
+                    </Link>
                     <div className="sm:hidden text-xs text-muted-foreground">
                       {player.countryFlag} {player.country} &middot; {player.primaryRole}
                     </div>
