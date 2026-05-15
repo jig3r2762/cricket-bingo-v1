@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+﻿import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
 import { RoomSetup } from "@/components/battle/RoomSetup";
@@ -34,7 +34,7 @@ export default function Battle() {
   const [joinError, setJoinError] = useState<string | null>(null);
 
   const myName = user?.displayName || user?.email?.split("@")[0] || "Player";
-  // user.uid is required — guests are blocked below before reaching any Firestore calls
+  // user.uid is required â€” guests are blocked below before reaching any Firestore calls
   const myUid = user?.uid ?? "";
 
   // Build player map for deck resolution
@@ -43,7 +43,7 @@ export default function Battle() {
     [allPlayers]
   );
 
-  // ── Host: create a new room ──────────────────────────────────────────────
+  // â”€â”€ Host: create a new room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCreateRoom = useCallback(
     async (gridSize: 3 | 4) => {
       if (allPlayers.length === 0) return;
@@ -70,7 +70,7 @@ export default function Battle() {
     [allPlayers, myUid, myName]
   );
 
-  // ── Guest: join existing room ────────────────────────────────────────────
+  // â”€â”€ Guest: join existing room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleJoinRoom = useCallback(
     async (code: string) => {
       setJoining(true);
@@ -100,7 +100,7 @@ export default function Battle() {
     [myUid, myName]
   );
 
-  // ── Host: opponent joined (WaitingRoom fires this) ───────────────────────
+  // â”€â”€ Host: opponent joined (WaitingRoom fires this) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleOpponentJoined = useCallback((data: RoomData) => {
     setGameInfo((prev) =>
       prev ? { ...prev, opponentName: data.guestName ?? "Opponent" } : prev
@@ -108,13 +108,13 @@ export default function Battle() {
     setPhase("playing");
   }, []);
 
-  // ── Play Again: go back to setup ─────────────────────────────────────────
+  // â”€â”€ Play Again: go back to setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handlePlayAgain = useCallback(() => {
     setGameInfo(null);
     setPhase("setup");
   }, []);
 
-  // ── Loading ──────────────────────────────────────────────────────────────
+  // â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (playersLoading || authLoading) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center">
@@ -125,11 +125,11 @@ export default function Battle() {
     );
   }
 
-  // ── Sign-in gate: guests have no Firebase auth → Firestore writes fail ───
+  // â”€â”€ Sign-in gate: guests have no Firebase auth â†’ Firestore writes fail â”€â”€â”€
   if (!user || isGuest) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <div className="glass-card rounded-2xl p-8 w-full max-w-sm text-center space-y-5">
+        <div className="glass-card rounded-xl p-8 w-full max-w-sm text-center space-y-5">
           <div className="flex items-center justify-center gap-2">
             <Swords className="w-6 h-6 text-primary" />
             <h2 className="font-display text-xl font-bold text-secondary uppercase tracking-wider">vs Player</h2>
@@ -139,7 +139,7 @@ export default function Battle() {
           </p>
           <button
             onClick={() => signInWithGoogle().catch(() => {})}
-            className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-gray-800 font-bold transition-all active:scale-95"
+            className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
           >
             Sign in with Google
@@ -155,7 +155,7 @@ export default function Battle() {
     );
   }
 
-  // ── Setup ────────────────────────────────────────────────────────────────
+  // â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "setup") {
     return (
       <RoomSetup
@@ -168,7 +168,7 @@ export default function Battle() {
     );
   }
 
-  // ── Waiting (host waiting for guest) ─────────────────────────────────────
+  // â”€â”€ Waiting (host waiting for guest) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "waiting" && gameInfo) {
     return (
       <WaitingRoom
@@ -180,7 +180,7 @@ export default function Battle() {
     );
   }
 
-  // ── Playing ──────────────────────────────────────────────────────────────
+  // â”€â”€ Playing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "playing" && gameInfo) {
     // Resolve deck from deckIds + local player map
     const deck = gameInfo.deckIds

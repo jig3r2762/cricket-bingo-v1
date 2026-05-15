@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Timer, TimerOff } from "lucide-react";
+import {
+  Timer, TimerOff, Calendar, Trophy, Search, Swords,
+  ChevronRight, Zap,
+} from "lucide-react";
 
 interface GridSelectionProps {
   onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
@@ -10,173 +13,166 @@ interface GridSelectionProps {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.06 } },
 };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 320, damping: 28 } },
 };
+
+interface ModeConfig {
+  id: string;
+  label: string;
+  sub: string;
+  tag?: string;
+  icon: React.FC<{ className?: string }>;
+  colorClass: string;
+  iconBg: string;
+  onClick: (onSelect: GridSelectionProps["onSelect"], timed: boolean, onGuess?: () => void) => void;
+}
+
+const MODES: ModeConfig[] = [
+  {
+    id: "daily-3",
+    label: "Daily 3x3",
+    sub: "9 cells · Same grid for all",
+    icon: Calendar,
+    colorClass: "border-primary/40 hover:border-primary/70",
+    iconBg: "bg-primary/10 text-primary border-primary/30",
+    onClick: (s, t) => s(3, t, "daily"),
+  },
+  {
+    id: "daily-4",
+    label: "Daily 4x4",
+    sub: "16 cells · Harder challenge",
+    icon: Calendar,
+    colorClass: "border-blue-500/40 hover:border-blue-500/70",
+    iconBg: "bg-blue-500/10 text-blue-500 border-blue-500/30",
+    onClick: (s, t) => s(4, t, "daily"),
+  },
+  {
+    id: "ipl",
+    label: "IPL Mode",
+    sub: "All 10 teams · IPL only",
+    icon: Trophy,
+    colorClass: "border-secondary/40 hover:border-secondary/70",
+    iconBg: "bg-secondary/10 text-secondary border-secondary/30",
+    onClick: (s, t) => s(3, t, "ipl"),
+  },
+  {
+    id: "guess",
+    label: "Guess Who",
+    sub: "5 clues · Name the player",
+    tag: "New",
+    icon: Search,
+    colorClass: "border-violet-500/40 hover:border-violet-500/70",
+    iconBg: "bg-violet-500/10 text-violet-500 border-violet-500/30",
+    onClick: (_, __, og) => og?.(),
+  },
+];
 
 export function GridSelection({ onSelect, onBattle, onGuess }: GridSelectionProps) {
   const [timed, setTimed] = useState(false);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-lg mx-auto px-4">
+    <div className="flex flex-col gap-6 w-full max-w-lg mx-auto px-4 py-2">
+
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center"
+        transition={{ duration: 0.3 }}
+        className="text-center space-y-1"
       >
-        <motion.span
-          animate={{ rotate: [-5, 5, -5] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="text-5xl block mb-2"
-        >
-          🏏
-        </motion.span>
-        <h1 className="font-display text-3xl leading-none" style={{ color: "hsl(25 30% 18%)" }}>
-          Play Cricket Games
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/30 bg-primary/8 mb-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
+          <span className="text-[10px] font-body font-semibold text-primary uppercase tracking-[0.14em]">
+            Daily Challenge
+          </span>
+        </div>
+        <h1 className="font-display text-4xl text-foreground leading-none tracking-wide">
+          Cricket Bingo
         </h1>
+        <p className="text-xs text-muted-foreground font-body">
+          Match players · Complete lines · Beat the world
+        </p>
       </motion.div>
 
-      {/* Timer toggle — applies to bingo modes */}
+      {/* Timer toggle */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.12 }}
         onClick={() => setTimed((v) => !v)}
-        className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border-2 mx-auto transition-all ${
+        className={`flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-lg border mx-auto transition-all text-sm ${
           timed
-            ? "border-candy-orange bg-orange-50 dark:bg-orange-950/30"
-            : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+            ? "border-secondary/50 bg-secondary/10 text-secondary"
+            : "border-border bg-card/60 text-muted-foreground"
         }`}
-        style={{ boxShadow: timed ? "0 3px 0 hsl(28 90% 38%)" : "0 3px 0 #d1d5db" }}
       >
-        {timed ? (
-          <Timer className="w-4 h-4 text-candy-orange" />
-        ) : (
-          <TimerOff className="w-4 h-4 text-muted-foreground" />
-        )}
-        <span className={`text-xs font-body font-bold ${timed ? "text-candy-orange" : "text-muted-foreground"}`}>
-          {timed ? "Timer ON — 10s per turn" : "Timer OFF — play relaxed"}
-        </span>
-        <div className={`w-9 h-5 rounded-full transition-colors relative shrink-0 ${timed ? "bg-candy-orange" : "bg-gray-300 dark:bg-gray-600"}`}>
-          <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${timed ? "translate-x-4" : "translate-x-0.5"}`} />
+        {timed
+          ? <><Zap className="w-3.5 h-3.5" /><span className="font-body font-semibold text-xs">Timed — 10s per turn</span></>
+          : <><TimerOff className="w-3.5 h-3.5" /><span className="font-body font-semibold text-xs">Relaxed — no timer</span></>
+        }
+        <div className={`w-9 h-5 rounded-full transition-colors relative shrink-0 ${timed ? "bg-secondary" : "bg-muted"}`}>
+          <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-transform ${timed ? "translate-x-4" : "translate-x-0.5"}`} />
         </div>
       </motion.button>
 
-      {/* Game mode cards */}
+      {/* Mode cards */}
       <motion.div
         variants={stagger}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-2 gap-3"
+        className="grid grid-cols-2 gap-2.5"
       >
-        {/* Daily 3x3 */}
-        <motion.button
-          variants={fadeUp}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onSelect(3, timed, "daily")}
-          className="candy-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-candy-green flex items-center justify-center"
-            style={{ boxShadow: "0 4px 0 hsl(134 55% 30%)" }}>
-            <span className="text-2xl">📅</span>
-          </div>
-          <div>
-            <h3 className="font-display text-base text-foreground">DAILY 3x3</h3>
-            <p className="text-[10px] text-muted-foreground font-body font-semibold mt-0.5">
-              Today's puzzle · 9 cells
-            </p>
-          </div>
-        </motion.button>
+        {MODES.map((mode) => {
+          if (mode.id === "guess" && !onGuess) return null;
+          const Icon = mode.icon;
+          return (
+            <motion.button
+              key={mode.id}
+              variants={fadeUp}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => mode.onClick(onSelect, timed, onGuess)}
+              className={`candy-card p-4 flex flex-col items-start gap-3 text-left cursor-pointer relative overflow-hidden group transition-all border ${mode.colorClass}`}
+            >
+              {mode.tag && (
+                <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[9px] font-body font-bold bg-primary text-white uppercase tracking-wide">
+                  {mode.tag}
+                </span>
+              )}
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center border ${mode.iconBg} group-hover:scale-110 transition-transform`}>
+                <Icon className="w-4.5 h-4.5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display text-base text-foreground leading-none mb-1">{mode.label}</h3>
+                <p className="text-[10px] text-muted-foreground font-body leading-snug">{mode.sub}</p>
+              </div>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 self-end group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+            </motion.button>
+          );
+        })}
 
-        {/* Daily 4x4 */}
-        <motion.button
-          variants={fadeUp}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onSelect(4, timed, "daily")}
-          className="candy-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-candy-blue flex items-center justify-center"
-            style={{ boxShadow: "0 4px 0 hsl(205 85% 38%)" }}>
-            <span className="text-2xl">📅</span>
-          </div>
-          <div>
-            <h3 className="font-display text-base text-foreground">DAILY 4x4</h3>
-            <p className="text-[10px] text-muted-foreground font-body font-semibold mt-0.5">
-              Today's puzzle · 16 cells
-            </p>
-          </div>
-        </motion.button>
-
-        {/* IPL Mode */}
-        <motion.button
-          variants={fadeUp}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onSelect(3, timed, "ipl")}
-          className="candy-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer relative overflow-hidden"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-candy-yellow flex items-center justify-center"
-            style={{ boxShadow: "0 4px 0 hsl(45 90% 38%)" }}>
-            <span className="text-2xl">🏆</span>
-          </div>
-          <div>
-            <h3 className="font-display text-base text-foreground">IPL MODE</h3>
-            <p className="text-[10px] text-muted-foreground font-body font-semibold mt-0.5">
-              All 10 teams · IPL only
-            </p>
-          </div>
-        </motion.button>
-
-        {/* Guess the Cricketer */}
-        {onGuess && (
-          <motion.button
-            variants={fadeUp}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={onGuess}
-            className="candy-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer relative overflow-hidden"
-          >
-            <div className="absolute top-1.5 right-1.5">
-              <span className="px-1.5 py-0.5 rounded-full bg-candy-orange text-white font-body font-bold text-[8px] uppercase">New</span>
-            </div>
-            <div className="w-14 h-14 rounded-2xl bg-candy-orange flex items-center justify-center"
-              style={{ boxShadow: "0 4px 0 hsl(28 90% 38%)" }}>
-              <span className="text-2xl">🕵️</span>
-            </div>
-            <div>
-              <h3 className="font-display text-base text-foreground">GUESS WHO</h3>
-              <p className="text-[10px] text-muted-foreground font-body font-semibold mt-0.5">
-                5 clues · Name the player
-              </p>
-            </div>
-          </motion.button>
-        )}
-
-        {/* VS Player */}
+        {/* VS Battle full-width */}
         {onBattle && (
           <motion.button
             variants={fadeUp}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onBattle}
-            className="candy-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer col-span-2"
+            className="candy-card col-span-2 p-4 flex items-center gap-4 text-left cursor-pointer border border-violet-500/30 hover:border-violet-500/60 group transition-all"
           >
-            <div className="w-14 h-14 rounded-2xl bg-candy-purple flex items-center justify-center"
-              style={{ boxShadow: "0 4px 0 hsl(262 78% 42%)" }}>
-              <span className="text-2xl">⚔️</span>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center border bg-violet-500/10 text-violet-500 border-violet-500/30 group-hover:scale-110 transition-transform shrink-0">
+              <Swords className="w-4.5 h-4.5" />
             </div>
-            <div>
-              <h3 className="font-display text-base text-foreground">VS PLAYER</h3>
-              <p className="text-[10px] text-muted-foreground font-body font-semibold mt-0.5">
-                Real-time · Same grid · First to fill wins
-              </p>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-display text-base text-foreground leading-none mb-1">VS Player</h3>
+              <p className="text-[10px] text-muted-foreground font-body">Real-time · Same grid · First to BINGO wins</p>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[10px] text-green-400 font-body font-semibold">Live</span>
             </div>
           </motion.button>
         )}

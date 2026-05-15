@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Copy, Check, X } from "lucide-react";
 import { subscribeToRoom, type RoomData } from "@/hooks/useOnlineBattle";
@@ -60,7 +60,7 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel, entr
         <motion.div
           animate={{ scale: [1, 1.015, 1] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="glass-card rounded-2xl p-8 border border-primary/40 space-y-5"
+          className="glass-card rounded-xl p-8 border border-primary/40 space-y-5"
         >
           <div className="font-display text-5xl font-extrabold text-primary tracking-[0.25em] select-all">
             {roomId}

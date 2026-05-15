@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -94,7 +94,7 @@ export default function Stats() {
             Loading...
           </div>
         ) : !user ? (
-          <div className="candy-card rounded-2xl p-8 text-center space-y-3">
+          <div className="candy-card rounded-xl p-8 text-center space-y-3">
             <p className="text-muted-foreground text-sm">Sign in to see your stats</p>
           </div>
         ) : (

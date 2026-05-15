@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+﻿import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Coins, Swords } from "lucide-react";
 import { EntryFeePicker } from "@/components/battle/EntryFeePicker";
@@ -43,7 +43,7 @@ export default function PaidBattle() {
     [allPlayers]
   );
 
-  // ── Host: create paid room ────────────────────────────────────────────────
+  // â”€â”€ Host: create paid room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCreateRoom = useCallback(
     async (entryFee: number, gridSize: 3 | 4) => {
       if (allPlayers.length === 0) return;
@@ -84,7 +84,7 @@ export default function PaidBattle() {
     [allPlayers, myUid, myName]
   );
 
-  // ── Guest: join paid room ─────────────────────────────────────────────────
+  // â”€â”€ Guest: join paid room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleJoinRoom = useCallback(
     async (code: string) => {
       setJoining(true);
@@ -122,7 +122,7 @@ export default function PaidBattle() {
     [myUid, myName]
   );
 
-  // ── Host: opponent joined ─────────────────────────────────────────────────
+  // â”€â”€ Host: opponent joined â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleOpponentJoined = useCallback((data: RoomData) => {
     setGameInfo((prev) =>
       prev ? { ...prev, opponentName: data.guestName ?? "Opponent" } : prev
@@ -130,7 +130,7 @@ export default function PaidBattle() {
     setPhase("playing");
   }, []);
 
-  // ── Host: cancel with refund ──────────────────────────────────────────────
+  // â”€â”€ Host: cancel with refund â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCancelWithRefund = useCallback(async () => {
     if (!gameInfo) return;
     try {
@@ -140,7 +140,7 @@ export default function PaidBattle() {
         body: JSON.stringify({ uid: myUid, roomId: gameInfo.roomId }),
       });
       if (res.ok) {
-        toast.success(`${gameInfo.entryFee} 🪙 refunded`);
+        toast.success(`${gameInfo.entryFee} ðŸª™ refunded`);
       } else {
         const err = await res.json();
         toast.error(err.error ?? "Refund failed");
@@ -152,7 +152,7 @@ export default function PaidBattle() {
     setPhase("setup");
   }, [gameInfo, myUid]);
 
-  // ── Game over: call paid-room-finish ─────────────────────────────────────
+  // â”€â”€ Game over: call paid-room-finish â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleGameOver = useCallback(
     async (score: number, filledCount: number, status: string) => {
       if (!gameInfo) return null;
@@ -178,7 +178,7 @@ export default function PaidBattle() {
     setPhase("setup");
   }, []);
 
-  // ── Loading ───────────────────────────────────────────────────────────────
+  // â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (playersLoading || authLoading) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center">
@@ -187,11 +187,11 @@ export default function PaidBattle() {
     );
   }
 
-  // ── Sign-in gate ──────────────────────────────────────────────────────────
+  // â”€â”€ Sign-in gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!user || isGuest) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <div className="glass-card rounded-2xl p-8 w-full max-w-sm text-center space-y-5">
+        <div className="glass-card rounded-xl p-8 w-full max-w-sm text-center space-y-5">
           <div className="flex items-center justify-center gap-2">
             <Coins className="w-5 h-5 text-amber-400" />
             <Swords className="w-5 h-5 text-primary" />
@@ -200,7 +200,7 @@ export default function PaidBattle() {
           <p className="text-sm text-muted-foreground">Sign in to play for real coins.</p>
           <button
             onClick={() => signInWithGoogle().catch(() => {})}
-            className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-gray-800 font-bold transition-all active:scale-95"
+            className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
           >
             Sign in with Google
@@ -216,7 +216,7 @@ export default function PaidBattle() {
     );
   }
 
-  // ── Setup ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "setup") {
     return (
       <EntryFeePicker
@@ -229,7 +229,7 @@ export default function PaidBattle() {
     );
   }
 
-  // ── Waiting ───────────────────────────────────────────────────────────────
+  // â”€â”€ Waiting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "waiting" && gameInfo) {
     return (
       <WaitingRoom
@@ -243,7 +243,7 @@ export default function PaidBattle() {
     );
   }
 
-  // ── Playing ───────────────────────────────────────────────────────────────
+  // â”€â”€ Playing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (phase === "playing" && gameInfo) {
     const deck = gameInfo.deckIds
       .map((id) => playerMap.get(id))

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, useState } from "react";
+﻿import { useEffect, useRef, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Swords, Trophy, Users, RotateCcw, Home, Timer } from "lucide-react";
@@ -370,7 +370,7 @@ function ResultOverlay({
         initial={{ scale: 0.85, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 280, damping: 20 }}
-        className="glass-card rounded-2xl p-6 w-full max-w-sm text-center space-y-5"
+        className="glass-card rounded-xl p-6 w-full max-w-sm text-center space-y-5"
       >
         <motion.div
           initial={{ scale: 0, rotate: -10 }}

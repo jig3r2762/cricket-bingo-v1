@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Terms() {
   useSeoHead({
-    title: "Terms of Service — Cricket Bingo",
+    title: "Terms of Service â€” Cricket Bingo",
     description:
       "Terms of Service for Cricket Bingo, the free online cricket quiz game. Read our usage rules, intellectual property policy, and user responsibilities.",
     canonical: "https://cricket-bingo.in/terms",
@@ -118,7 +118,7 @@ export default function Terms() {
               monetary value and cannot be withdrawn or refunded once used in a Paid Battle.
             </p>
             <ul className="list-disc pl-6 space-y-1">
-              <li>All purchases are final. Unused Coins may be eligible for a refund within 7 days of purchase — contact us to request one.</li>
+              <li>All purchases are final. Unused Coins may be eligible for a refund within 7 days of purchase â€” contact us to request one.</li>
               <li>We reserve the right to adjust Coin pricing or game mechanics at any time.</li>
               <li>Paid Battle winnings are distributed as in-game Coins only.</li>
             </ul>
@@ -187,7 +187,7 @@ export default function Terms() {
           </section>
         </div>
 
-        <footer className="border-t-2 border-gray-200 pt-6 mt-12 text-center">
+        <footer className="border-t-2 border-border pt-6 mt-12 text-center">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-3">
             <Link to="/" className="hover:text-candy-green transition-colors font-body font-bold">Home</Link>
             <Link to="/about" className="hover:text-candy-green transition-colors font-body font-bold">About</Link>

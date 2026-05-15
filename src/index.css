@@ -1,360 +1,427 @@
-@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Warm background palette */
-    --background: 33 100% 97%;
-    --foreground: 25 30% 18%;
-
+    /* ── Light mode: Daytime stadium ── */
+    --background: 150 22% 96%;
+    --foreground: 150 45% 6%;
     --card: 0 0% 100%;
-    --card-foreground: 25 30% 18%;
-
+    --card-foreground: 150 45% 6%;
     --popover: 0 0% 100%;
-    --popover-foreground: 25 30% 18%;
-
-    /* Primary: lush green */
-    --primary: 134 61% 41%;
+    --popover-foreground: 150 45% 6%;
+    --primary: 152 72% 28%;
     --primary-foreground: 0 0% 100%;
-
-    /* Secondary: warm orange */
-    --secondary: 28 95% 55%;
-    --secondary-foreground: 0 0% 100%;
-
-    /* Muted: soft peach */
-    --muted: 33 60% 92%;
-    --muted-foreground: 25 20% 50%;
-
-    /* Accent: sky blue */
-    --accent: 205 90% 55%;
+    --secondary: 38 95% 50%;
+    --secondary-foreground: 30 60% 10%;
+    --muted: 150 16% 91%;
+    --muted-foreground: 150 14% 42%;
+    --accent: 187 80% 40%;
     --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 33 30% 85%;
-    --input: 33 30% 85%;
-    --ring: 134 61% 41%;
-
-    --radius: 1rem;
-
-    /* Brand colors */
-    --candy-green: 134 61% 41%;
-    --candy-orange: 28 95% 55%;
-    --candy-blue: 205 90% 55%;
-    --candy-purple: 262 83% 58%;
-    --candy-red: 0 84% 60%;
-    --candy-yellow: 45 98% 55%;
-    --candy-pink: 330 85% 60%;
-
-    /* Shadow colors for 3D chunky cards */
-    --shadow-green: 134 55% 30%;
-    --shadow-orange: 28 90% 38%;
-    --shadow-blue: 205 85% 38%;
-    --shadow-purple: 262 78% 42%;
-
-    /* Background gradient stops */
-    --bg-warm: 33 100% 97%;
-    --bg-peach: 24 100% 95%;
-
+    --border: 150 20% 83%;
+    --input: 150 20% 83%;
+    --ring: 152 72% 28%;
+    --radius: 0.5rem;
+    /* brand tokens */
+    --candy-green: 152 72% 28%;
+    --candy-orange: 38 95% 50%;
+    --candy-blue: 199 80% 42%;
+    --candy-purple: 262 72% 52%;
+    --candy-red: 0 84% 50%;
+    --candy-yellow: 45 98% 52%;
+    --candy-pink: 330 80% 56%;
+    --shadow-green: 152 65% 18%;
+    --shadow-orange: 38 85% 32%;
+    --shadow-blue: 199 70% 28%;
+    --shadow-purple: 262 65% 34%;
+    --neon-glow: 152 100% 40%;
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 25 30% 18%;
-    --sidebar-primary: 134 61% 41%;
+    --sidebar-foreground: 150 45% 6%;
+    --sidebar-primary: 152 72% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 33 60% 92%;
-    --sidebar-accent-foreground: 25 30% 18%;
-    --sidebar-border: 33 30% 85%;
-    --sidebar-ring: 134 61% 41%;
+    --sidebar-accent: 150 16% 91%;
+    --sidebar-accent-foreground: 150 45% 6%;
+    --sidebar-border: 150 20% 83%;
+    --sidebar-ring: 152 72% 28%;
   }
-}
 
-/* ── Dark mode overrides ── */
-.dark {
-  --background: 222 71% 4%;
-  --foreground: 210 40% 98%;
-  --card: 222 50% 10%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 71% 4%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 142 71% 45%;
-  --primary-foreground: 222 71% 4%;
-  --secondary: 38 92% 50%;
-  --secondary-foreground: 222 71% 4%;
-  --muted: 222 40% 14%;
-  --muted-foreground: 215 20% 55%;
-  --accent: 187 92% 55%;
-  --accent-foreground: 222 71% 4%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 222 30% 18%;
-  --input: 222 30% 18%;
-  --ring: 142 71% 45%;
-  --candy-green: 142 71% 45%;
-  --candy-orange: 38 92% 50%;
-  --candy-blue: 187 92% 55%;
-  --candy-purple: 262 75% 65%;
-  --candy-red: 0 84% 60%;
-  --candy-yellow: 45 92% 55%;
-  --candy-pink: 330 80% 65%;
-  --shadow-green: 142 60% 28%;
-  --shadow-orange: 38 85% 32%;
-  --shadow-blue: 187 80% 32%;
-  --shadow-purple: 262 70% 38%;
-}
-
-@layer base {
-  * {
-    @apply border-border;
+  .dark {
+    /* ── Dark mode: Night match at the stadium ── */
+    --background: 216 38% 5%;
+    --foreground: 160 15% 92%;
+    --card: 210 30% 8%;
+    --card-foreground: 160 15% 92%;
+    --popover: 210 30% 8%;
+    --popover-foreground: 160 15% 92%;
+    --primary: 145 80% 48%;
+    --primary-foreground: 216 38% 5%;
+    --secondary: 43 100% 52%;
+    --secondary-foreground: 30 60% 8%;
+    --muted: 210 25% 13%;
+    --muted-foreground: 210 12% 55%;
+    --accent: 187 100% 48%;
+    --accent-foreground: 216 38% 5%;
+    --destructive: 0 84% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 16%;
+    --input: 210 20% 16%;
+    --ring: 145 80% 48%;
+    --neon-glow: 145 100% 52%;
+    --candy-green: 145 80% 48%;
+    --candy-orange: 43 100% 52%;
+    --candy-blue: 199 100% 52%;
+    --candy-purple: 262 80% 68%;
+    --candy-red: 0 90% 60%;
+    --candy-yellow: 45 100% 55%;
+    --candy-pink: 330 85% 65%;
   }
+
+  * { @apply border-border; }
+
   body {
     @apply bg-background text-foreground;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
   }
-  body:not(.dark) {
-    background: linear-gradient(160deg, hsl(33 100% 97%) 0%, hsl(24 100% 94%) 50%, hsl(33 80% 95%) 100%);
-  }
-  body.dark {
-    background: hsl(230 80% 2%);
-  }
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Lilita One', cursive;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 }
 
 @layer components {
-  /* ── Chunky 3D Card ── */
+
+  /* ════════════════════════════════
+     SURFACES
+  ════════════════════════════════ */
+
+  .game-bg {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% -10%, hsl(145 80% 30% / 0.12), transparent),
+      hsl(var(--background));
+  }
+  .dark .game-bg {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, hsl(145 80% 48% / 0.08), transparent),
+      radial-gradient(ellipse 60% 30% at 80% 100%, hsl(43 100% 52% / 0.04), transparent),
+      hsl(216 38% 5%);
+  }
+
+  /* backward-compat alias */
+  .warm-bg { @apply game-bg; }
+
+  .glass-panel {
+    background: hsl(var(--card) / 0.85);
+    border: 1px solid hsl(var(--border));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .dark .glass-panel {
+    background: hsl(210 30% 8% / 0.9);
+    border-color: hsl(210 20% 18%);
+  }
+
+  /* ════════════════════════════════
+     CARDS
+  ════════════════════════════════ */
+
   .candy-card {
-    @apply rounded-2xl bg-white;
-    border: 2px solid rgba(0,0,0,0.06);
-    box-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    @apply rounded-lg bg-card;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 4px 24px hsl(150 30% 10% / 0.08), 0 1px 4px hsl(150 30% 10% / 0.06);
+    transition: box-shadow 0.18s ease, transform 0.14s ease, border-color 0.18s ease;
   }
-  .candy-card:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  .candy-card:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.2),
+      0 8px 32px hsl(150 30% 10% / 0.12),
+      0 2px 8px hsl(var(--primary) / 0.1);
+    transform: translateY(-2px);
   }
-
-  /* ── Chunky Button ── */
-  .candy-btn {
-    @apply rounded-2xl font-bold text-white px-6 py-3;
-    font-family: 'Lilita One', cursive;
-    letter-spacing: 0.03em;
-    border: none;
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
-    cursor: pointer;
+  .dark .candy-card {
+    box-shadow: 0 4px 28px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
   }
-  .candy-btn:active {
-    transform: translateY(3px);
-    box-shadow: none !important;
-  }
-  .candy-btn-green {
-    background: hsl(var(--candy-green));
-    box-shadow: 0 5px 0 hsl(var(--shadow-green));
-  }
-  .candy-btn-orange {
-    background: hsl(var(--candy-orange));
-    box-shadow: 0 5px 0 hsl(var(--shadow-orange));
-  }
-  .candy-btn-blue {
-    background: hsl(var(--candy-blue));
-    box-shadow: 0 5px 0 hsl(var(--shadow-blue));
-  }
-  .candy-btn-purple {
-    background: hsl(var(--candy-purple));
-    box-shadow: 0 5px 0 hsl(var(--shadow-purple));
+  .dark .candy-card:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.2),
+      0 8px 40px rgba(0,0,0,0.5),
+      0 0 24px hsl(var(--primary) / 0.08);
   }
 
-  /* ── Mode Card (GridSelection) ── */
   .mode-card {
-    @apply rounded-2xl p-5 flex items-center gap-4 cursor-pointer w-full;
-    border: 2.5px solid rgba(0,0,0,0.07);
-    box-shadow: 0 5px 0 rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.06);
-    background: white;
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    @apply rounded-lg p-5 flex items-center gap-4 cursor-pointer w-full bg-card;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 4px 24px hsl(150 30% 10% / 0.06);
+    transition: box-shadow 0.18s ease, transform 0.14s ease, border-color 0.18s ease;
   }
   .mode-card:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.18),
+      0 8px 32px hsl(150 30% 10% / 0.1),
+      0 0 20px hsl(var(--primary) / 0.06);
     transform: translateY(-2px);
-    box-shadow: 0 7px 0 rgba(0,0,0,0.1), 0 12px 24px rgba(0,0,0,0.08);
   }
-  .mode-card:active {
-    transform: translateY(4px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  .dark .mode-card {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+  .dark .mode-card:hover {
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.15),
+      0 8px 36px rgba(0,0,0,0.45),
+      0 0 28px hsl(var(--primary) / 0.1);
   }
 
-  /* ── Bingo Cell ── */
+  /* ════════════════════════════════
+     BINGO CELL — THE GAME TILE
+  ════════════════════════════════ */
+
   .bingo-cell {
-    @apply rounded-xl flex flex-col items-center justify-center cursor-pointer select-none;
-    background: white;
-    border: 2.5px solid hsl(33 30% 85%);
-    box-shadow: 0 4px 0 hsl(33 25% 75%), 0 6px 12px rgba(0,0,0,0.06);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    @apply rounded-lg flex flex-col items-center justify-center cursor-pointer select-none;
+    background: hsl(var(--card));
+    border: 1.5px solid hsl(var(--border));
+    box-shadow: 0 2px 12px hsl(150 20% 10% / 0.07), inset 0 1px 0 hsl(0 0% 100% / 0.6);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .bingo-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, hsl(var(--primary) / 0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
   }
   .bingo-cell:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 hsl(33 25% 72%), 0 10px 16px rgba(0,0,0,0.08);
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow:
+      0 0 0 2px hsl(var(--primary) / 0.12),
+      0 4px 20px hsl(var(--primary) / 0.15),
+      inset 0 1px 0 hsl(0 0% 100% / 0.8);
+    transform: translateY(-1px) scale(1.01);
   }
-  .bingo-cell:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 hsl(33 25% 75%), 0 2px 6px rgba(0,0,0,0.06);
-  }
+  .bingo-cell:hover::before { opacity: 1; }
+
   .bingo-cell-filled {
-    background: hsl(134 61% 41%);
-    border-color: hsl(134 55% 35%);
-    box-shadow: 0 4px 0 hsl(134 55% 28%), 0 6px 16px rgba(50,150,50,0.25);
+    background: linear-gradient(145deg, hsl(var(--primary)), hsl(150 70% 18%));
+    border-color: hsl(var(--primary) / 0.8);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.3),
+      0 4px 20px hsl(var(--primary) / 0.3),
+      inset 0 1px 0 hsl(0 0% 100% / 0.15);
   }
-  .bingo-cell-filled:hover {
-    transform: none;
-    cursor: default;
+  .bingo-cell-filled:hover { cursor: default; transform: none; }
+  .bingo-cell-filled::before { display: none; }
+
+  .dark .bingo-cell {
+    background: hsl(210 30% 9%);
+    border-color: hsl(210 20% 17%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25), inset 0 1px 0 hsl(0 0% 100% / 0.04);
+  }
+  .dark .bingo-cell::before {
+    background: linear-gradient(160deg, hsl(var(--primary) / 0.06) 0%, transparent 60%);
+  }
+  .dark .bingo-cell:hover {
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow:
+      0 0 0 2px hsl(var(--primary) / 0.15),
+      0 4px 24px hsl(var(--primary) / 0.2),
+      0 0 40px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(0 0% 100% / 0.04);
+  }
+  .dark .bingo-cell-filled {
+    background: linear-gradient(145deg, hsl(var(--primary)), hsl(152 65% 20%));
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.25),
+      0 4px 24px hsl(var(--primary) / 0.35),
+      0 0 48px hsl(var(--primary) / 0.12);
   }
 
-  /* ── Pill Badge ── */
+  /* WIN LINE pulse */
+  .bingo-cell-win {
+    animation: winLinePulse 1.2s ease-in-out infinite;
+  }
+
+  /* ════════════════════════════════
+     BUTTONS
+  ════════════════════════════════ */
+
+  .candy-btn {
+    @apply rounded-lg font-semibold text-white px-5 py-2.5;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+    border: none;
+    transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+  }
+  .candy-btn:hover { filter: brightness(1.1); box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+  .candy-btn:active { transform: scale(0.97); }
+  .candy-btn-green  { background: hsl(var(--candy-green)); }
+  .candy-btn-orange { background: hsl(var(--candy-orange)); }
+  .candy-btn-blue   { background: hsl(var(--candy-blue)); }
+  .candy-btn-purple { background: hsl(var(--candy-purple)); }
+
+  /* ════════════════════════════════
+     HUD / SCORE
+  ════════════════════════════════ */
+
+  .score-display {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: hsl(var(--secondary));
+    text-shadow: 0 0 20px hsl(var(--secondary) / 0.4);
+  }
+
+  /* ════════════════════════════════
+     PILL / BADGE
+  ════════════════════════════════ */
+
   .pill-badge {
-    @apply rounded-full px-2.5 py-0.5 text-xs font-bold;
-    font-family: 'Lilita One', cursive;
-    letter-spacing: 0.04em;
+    @apply rounded-md px-2 py-0.5 text-xs font-semibold;
+    font-family: 'Inter', sans-serif;
   }
 
-  /* ── Progress Bar ── */
+  /* ════════════════════════════════
+     PROGRESS BAR
+  ════════════════════════════════ */
+
   .progress-track {
-    @apply rounded-full w-full;
-    background: hsl(134 40% 88%);
-    height: 14px;
-    border: 2px solid hsl(134 35% 78%);
+    @apply rounded-full w-full overflow-hidden;
+    background: hsl(var(--muted));
+    height: 6px;
   }
   .progress-fill {
     @apply rounded-full h-full;
-    background: linear-gradient(90deg, hsl(134 61% 41%), hsl(134 65% 52%));
-    box-shadow: 0 2px 0 hsl(134 55% 30%);
-    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.5);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ── Warm app background ── */
-  .warm-bg {
-    background: linear-gradient(160deg, hsl(33 100% 97%) 0%, hsl(24 100% 94%) 50%, hsl(33 80% 95%) 100%);
-    min-height: 100vh;
+  /* ════════════════════════════════
+     NEON GLOW UTILITIES
+  ════════════════════════════════ */
+
+  .neon-border {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3), 0 0 16px hsl(var(--primary) / 0.2) !important;
   }
-  .dark .warm-bg {
-    background: hsl(230 80% 2%);
+  .neon-text {
+    color: hsl(var(--primary));
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+  }
+  .gold-text {
+    color: hsl(var(--secondary));
+    text-shadow: 0 0 12px hsl(var(--secondary) / 0.4);
   }
 
-  /* ── Dark mode card / cell overrides ── */
-  .dark .candy-card {
-    background: hsl(222 50% 10%);
-    border-color: hsl(222 30% 20%);
-    box-shadow: 0 4px 0 hsl(222 40% 6%), 0 8px 24px rgba(0,0,0,0.3);
-  }
-  .dark .mode-card {
-    background: hsl(222 50% 10%);
-    border-color: hsl(222 30% 20%);
-    box-shadow: 0 5px 0 hsl(222 40% 6%), 0 8px 20px rgba(0,0,0,0.3);
-  }
-  .dark .mode-card:hover {
-    box-shadow: 0 7px 0 hsl(222 40% 5%), 0 12px 24px rgba(0,0,0,0.35);
-  }
-  .dark .bingo-cell {
-    background: hsl(222 50% 10%);
-    border-color: hsl(222 30% 22%);
-    box-shadow: 0 4px 0 hsl(222 40% 6%), 0 6px 12px rgba(0,0,0,0.25);
-  }
-  .dark .bingo-cell:hover {
-    box-shadow: 0 6px 0 hsl(222 40% 5%), 0 10px 16px rgba(0,0,0,0.3);
-  }
-  .dark .progress-track {
-    background: hsl(222 40% 14%);
-    border-color: hsl(222 30% 20%);
-  }
+  /* ════════════════════════════════
+     DARK MODE OVERRIDES
+  ════════════════════════════════ */
 
-  /* ── Score display ── */
-  .score-display {
-    font-family: 'Lilita One', cursive;
-    color: hsl(var(--candy-orange));
-  }
-
-  /* ── Dark mode: white cards → dark cards ── */
-  .dark .candy-btn-green { background: hsl(134 61% 36%); }
-  .dark .candy-btn-orange { background: hsl(28 90% 48%); }
-
-  /* inline bg-white overrides for dark mode */
   .dark [class*="bg-white"] {
-    background-color: hsl(222 50% 10%) !important;
-    border-color: hsl(222 30% 20%) !important;
-    color: hsl(210 40% 92%);
+    background-color: hsl(var(--card)) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--foreground));
   }
-  .dark [class*="border-gray-200"] {
-    border-color: hsl(222 30% 22%) !important;
-  }
-  .dark [class*="border-gray-300"] {
-    border-color: hsl(222 30% 25%) !important;
-  }
+  .dark [class*="border-gray-200"],
+  .dark [class*="border-gray-300"] { border-color: hsl(var(--border)) !important; }
   .dark [class*="text-gray-500"],
-  .dark [class*="text-gray-600"] {
-    color: hsl(215 20% 60%) !important;
-  }
-  .dark [class*="text-gray-700"] {
-    color: hsl(210 30% 75%) !important;
-  }
+  .dark [class*="text-gray-600"] { color: hsl(var(--muted-foreground)) !important; }
+  .dark [class*="text-gray-700"] { color: hsl(var(--foreground) / 0.8) !important; }
 }
 
 @layer utilities {
-  @keyframes bounceIn {
-    0%   { transform: scale(0.3); opacity: 0; }
-    50%  { transform: scale(1.1); }
-    70%  { transform: scale(0.95); }
-    100% { transform: scale(1); opacity: 1; }
+
+  @keyframes winLinePulse {
+    0%, 100% { box-shadow: 0 0 0 1px hsl(var(--secondary) / 0.4), 0 0 12px hsl(var(--secondary) / 0.2); }
+    50%       { box-shadow: 0 0 0 2px hsl(var(--secondary) / 0.7), 0 0 28px hsl(var(--secondary) / 0.4); }
   }
+
+  @keyframes scorePopUp {
+    0%   { transform: translateY(0) scale(1); opacity: 1; }
+    60%  { transform: translateY(-20px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+  }
+
+  @keyframes cellCorrect {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.06); }
+    60%  { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes cellWrong {
+    0%, 100% { transform: translateX(0); }
+    20%  { transform: translateX(-7px); }
+    40%  { transform: translateX(7px); }
+    60%  { transform: translateX(-4px); }
+    80%  { transform: translateX(4px); }
+  }
+
   @keyframes popIn {
-    0%   { transform: scale(0.5) rotate(-5deg); opacity: 0; }
-    60%  { transform: scale(1.15) rotate(2deg); }
+    0%   { transform: scale(0.6) rotate(-3deg); opacity: 0; }
+    70%  { transform: scale(1.05) rotate(1deg); opacity: 1; }
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
+
   @keyframes slideUp {
-    0%   { transform: translateY(30px); opacity: 0; }
+    0%   { transform: translateY(12px); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    20%       { transform: rotate(-12deg); }
-    40%       { transform: rotate(12deg); }
-    60%       { transform: rotate(-8deg); }
-    80%       { transform: rotate(8deg); }
+
+  @keyframes bounceIn {
+    0%   { transform: scale(0.7); opacity: 0; }
+    60%  { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
   }
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%      { transform: translateY(-12px); }
-  }
-  @keyframes pulseBig {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.08); }
-  }
+
   @keyframes shimmer {
     0%   { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
-  @keyframes cell-correct {
-    0%   { transform: scale(1); }
-    30%  { transform: scale(1.18) rotate(3deg); }
-    60%  { transform: scale(0.94) rotate(-2deg); }
-    100% { transform: scale(1) rotate(0deg); }
-  }
-  @keyframes cell-wrong {
-    0%, 100% { transform: translateX(0); }
-    20%  { transform: translateX(-8px); }
-    40%  { transform: translateX(8px); }
-    60%  { transform: translateX(-5px); }
-    80%  { transform: translateX(5px); }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
   }
 
-  .animate-bounce-in  { animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-  .animate-pop-in     { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-  .animate-slide-up   { animation: slideUp 0.4s ease-out forwards; }
-  .animate-wiggle     { animation: wiggle 0.6s ease-in-out; }
-  .animate-float      { animation: float 3s ease-in-out infinite; }
-  .animate-pulse-big  { animation: pulseBig 1.5s ease-in-out infinite; }
-  .animate-shimmer    { animation: shimmer 2s linear infinite; background-size: 200% 100%; }
-  .animate-cell-correct { animation: cell-correct 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .animate-cell-wrong   { animation: cell-wrong 0.4s ease-out; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    25%       { transform: rotate(-5deg); }
+    75%       { transform: rotate(5deg); }
+  }
+
+  @keyframes pulseBig {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.7; }
+  }
+
+  .animate-cell-correct { animation: cellCorrect 0.35s cubic-bezier(0.34,1.4,0.64,1); }
+  .animate-cell-wrong   { animation: cellWrong 0.38s ease-out; }
+  .animate-pop-in       { animation: popIn 0.35s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+  .animate-slide-up     { animation: slideUp 0.28s ease-out forwards; }
+  .animate-bounce-in    { animation: bounceIn 0.32s ease-out forwards; }
+  .animate-shimmer      { animation: shimmer 2s linear infinite; background-size: 200% 100%; }
+  .animate-pulse-glow   { animation: pulseGlow 1.6s ease-in-out infinite; }
+  .animate-float        { animation: float 3s ease-in-out infinite; }
+  .animate-wiggle       { animation: wiggle 0.4s ease-in-out; }
+  .animate-pulse-big    { animation: pulseBig 1.6s ease-in-out infinite; }
 }

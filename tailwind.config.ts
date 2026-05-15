@@ -12,9 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Lilita One", "cursive"],
-        body: ["Nunito", "sans-serif"],
-        mono: ["Nunito", "sans-serif"],
+        display: ["Barlow Condensed", "sans-serif"],
+        body: ["Inter", "system-ui", "sans-serif"],
+        mono: ["Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

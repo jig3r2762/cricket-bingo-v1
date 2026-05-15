@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+﻿import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -29,7 +29,7 @@ const trophyLabels: Record<string, string> = {
 
 export default function Players() {
   useSeoHead({
-    title: "Cricket Player Database — 1,100+ Players | Cricket Bingo",
+    title: "Cricket Player Database â€” 1,100+ Players | Cricket Bingo",
     description:
       "Browse 1,100+ real cricket player cards in Cricket Bingo. Search by name, filter by country, role, or IPL team. View career stats, trophies, and more for every player.",
     canonical: "https://cricket-bingo.in/players",
@@ -107,7 +107,7 @@ export default function Players() {
   };
 
   const sortIcon = (field: SortField) =>
-    sortField === field ? (sortDir === "asc" ? " ↑" : " ↓") : "";
+    sortField === field ? (sortDir === "asc" ? " â†‘" : " â†“") : "";
 
   return (
     <div className="min-h-screen warm-bg">
@@ -262,7 +262,7 @@ export default function Players() {
                   </td>
                   <td className="p-3 hidden md:table-cell">
                     <span className="font-body text-xs text-muted-foreground">
-                      {player.iplTeams?.join(", ") || "—"}
+                      {player.iplTeams?.join(", ") || "â€”"}
                     </span>
                   </td>
                   <td className="p-3 text-center font-body text-foreground">
@@ -327,7 +327,7 @@ export default function Players() {
           <p className="text-muted-foreground font-body text-sm leading-relaxed mb-3">
             The Cricket Bingo player database contains over {allPlayers.length.toLocaleString()} real cricket players
             from international cricket and the Indian Premier League. Each player card includes
-            comprehensive career statistics across all formats — Tests, ODIs, T20 Internationals,
+            comprehensive career statistics across all formats â€” Tests, ODIs, T20 Internationals,
             and IPL matches.
           </p>
           <p className="text-muted-foreground font-body text-sm leading-relaxed mb-3">
@@ -377,12 +377,12 @@ export default function Players() {
             Think you know these players? Put your cricket knowledge to the test in Cricket Bingo.
           </p>
           <Link to="/play" className="candy-btn candy-btn-green text-lg px-10 py-4 inline-block">
-            Play Now — Free
+            Play Now â€” Free
           </Link>
         </section>
 
         {/* Footer */}
-        <footer className="border-t-2 border-gray-200 pt-6 text-center">
+        <footer className="border-t-2 border-border pt-6 text-center">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-3">
             <Link to="/" className="hover:text-candy-green transition-colors font-body font-bold">Home</Link>
             <Link to="/about" className="hover:text-candy-green transition-colors font-body font-bold">About</Link>

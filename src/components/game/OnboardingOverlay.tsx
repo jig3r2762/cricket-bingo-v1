@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, Trophy, Zap, ChevronRight, X } from "lucide-react";
 
@@ -9,7 +9,7 @@ const steps = [
     icon: Target,
     title: "A Player Appears",
     description: "Each turn, a cricket player is shown with their stats, team, and role. Study them carefully!",
-    emoji: "🏏",
+    emoji: "ðŸ",
     color: "text-primary",
     bgColor: "bg-primary/15 border-primary/30",
   },
@@ -17,7 +17,7 @@ const steps = [
     icon: Trophy,
     title: "Place in the Grid",
     description: "Tap the cell whose category matches the player. Green = correct, Red = wrong. Build your grid!",
-    emoji: "🎯",
+    emoji: "ðŸŽ¯",
     color: "text-emerald-400",
     bgColor: "bg-emerald-400/15 border-emerald-400/30",
   },
@@ -25,7 +25,7 @@ const steps = [
     icon: Zap,
     title: "Get BINGO!",
     description: "Complete a row, column, or diagonal to win! Use wildcards wisely and build streaks for bonus points.",
-    emoji: "⚡",
+    emoji: "âš¡",
     color: "text-yellow-400",
     bgColor: "bg-yellow-400/15 border-yellow-400/30",
   },
@@ -71,7 +71,7 @@ export function OnboardingOverlay() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: -20 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        className="w-full max-w-sm bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-6 relative"
+        className="w-full max-w-sm bg-card/95 backdrop-blur-xl border border-border/50 rounded-xl p-6 relative"
       >
         {/* Close button */}
         <button
@@ -100,7 +100,7 @@ export function OnboardingOverlay() {
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
           className="flex justify-center mb-4"
         >
-          <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center ${current.bgColor}`}>
+          <div className={`w-16 h-16 rounded-xl border flex items-center justify-center ${current.bgColor}`}>
             <span className="text-3xl">{current.emoji}</span>
           </div>
         </motion.div>
@@ -132,7 +132,7 @@ export function OnboardingOverlay() {
           )}
           <button
             onClick={handleNext}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-display text-xs uppercase tracking-wider text-gray-900 font-medium transition-all active:scale-95"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-display text-xs uppercase tracking-wider text-foreground font-medium transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
           >
             {step < steps.length - 1 ? (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, X, Zap } from "lucide-react";
 import { BingoGrid } from "./BingoGrid";
@@ -39,7 +39,7 @@ const STEPS: TutorialStep[] = [
     kind: "explain",
     playerIdx: 0,
     title: "Your Bingo Grid",
-    body: "Each cell has a cricket category — a country, IPL team, role or trophy. You'll fill these with players.",
+    body: "Each cell has a cricket category â€” a country, IPL team, role or trophy. You'll fill these with players.",
     dimPlayer: true,
   },
   // 2: Explain the goal (highlight top row)
@@ -55,7 +55,7 @@ const STEPS: TutorialStep[] = [
     kind: "explain",
     playerIdx: 0,
     title: "A Player Appears",
-    body: "Each turn a player card appears. Study their country, IPL team and role — that decides which cells they can go in.",
+    body: "Each turn a player card appears. Study their country, IPL team and role â€” that decides which cells they can go in.",
     dimGrid: true,
   },
   // 4: Explain eligible cells
@@ -66,7 +66,7 @@ const STEPS: TutorialStep[] = [
     body: "Cells that match the player glow cyan. Only tap a glowing cell! Placing in a wrong cell costs you a life.",
     showEligible: true,
   },
-  // 5: Interactive — place Kohli in India
+  // 5: Interactive â€” place Kohli in India
   {
     kind: "interactive",
     playerIdx: 0,
@@ -74,14 +74,14 @@ const STEPS: TutorialStep[] = [
     body: "Virat Kohli plays for India. Tap the INDIA cell to place him on the grid!",
     targetCellId: "country_ind",
   },
-  // 6: Auto — celebrate + show Rohit
+  // 6: Auto â€” celebrate + show Rohit
   {
     kind: "auto",
     playerIdx: 1,
     title: "Correct! +100 pts",
     body: "Kohli placed in India. Next player: Rohit Sharma...",
   },
-  // 7: Interactive — place Rohit in MI
+  // 7: Interactive â€” place Rohit in MI
   {
     kind: "interactive",
     playerIdx: 1,
@@ -89,14 +89,14 @@ const STEPS: TutorialStep[] = [
     body: "Rohit is the Mumbai Indians captain. Tap the MI cell to place him!",
     targetCellId: "team_mi",
   },
-  // 8: Auto — almost bingo
+  // 8: Auto â€” almost bingo
   {
     kind: "auto",
     playerIdx: 2,
     title: "Top Row: 2 / 3",
-    body: "One more cell completes the row — BINGO incoming!",
+    body: "One more cell completes the row â€” BINGO incoming!",
   },
-  // 9: Interactive — place Bumrah in Fast Bowler → triggers bingo
+  // 9: Interactive â€” place Bumrah in Fast Bowler â†’ triggers bingo
   {
     kind: "interactive",
     playerIdx: 2,
@@ -108,8 +108,8 @@ const STEPS: TutorialStep[] = [
   {
     kind: "bingo",
     playerIdx: 2,
-    title: "BINGO! 🎉",
-    body: "You completed a row! That's exactly how you win — complete any row, column or diagonal with the right players. Now try the real game!",
+    title: "BINGO! ðŸŽ‰",
+    body: "You completed a row! That's exactly how you win â€” complete any row, column or diagonal with the right players. Now try the real game!",
   },
 ];
 
@@ -140,7 +140,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
       return ["country_ind", "team_mi", "tut_pacer"];
     }
     if (isInteractive && current.targetCellId) {
-      // Only the guided target cell glows — keeps tutorial focused
+      // Only the guided target cell glows â€” keeps tutorial focused
       return [current.targetCellId];
     }
     if (current.showEligible) {
@@ -203,15 +203,15 @@ export function InteractiveTutorial({ onComplete }: Props) {
       )}
 
       {isWelcome ? (
-        /* ── WELCOME SCREEN ── */
+        /* â”€â”€ WELCOME SCREEN â”€â”€ */
         <div className="flex-1 flex items-center justify-center p-6">
           <motion.div
             initial={{ scale: 0.85, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 22 }}
-            className="w-full max-w-sm bg-card/95 border border-border/50 rounded-2xl p-8 text-center shadow-2xl"
+            className="w-full max-w-sm bg-card/95 border border-border/50 rounded-xl p-8 text-center shadow-2xl"
           >
-            <div className="text-5xl mb-4">🏏</div>
+            <div className="text-5xl mb-4">ðŸ</div>
             <h2 className="font-display text-2xl font-extrabold uppercase tracking-wider text-foreground mb-2">
               Cricket Bingo
             </h2>
@@ -221,7 +221,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
             <div className="flex flex-col gap-3">
               <button
                 onClick={advance}
-                className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-gray-900 font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
                 style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
               >
                 Start Practice Game <ChevronRight className="w-4 h-4" />
@@ -230,15 +230,15 @@ export function InteractiveTutorial({ onComplete }: Props) {
                 onClick={dismiss}
                 className="w-full py-2.5 rounded-xl font-display text-xs uppercase tracking-wider border border-border/40 text-muted-foreground hover:bg-muted/10 transition-colors"
               >
-                Skip — I know how to play
+                Skip â€” I know how to play
               </button>
             </div>
           </motion.div>
         </div>
       ) : (
-        /* ── GAME PREVIEW + COACH MARK ── */
+        /* â”€â”€ GAME PREVIEW + COACH MARK â”€â”€ */
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Step progress dots (steps 1–10) */}
+          {/* Step progress dots (steps 1â€“10) */}
           <div className="flex justify-center gap-1.5 pt-3 pb-1 shrink-0">
             {STEPS.slice(1).map((_, i) => (
               <div
@@ -297,7 +297,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
             </div>
           </div>
 
-          {/* Coach mark — slides up from bottom */}
+          {/* Coach mark â€” slides up from bottom */}
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -308,7 +308,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
               className="px-4 pb-6 pt-1 shrink-0"
             >
               <div
-                className={`w-full max-w-md mx-auto rounded-2xl border p-4 backdrop-blur-sm ${
+                className={`w-full max-w-md mx-auto rounded-xl border p-4 backdrop-blur-sm ${
                   isBingo
                     ? "bg-emerald-950/90 border-emerald-500/50"
                     : isInteractive
@@ -335,7 +335,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
                 {isBingo ? (
                   <button
                     onClick={dismiss}
-                    className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-gray-900 font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
                     style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
                   >
                     <Zap className="w-4 h-4" /> Play for Real!
@@ -347,7 +347,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
                       transition={{ repeat: Infinity, duration: 1.1, ease: "easeInOut" }}
                       className="text-lg leading-none"
                     >
-                      👆
+                      ðŸ‘†
                     </motion.span>
                     <span className="text-xs font-display uppercase tracking-wider">
                       Tap the glowing cell above
@@ -366,7 +366,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
                 ) : (
                   <button
                     onClick={advance}
-                    className="w-full py-2.5 rounded-xl font-display text-sm uppercase tracking-wider text-gray-900 font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
                     style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
                   >
                     Got it <ChevronRight className="w-4 h-4" />

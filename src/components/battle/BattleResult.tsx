@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw, Home, Trophy, Bot, Swords } from "lucide-react";
@@ -31,7 +31,7 @@ function determineWinner(
     if (botState.score > playerState.score) return "bot";
     return "draw";
   }
-  // Both still playing — compare progress
+  // Both still playing â€” compare progress
   if (playerFilled > botFilled) return "player";
   if (botFilled > playerFilled) return "bot";
   return "draw";
@@ -49,9 +49,9 @@ export function BattleResult({ playerState, botState, playerFilledCount, botFill
   }, [outcome]);
 
   const headline =
-    outcome === "player" ? "You Win! 🏆" :
-    outcome === "bot"    ? "CricBot Wins! 🤖" :
-    "It's a Draw! 🤝";
+    outcome === "player" ? "You Win! ðŸ†" :
+    outcome === "bot"    ? "CricBot Wins! ðŸ¤–" :
+    "It's a Draw! ðŸ¤";
 
   const headlineColor =
     outcome === "player" ? "text-yellow-400" :
@@ -70,7 +70,7 @@ export function BattleResult({ playerState, botState, playerFilledCount, botFill
         initial={{ scale: 0.85, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 280, damping: 20 }}
-        className="glass-card rounded-2xl p-6 w-full max-w-sm text-center space-y-5"
+        className="glass-card rounded-xl p-6 w-full max-w-sm text-center space-y-5"
       >
         {/* Icon */}
         <motion.div

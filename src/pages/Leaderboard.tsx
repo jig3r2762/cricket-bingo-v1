@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, query, orderBy, limit, where, getDocsFromServer } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -177,7 +177,7 @@ export default function Leaderboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="candy-card rounded-2xl overflow-hidden"
+          className="candy-card rounded-xl overflow-hidden"
         >
           {loading ? (
             <div className="p-8 text-center text-muted-foreground/60 font-display text-sm uppercase tracking-widest animate-pulse">

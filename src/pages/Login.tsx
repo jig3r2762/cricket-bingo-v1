@@ -1,4 +1,4 @@
-import { useAuth } from "@/contexts/AuthContext";
+﻿import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, Zap, AlertCircle } from "lucide-react";
@@ -67,7 +67,7 @@ export default function Login() {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-8 shadow-2xl text-center"
+          className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-xl p-8 shadow-2xl text-center"
         >
           {/* Animated Logo */}
           <motion.div
@@ -81,7 +81,7 @@ export default function Login() {
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="text-5xl block"
             >
-              🏏
+              ðŸ
             </motion.span>
           </motion.div>
 
@@ -145,7 +145,7 @@ export default function Login() {
             whileTap={{ scale: !signingIn ? 0.98 : 1 }}
             onClick={handleSignIn}
             disabled={signingIn}
-            className={`w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-gray-800 font-medium text-sm active:scale-[0.98] transition-all shadow-lg relative overflow-hidden group ${
+            className={`w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-foreground font-medium text-sm active:scale-[0.98] transition-all shadow-lg relative overflow-hidden group ${
               signingIn ? "opacity-75 cursor-not-allowed" : ""
             }`}
             style={{
@@ -190,7 +190,7 @@ export default function Login() {
             onClick={handleGuestPlay}
             className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-border/50 text-secondary font-medium text-sm hover:bg-secondary/5 transition-all"
           >
-            <span>🎮</span>
+            <span>ðŸŽ®</span>
             <span>Play as Guest</span>
           </motion.button>
 

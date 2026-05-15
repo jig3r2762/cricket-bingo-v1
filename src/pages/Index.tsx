@@ -94,10 +94,10 @@ const Index = () => {
 
   if (playersLoading) {
     return (
-      <div className="min-h-screen warm-bg flex items-center justify-center">
+      <div className="min-h-screen game-bg flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="text-4xl animate-bounce">🏏</div>
-          <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
+          <div className="w-10 h-10 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
+          <div className="text-muted-foreground font-display text-sm uppercase tracking-widest">
             Loading players...
           </div>
         </div>
@@ -107,7 +107,7 @@ const Index = () => {
 
   if (playersError) {
     return (
-      <div className="min-h-screen warm-bg flex items-center justify-center p-4">
+      <div className="min-h-screen game-bg flex items-center justify-center p-4">
         <div className="text-center space-y-3 max-w-sm">
           <div className="text-4xl">⚠️</div>
           <p className="text-destructive font-display text-sm uppercase tracking-wider">
@@ -127,7 +127,7 @@ const Index = () => {
 
   if (!gridSize) {
     return (
-      <div className="min-h-screen warm-bg flex items-center justify-center p-4">
+      <div className="min-h-screen game-bg flex items-center justify-center p-4">
         <div className="fixed top-4 right-4 z-50"><ThemeToggle /></div>
         <GridSelection
           onSelect={(size, timedMode, mode) => {
@@ -150,7 +150,7 @@ const Index = () => {
 
   if (loadingGrid) {
     return (
-      <div className="min-h-screen warm-bg flex items-center justify-center">
+      <div className="min-h-screen game-bg flex items-center justify-center">
         <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
           Loading today's grid...
         </div>
@@ -224,18 +224,17 @@ function GameBoard({
   const total = gameState.deck.length;
 
   return (
-    <div className="min-h-screen warm-bg flex flex-col">
+    <div className="min-h-screen game-bg flex flex-col">
       <div
         className={`flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
         style={IN_IFRAME ? { zoom: 0.88 } : undefined}
       >
         {/* User bar with back button */}
-        <div className="w-full relative z-30 bg-white border-2 border-gray-200 rounded-2xl px-3 py-2" style={{ boxShadow: "0 3px 0 #e5e7eb" }}>
+        <div className="w-full relative z-30 bg-card border border-border rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
             <button
               onClick={onBack}
-              className="p-2 rounded-xl border-2 border-gray-200 bg-white text-gray-500 hover:text-gray-700 transition-colors"
-              style={{ boxShadow: "0 2px 0 #e5e7eb" }}
+              className="p-2 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
               title="Back to Grid Selection"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -357,7 +356,7 @@ function GameBoard({
 
           {/* Mobile dropdown menu — only in non-iframe mode */}
           {!IN_IFRAME && menuOpen && (
-            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-white border-2 border-gray-200 rounded-2xl py-2 px-3 z-50 space-y-1" style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }}>
+            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl py-2 px-3 z-50 space-y-1 shadow-lg">
               <div className="px-3 py-2.5">
                 <CoinBalance />
               </div>
@@ -482,34 +481,27 @@ function GameBoard({
 
       {/* Mobile bottom bar */}
       {!isGameOver && currentPlayer && (
-        <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t-2 border-gray-200 p-3 flex items-center justify-between px-5 z-50"
-          style={{ boxShadow: "0 -4px 16px rgba(0,0,0,0.08)" }}>
+        <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-card border-t border-border p-3 flex items-center justify-between px-5 z-50 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
           <button
             onClick={handleSkip}
-            className="px-5 py-2.5 rounded-2xl border-2 border-gray-300 text-gray-600 font-body font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform bg-white"
-            style={{ boxShadow: "0 3px 0 #d1d5db" }}
+            className="px-5 py-2.5 rounded-lg border border-border text-muted-foreground font-body font-semibold text-xs uppercase tracking-wider active:scale-95 transition-transform bg-card"
           >
             Skip
           </button>
           <div className="text-center">
-            <div className="font-display text-2xl leading-none text-candy-orange">{gameState.score}</div>
-            <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-body font-bold">Score</div>
+            <div className="font-display text-2xl leading-none text-secondary">{gameState.score}</div>
+            <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-body font-semibold">Score</div>
           </div>
           <button
             onClick={gameState.wildcardMode ? cancelWildcard : handleWildcard}
             disabled={gameState.wildcardsLeft <= 0 && !gameState.wildcardMode}
-            className={`px-5 py-2.5 rounded-2xl font-body font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform border-2
+            className={`px-5 py-2.5 rounded-lg font-body font-semibold text-xs uppercase tracking-wider active:scale-95 transition-transform border
               ${gameState.wildcardMode
-                ? "bg-candy-yellow border-yellow-500 text-white"
+                ? "bg-secondary/15 border-secondary/50 text-secondary"
                 : gameState.wildcardsLeft > 0
-                  ? "bg-candy-green border-green-600 text-white"
-                  : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-muted border-border text-muted-foreground cursor-not-allowed"
               }`}
-            style={gameState.wildcardMode
-              ? { boxShadow: "0 3px 0 hsl(45 90% 38%)" }
-              : gameState.wildcardsLeft > 0
-                ? { boxShadow: "0 3px 0 hsl(134 55% 30%)" }
-                : {}}
           >
             {gameState.wildcardMode ? "Cancel" : "Wild"}
           </button>

@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
-import { Flame, Volume2, VolumeX, HelpCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Flame, HelpCircle, Volume2, VolumeX, Zap } from "lucide-react";
 import { useState } from "react";
-import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 
 interface GameHeaderProps {
   score: number;
@@ -12,6 +12,14 @@ interface GameHeaderProps {
 
 export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
+  const [prevScore, setPrevScore] = useState(score);
+  const [delta, setDelta] = useState<number | null>(null);
+
+  if (score !== prevScore) {
+    const diff = score - prevScore;
+    setDelta(diff > 0 ? diff : null);
+    setPrevScore(score);
+  }
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -20,63 +28,83 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
   };
 
   return (
-    <div>
-      {/* Competitive message */}
-      <div className="text-center mb-2">
-        <p className="text-[10px] text-candy-green font-body font-bold uppercase tracking-widest">
-          ↑ Higher score = Higher rank today ↑
-        </p>
-      </div>
+    <div className="w-full max-w-md mx-auto rounded-lg border border-border bg-card/90 backdrop-blur-sm px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
 
-      <div className="flex items-center justify-between w-full max-w-md mx-auto">
-      {/* Score */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border-2 border-orange-200" style={{ boxShadow: "0 3px 0 #f97316" }}>
-          <span className="text-[10px] text-orange-400 uppercase tracking-wider font-body font-bold">Score</span>
-          <motion.span
-            key={score}
-            initial={{ y: -8, opacity: 0, scale: 0.8 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 18 }}
-            className="score-display text-2xl leading-none"
-          >
-            {score}
-          </motion.span>
+        {/* Score block */}
+        <div className="flex items-end gap-3 relative">
+          <div>
+            <p className="text-[9px] text-muted-foreground font-body font-semibold uppercase tracking-[0.12em] mb-0.5">
+              Score
+            </p>
+            <div className="relative">
+              <motion.span
+                key={score}
+                initial={{ y: -10, opacity: 0, scale: 0.8 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 24 }}
+                className="score-display text-4xl leading-none block"
+              >
+                {score}
+              </motion.span>
+              {/* Score delta pop */}
+              <AnimatePresence>
+                {delta !== null && (
+                  <motion.span
+                    key={`delta-${score}`}
+                    initial={{ y: 0, opacity: 1, scale: 0.8 }}
+                    animate={{ y: -32, opacity: 0, scale: 1.2 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="absolute -top-1 left-full ml-1.5 text-xs font-display font-bold text-primary whitespace-nowrap pointer-events-none"
+                    onAnimationComplete={() => setDelta(null)}
+                  >
+                    +{delta}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Streak badge */}
+          <AnimatePresence>
+            {streak > 0 && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                className="mb-0.5 flex items-center gap-1 rounded-md border border-secondary/40 bg-secondary/10 px-2 py-1"
+              >
+                {streak >= 3
+                  ? <Zap className="w-3.5 h-3.5 text-secondary fill-secondary" />
+                  : <Flame className="w-3.5 h-3.5 text-secondary" />
+                }
+                <span className="font-display text-xs text-secondary leading-none">
+                  {streak}x
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {streak > 0 && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 15 }}
-            className="flex items-center gap-1 px-3 py-2 rounded-2xl bg-orange-400 border-2 border-orange-500"
-            style={{ boxShadow: "0 3px 0 #ea580c" }}
+        {/* Controls */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={toggleSound}
+            className="p-2 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+            title={soundOn ? "Mute" : "Unmute"}
           >
-            <Flame className="w-4 h-4 text-white" />
-            <span className="font-display text-base text-white leading-none">{streak}x</span>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Controls */}
-      <div className="flex items-center gap-1">
-        <button
-          onClick={toggleSound}
-          className="p-2 rounded-xl bg-white border-2 border-gray-200 text-gray-500 hover:text-gray-700 transition-colors dark:bg-slate-800 dark:border-slate-600 dark:text-slate-300"
-          style={{ boxShadow: "0 2px 0 #d1d5db" }}
-          title={soundOn ? "Mute sounds" : "Enable sounds"}
-        >
-          {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-        </button>
-        <button
-          onClick={onHowToPlay}
-          className="p-2 rounded-xl bg-white border-2 border-gray-200 text-gray-500 hover:text-gray-700 transition-colors dark:bg-slate-800 dark:border-slate-600 dark:text-slate-300"
-          style={{ boxShadow: "0 2px 0 #d1d5db" }}
-        >
-          <HelpCircle className="w-4 h-4" />
-        </button>
-        <ThemeToggle />
-      </div>
+            {soundOn ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+          </button>
+          <button
+            onClick={onHowToPlay}
+            className="p-2 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+          </button>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );
