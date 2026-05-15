@@ -570,46 +570,24 @@ export const BingoCell = memo(function BingoCell({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`
-        relative w-full aspect-square rounded-xl
-        flex flex-col items-center justify-center gap-0.5 p-1 text-center overflow-hidden
-        ${placedPlayer
-          ? "bingo-cell-filled cursor-default"
-          : "bingo-cell"
-        }
+        relative w-full aspect-square
+        flex flex-col items-center justify-center gap-1 p-1.5 text-center overflow-hidden
+        ${placedPlayer ? "bingo-cell-filled cursor-default" : "bingo-cell"}
         ${feedbackState === "correct" ? "animate-cell-correct" : ""}
         ${feedbackState === "wrong" ? "animate-cell-wrong" : ""}
-        ${isWildcardTarget && !placedPlayer ? "!border-candy-yellow ring-2 ring-yellow-300" : ""}
-        ${isWinLine ? "!border-candy-green ring-2 ring-green-400 ring-offset-1" : ""}
+        ${isWildcardTarget && !placedPlayer ? "!border-secondary ring-2 ring-secondary/30" : ""}
+        ${isWinLine ? "bingo-cell-win" : ""}
       `}
     >
-      {/* Sparkle particles on correct */}
-      {feedbackState === "correct" && (
-        <>
-          {[...Array(6)].map((_, i) => (
-            <span
-              key={i}
-              className="absolute w-1.5 h-1.5 rounded-full bg-neon-green animate-sparkle"
-              style={{
-                top: `${15 + Math.random() * 70}%`,
-                left: `${10 + Math.random() * 80}%`,
-                animationDelay: `${i * 0.07}s`,
-              }}
-            />
-          ))}
-        </>
-      )}
-
       {placedPlayer ? (
-        /* --- Filled cell: show placed player --- */
+        /* --- Filled cell: placed player --- */
         <div className="flex flex-col items-center gap-0.5 animate-pop-in">
-          {/* Player headshot or country flag */}
           {placedPlayer.headshot_url ? (
             <img
               src={placedPlayer.headshot_url}
               alt={placedPlayer.name}
-              className="w-8 h-8 sm:w-9 sm:h-9 lg:w-12 lg:h-12 rounded-full object-cover border-2 border-white/60"
+              className="w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg object-cover ring-1 ring-white/25 shadow-md"
               onError={(e) => {
-                // Fallback to flag emoji if image fails
                 e.currentTarget.style.display = "none";
                 const fallback = e.currentTarget.nextElementSibling;
                 if (fallback) fallback.classList.remove("hidden");
@@ -617,14 +595,14 @@ export const BingoCell = memo(function BingoCell({
             />
           ) : null}
           {!placedPlayer.headshot_url ? (
-            <span className="text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
+            <span className="text-xl sm:text-2xl leading-none">{placedPlayer.countryFlag}</span>
           ) : (
-            <span className="hidden text-2xl sm:text-3xl leading-none">{placedPlayer.countryFlag}</span>
+            <span className="hidden text-xl sm:text-2xl leading-none">{placedPlayer.countryFlag}</span>
           )}
-          <span className="font-display text-[9px] sm:text-[10px] lg:text-xs text-white font-bold uppercase tracking-wider truncate w-full leading-tight">
+          <span className="font-display text-[9px] sm:text-[10px] lg:text-xs text-white font-bold uppercase tracking-wide truncate w-full leading-tight px-0.5">
             {placedPlayer.name.split(" ").pop()}
           </span>
-          <span className="text-[8px] lg:text-[10px] text-white/80 uppercase tracking-wider font-body font-semibold">{category.shortLabel}</span>
+          <span className="text-[7px] lg:text-[9px] text-white/70 uppercase tracking-wide font-body font-semibold">{category.shortLabel}</span>
         </div>
       ) : (
         /* --- Empty cell: show category visual --- */
@@ -634,21 +612,21 @@ export const BingoCell = memo(function BingoCell({
             <img
               src={flagUrl}
               alt={category.label}
-              className="w-14 h-10 sm:w-16 sm:h-11 lg:w-24 lg:h-16 rounded-sm object-cover shadow-sm"
+              className="w-12 h-8 sm:w-14 sm:h-10 lg:w-20 lg:h-14 rounded-sm object-cover shadow-sm"
             />
           ) : teamLogo ? (
             /* IPL team official logo */
             <img
               src={teamLogo}
               alt={category.label}
-              className="w-12 h-12 sm:w-14 sm:h-14 lg:w-20 lg:h-20 object-contain"
+              className="w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain"
             />
           ) : playerImg ? (
             /* Teammate player image */
             <img
               src={playerImg.url}
               alt={playerImg.name}
-              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full object-cover border-2 border-accent/30"
+              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-md object-cover border border-accent/30"
               onError={(e) => {
                 // Fallback to initials if image fails to load
                 const target = e.currentTarget;
@@ -661,7 +639,7 @@ export const BingoCell = memo(function BingoCell({
             <img
               src={achievementBadge}
               alt={category.label}
-              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 object-contain drop-shadow-sm"
+              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain drop-shadow-sm"
             />
           ) : isCombo ? (
             /* Combo visual */
@@ -682,7 +660,7 @@ export const BingoCell = memo(function BingoCell({
           )}
 
           <div className="relative flex items-center gap-0.5">
-            <span className="font-body text-[8px] sm:text-[10px] lg:text-xs text-muted-foreground font-bold uppercase tracking-wider leading-tight mt-0.5">
+            <span className="font-body text-[8px] sm:text-[10px] lg:text-xs text-muted-foreground font-bold uppercase tracking-wide leading-tight mt-0.5">
               {category.shortLabel}
             </span>
             {CATEGORY_DEFINITIONS[category.shortLabel] && (
@@ -697,11 +675,10 @@ export const BingoCell = memo(function BingoCell({
                   <motion.div
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-32 sm:w-40 px-2 py-1.5 rounded-xl bg-white border-2 border-gray-200 text-gray-600 text-[7px] sm:text-[8px] text-center whitespace-normal z-50 pointer-events-none font-body"
-                    style={{ boxShadow: "0 3px 0 #e5e7eb" }}
+                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-32 sm:w-40 px-2 py-1.5 rounded-lg bg-card border border-border text-foreground/80 text-[7px] sm:text-[8px] text-center whitespace-normal z-50 pointer-events-none font-body shadow-lg"
                   >
                     {CATEGORY_DEFINITIONS[category.shortLabel]}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-muted border-t border-l border-border/50" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-card border-b border-r border-border/50 rotate-45 -translate-y-1" />
                   </motion.div>
                 )}
               </span>
@@ -710,9 +687,8 @@ export const BingoCell = memo(function BingoCell({
         </>
       )}
 
-      {/* Wrong feedback red overlay */}
       {feedbackState === "wrong" && (
-        <div className="absolute inset-0 bg-red-100 rounded-xl pointer-events-none border-2 border-red-400" />
+        <div className="absolute inset-0 rounded-lg bg-destructive/15 pointer-events-none border-2 border-destructive/70" />
       )}
     </motion.button>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check, Star, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ const IN_IFRAME = shouldUseHashRouter();
 interface GameOverScreenProps {
   gameState: GameState;
   onReset: () => void;
-  /** Session game number (CrazyGames only — undefined on regular site) */
+  /** Session game number (CrazyGames only -- undefined on regular site) */
   gameNumber?: number;
 }
 
@@ -136,7 +136,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
         await navigator.share({ text });
         return;
       } catch {
-        // User cancelled or not supported — fall through to clipboard
+        // User cancelled or not supported -- fall through to clipboard
       }
     }
 
@@ -263,7 +263,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
       animate={{ opacity: 1, scale: 1 }}
       className="w-full max-w-md mx-auto"
     >
-      <div className="candy-card rounded-2xl p-6 text-center space-y-4">
+      <div className="candy-card rounded-xl p-6 text-center space-y-4">
         {/* CrazyGames: game number chip */}
         {IN_IFRAME && gameNumber !== undefined && gameNumber > 1 && (
           <div className="flex items-center justify-center gap-2">
@@ -318,15 +318,15 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-candy-green font-body font-bold text-sm"
+              className="text-primary font-body font-bold text-sm"
             >
               You completed a line! +500 bonus
             </motion.p>
           </>
         ) : (
           <>
-            <XCircle className="w-16 h-16 text-candy-red mx-auto" />
-            <h2 className="font-display text-4xl text-candy-red">
+            <XCircle className="w-16 h-16 text-destructive mx-auto" />
+            <h2 className="font-display text-4xl text-destructive">
               Game Over
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -340,32 +340,32 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-green-50 border-2 border-green-200 rounded-xl p-3"
+          className="rounded-xl border border-primary/30 bg-primary/10 p-3"
         >
           <div className="text-sm font-body font-bold">
-            <span className="text-candy-green font-bold">{percentile}%</span> of players today
+            <span className="text-primary font-bold">{percentile}%</span><span className="text-muted-foreground"> of players today</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            {percentile >= 90 ? '🔥 Top performer!' : percentile >= 70 ? '💪 Great job!' : percentile >= 50 ? '👍 Above average' : '🎯 Keep improving!'}
+          {percentile >= 90 ? "Top performer!" : percentile >= 70 ? "Great job!" : percentile >= 50 ? "Above average" : "Keep improving!"}
           </p>
         </motion.div>
 
         <div className="flex items-center justify-center gap-6 pt-2">
           <div className="text-center">
-            <div className="font-display text-3xl text-candy-orange">{gameState.score}</div>
+            <div className="score-display font-display text-3xl">{gameState.score}</div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
               Final Score
             </div>
           </div>
           <div className="text-center">
-            <div className="font-display text-3xl text-candy-blue">{filledCount}/{total}</div>
+            <div className="font-display text-3xl text-foreground">{filledCount}/{total}</div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
               Cells Filled
             </div>
           </div>
           {gameState.maxStreak > 0 && (
             <div className="text-center">
-              <div className="font-display text-3xl text-candy-purple">{gameState.maxStreak}</div>
+              <div className="font-display text-3xl text-secondary">{gameState.maxStreak}</div>
               <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
                 Best Streak
               </div>
@@ -379,7 +379,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           </div>
         )}
 
-        {/* Countdown to next puzzle — only on main site (CrazyGames plays random games) */}
+        {/* Countdown to next puzzle â€” only on main site (CrazyGames plays random games) */}
         {!IN_IFRAME && <CountdownTimer />}
 
         {/* Challenge CTA */}
@@ -388,8 +388,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
           className="text-xs text-primary/80 font-display tracking-wide"
-        >
-          ✨ Challenge a friend to beat this score
+        >          Challenge a friend to beat this score
         </motion.p>
 
         {/* Action buttons */}
@@ -493,11 +492,11 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="mt-2 p-3 rounded-xl border-2 border-green-200 bg-green-50"
+            className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/10"
           >
             {IN_IFRAME ? (
               <p className="text-xs text-muted-foreground">
-                🏏 Sign in to save your scores, track streaks & compete on the global leaderboard!
+                ðŸ Sign in to save your scores, track streaks & compete on the global leaderboard!
               </p>
             ) : (
               <>
@@ -506,7 +505,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
                 </p>
                 <button
                   onClick={() => signInWithGoogle().catch(() => {})}
-                  className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-gray-800 font-medium transition-all"
+                  className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-foreground font-medium transition-all"
                   style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
                 >
                   Sign in with Google
