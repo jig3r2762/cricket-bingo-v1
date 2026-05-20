@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw, Home, Trophy, Bot, Swords } from "lucide-react";
@@ -31,7 +31,7 @@ function determineWinner(
     if (botState.score > playerState.score) return "bot";
     return "draw";
   }
-  // Both still playing â€” compare progress
+  // Both still playing — compare progress
   if (playerFilled > botFilled) return "player";
   if (botFilled > playerFilled) return "bot";
   return "draw";
@@ -49,9 +49,9 @@ export function BattleResult({ playerState, botState, playerFilledCount, botFill
   }, [outcome]);
 
   const headline =
-    outcome === "player" ? "You Win! ðŸ†" :
-    outcome === "bot"    ? "CricBot Wins! ðŸ¤–" :
-    "It's a Draw! ðŸ¤";
+    outcome === "player" ? "You Win! 🏆" :
+    outcome === "bot"    ? "CricBot Wins! 🤖" :
+    "It's a Draw! 🤝";
 
   const headlineColor =
     outcome === "player" ? "text-yellow-400" :
@@ -146,11 +146,11 @@ export function BattleResult({ playerState, botState, playerFilledCount, botFill
             Play Again
           </button>
           <button
-            onClick={() => navigate("/play")}
+            onClick={() => navigate("/")}
             className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-secondary/10 border border-secondary/30 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/20 transition-all active:scale-95"
           >
             <Home className="w-4 h-4" />
-            Back to Main
+            Back to Hub
           </button>
         </motion.div>
       </motion.div>

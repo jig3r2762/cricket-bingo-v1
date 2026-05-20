@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayers } from "@/contexts/PlayersContext";
@@ -6,7 +6,7 @@ import { useGuessGame } from "@/hooks/useGuessGame";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { CricketPlayer } from "@/types/game";
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── helpers ───────────────────────── */
 
 function HeadshotOrInitials({ player, size = 80 }: { player: CricketPlayer; size?: number }) {
   const [imgError, setImgError] = useState(false);
@@ -40,7 +40,7 @@ function HeadshotOrInitials({ player, size = 80 }: { player: CricketPlayer; size
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ autocomplete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── autocomplete ───────────────────────── */
 
 function PlayerSearch({
   players,
@@ -123,7 +123,7 @@ function PlayerSearch({
                 <div>
                   <div className="font-body font-bold text-sm text-foreground">{p.name}</div>
                   <div className="font-body text-xs text-muted-foreground">
-                    {p.primaryRole} Â· {p.iplTeams.join(", ") || p.country}
+                    {p.primaryRole} · {p.iplTeams.join(", ") || p.country}
                   </div>
                 </div>
               </button>
@@ -135,7 +135,7 @@ function PlayerSearch({
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ clue card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── clue card ───────────────────────── */
 
 function ClueCard({
   icon,
@@ -183,7 +183,7 @@ function ClueCard({
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ lives display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── lives display ───────────────────────── */
 
 function LivesDisplay({ lives, max }: { lives: number; max: number }) {
   return (
@@ -194,14 +194,14 @@ function LivesDisplay({ lives, max }: { lives: number; max: number }) {
           animate={i >= lives ? { scale: [1, 0.5], opacity: [1, 0.3] } : {}}
           className="text-xl"
         >
-          {i < lives ? "â¤ï¸" : "ðŸ–¤"}
+          {i < lives ? "❤️" : "🖤"}
         </motion.span>
       ))}
     </div>
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ result overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── result overlay ───────────────────────── */
 
 function RoundResult({
   round,
@@ -228,8 +228,8 @@ function RoundResult({
       <div>
         <h3 className="font-display text-2xl text-foreground">{round.player.name}</h3>
         <p className="font-body text-sm text-muted-foreground">
-          {round.player.countryFlag} {round.player.country} Â· {round.player.primaryRole}
-          {round.player.iplTeams.length > 0 && ` Â· ${round.player.iplTeams.join(", ")}`}
+          {round.player.countryFlag} {round.player.country} · {round.player.primaryRole}
+          {round.player.iplTeams.length > 0 && ` · ${round.player.iplTeams.join(", ")}`}
         </p>
       </div>
 
@@ -259,13 +259,13 @@ function RoundResult({
         onClick={onNext}
         className="candy-btn candy-btn-green text-sm px-8 py-3"
       >
-        {isLast ? "See Results" : "Next Player â†’"}
+        {isLast ? "See Results" : "Next Player →"}
       </motion.button>
     </motion.div>
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ game over â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── game over ───────────────────────── */
 
 function GameOverScreen({
   game,
@@ -280,16 +280,16 @@ function GameOverScreen({
   const totalPlayed = game.rounds.filter((r) => r.guessed).length;
 
   const getMessage = () => {
-    if (correctCount === 10) return { emoji: "ðŸ†", text: "Perfect Game!" };
-    if (correctCount >= 8) return { emoji: "ðŸ”¥", text: "Cricket Expert!" };
-    if (correctCount >= 5) return { emoji: "ðŸ‘", text: "Well Played!" };
-    if (correctCount >= 3) return { emoji: "ðŸ’ª", text: "Good Try!" };
-    return { emoji: "ðŸ“š", text: "Keep Learning!" };
+    if (correctCount === 10) return { emoji: "🏆", text: "Perfect Game!" };
+    if (correctCount >= 8) return { emoji: "🔥", text: "Cricket Expert!" };
+    if (correctCount >= 5) return { emoji: "👏", text: "Well Played!" };
+    if (correctCount >= 3) return { emoji: "💪", text: "Good Try!" };
+    return { emoji: "📚", text: "Keep Learning!" };
   };
 
   const msg = getMessage();
 
-  const shareText = `ðŸ Guess the Cricketer!\n\nI got ${correctCount}/${totalPlayed} correct\nScore: ${game.score} | Best streak: ${game.maxStreak}ðŸ”¥\n\nPlay at cricket-bingo.in/guess`;
+  const shareText = `🏏 Guess the Cricketer!\n\nI got ${correctCount}/${totalPlayed} correct\nScore: ${game.score} | Best streak: ${game.maxStreak}🔥\n\nPlay at cricket-bingo.in/guess`;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -331,7 +331,7 @@ function GameOverScreen({
             <div className="font-body font-bold text-[10px] text-muted-foreground uppercase tracking-widest">Score</div>
           </div>
           <div className="candy-card py-3">
-            <div className="font-display text-2xl text-candy-red">{game.maxStreak}ðŸ”¥</div>
+            <div className="font-display text-2xl text-candy-red">{game.maxStreak}🔥</div>
             <div className="font-body font-bold text-[10px] text-muted-foreground uppercase tracking-widest">Streak</div>
           </div>
         </div>
@@ -351,7 +351,7 @@ function GameOverScreen({
                       : "bg-candy-red text-white"
                 }`}
               >
-                {r.correct ? "âœ“" : r.skipped ? "â€“" : "âœ—"}
+                {r.correct ? "✓" : r.skipped ? "–" : "✗"}
               </div>
             ))}
         </div>
@@ -363,7 +363,7 @@ function GameOverScreen({
             onClick={onPlayAgain}
             className="candy-btn candy-btn-green text-base px-8 py-4 w-full"
           >
-            ðŸŽ® Play Again
+            🎮 Play Again
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.03 }}
@@ -371,13 +371,13 @@ function GameOverScreen({
             onClick={handleShare}
             className="candy-btn candy-btn-orange text-sm px-8 py-3 w-full"
           >
-            ðŸ“¤ Share Result
+            📤 Share Result
           </motion.button>
           <button
             onClick={onHome}
             className="font-body font-bold text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            â† Back to Home
+            ← Back to Home
           </button>
         </div>
       </div>
@@ -385,85 +385,88 @@ function GameOverScreen({
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ start screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── start screen ───────────────────────── */
 
 function StartScreen({ onStart, onBack }: { onStart: () => void; onBack: () => void }) {
   return (
-    <div className="min-h-screen warm-bg flex items-center justify-center p-4">
+    <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="candy-card p-8 max-w-md w-full text-center space-y-6"
+        className="scoreboard p-7 max-w-md w-full text-center space-y-5 relative z-10"
       >
         <motion.div
-          animate={{ rotate: [-5, 5, -5] }}
+          animate={{ rotate: [-6, 6, -6] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="text-6xl"
         >
-          ðŸ•µï¸
+          🕵️
         </motion.div>
-        <h1 className="font-display text-3xl text-foreground">Guess the Cricketer</h1>
-        <p className="font-body font-semibold text-sm text-muted-foreground leading-relaxed">
-          We'll show you clues about a mystery cricket player â€” one at a time.
+        <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text">
+          Guess the Cricketer
+        </h1>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          We&apos;ll show you clues about a mystery cricket player — one at a time.
           Guess who it is with fewer clues for more points!
         </p>
 
-        <div className="grid grid-cols-3 gap-3 text-center">
-          <div className="candy-card py-3">
-            <div className="font-display text-xl text-candy-green">10</div>
-            <div className="font-body font-bold text-[10px] text-muted-foreground uppercase">Rounds</div>
+        <div className="grid grid-cols-3 gap-2.5">
+          <div className="tile-3d color-green is-locked aspect-square !rounded-xl">
+            <div className="relative z-10 flex flex-col items-center gap-0.5">
+              <div className="score-display color-green text-3xl">10</div>
+              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Rounds</div>
+            </div>
           </div>
-          <div className="candy-card py-3">
-            <div className="font-display text-xl text-candy-red">3</div>
-            <div className="font-body font-bold text-[10px] text-muted-foreground uppercase">Lives</div>
+          <div className="tile-3d color-red is-locked aspect-square !rounded-xl">
+            <div className="relative z-10 flex flex-col items-center gap-0.5">
+              <div className="font-display text-4xl font-black">3</div>
+              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Lives</div>
+            </div>
           </div>
-          <div className="candy-card py-3">
-            <div className="font-display text-xl text-candy-orange">5</div>
-            <div className="font-body font-bold text-[10px] text-muted-foreground uppercase">Clues</div>
+          <div className="tile-3d color-orange is-locked aspect-square !rounded-xl">
+            <div className="relative z-10 flex flex-col items-center gap-0.5">
+              <div className="font-display text-4xl font-black">5</div>
+              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Clues</div>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-2 text-left candy-card p-4">
-          <div className="font-body font-bold text-xs text-foreground uppercase tracking-widest mb-2">Scoring</div>
+        <div className="candy-card p-4 space-y-2 text-left">
+          <div className="font-display font-extrabold text-xs uppercase tracking-widest text-primary/70 mb-2">Scoring</div>
           {[
-            { clues: 3, pts: 300, color: "text-candy-green", label: "Guess with 3 clues" },
-            { clues: 4, pts: 200, color: "text-candy-orange", label: "Reveal 4th clue" },
-            { clues: 5, pts: 100, color: "text-candy-red", label: "Reveal all 5 clues" },
+            { pts: 300, color: "text-primary", label: "Guess with 3 clues" },
+            { pts: 200, color: "text-secondary", label: "Reveal 4th clue" },
+            { pts: 100, color: "text-destructive", label: "Reveal all 5 clues" },
           ].map((row) => (
-            <div key={row.clues} className="flex justify-between items-center">
-              <span className="font-body text-xs text-muted-foreground">
-                {row.label}
-              </span>
-              <span className={`font-display text-sm ${row.color}`}>{row.pts} pts</span>
+            <div key={row.pts} className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{row.label}</span>
+              <span className={`font-display text-sm font-black ${row.color}`}>{row.pts} pts</span>
             </div>
           ))}
-          <div className="border-t border-border pt-1 mt-1">
-            <span className="font-body text-xs text-muted-foreground">
+          <div className="border-t border-border pt-2 mt-2">
+            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
               Streak bonus: +50% per consecutive correct
             </span>
           </div>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95, y: 4 }}
-          onClick={onStart}
-          className="candy-btn candy-btn-green text-lg px-10 py-4 w-full"
-        >
-          ðŸŽ¯ Start Guessing!
-        </motion.button>
+        <button onClick={onStart} className="cta-chunky color-green size-lg w-full">
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            🎯 START GUESSING
+          </span>
+        </button>
         <button
           onClick={onBack}
-          className="font-body font-bold text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="text-xs font-display font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
         >
-          â† Back to Home
+          ← Back to Hub
         </button>
       </motion.div>
     </div>
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── main page ───────────────────────── */
 
 export default function GuessPlayer() {
   const navigate = useNavigate();
@@ -483,7 +486,7 @@ export default function GuessPlayer() {
 
   // Start screen
   if (!game) {
-    return <StartScreen onStart={startGame} onBack={() => navigate("/play")} />;
+    return <StartScreen onStart={startGame} onBack={() => navigate("/")} />;
   }
 
   // Game over
@@ -492,7 +495,7 @@ export default function GuessPlayer() {
       <GameOverScreen
         game={game}
         onPlayAgain={startGame}
-        onHome={() => navigate("/play")}
+        onHome={() => navigate("/")}
       />
     );
   }
@@ -507,10 +510,10 @@ export default function GuessPlayer() {
       <div className="sticky top-0 z-40 bg-card/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <button
-            onClick={() => navigate("/play")}
+            onClick={() => navigate("/")}
             className="font-body font-bold text-sm text-muted-foreground hover:text-foreground"
           >
-            â† Exit
+            ← Exit
           </button>
 
           <div className="flex items-center gap-4">
@@ -521,7 +524,7 @@ export default function GuessPlayer() {
                 animate={{ scale: 1 }}
                 className="font-display text-sm text-candy-orange"
               >
-                {game.streak}ðŸ”¥
+                {game.streak}🔥
               </motion.div>
             )}
             <LivesDisplay lives={game.lives} max={3} />
@@ -565,7 +568,7 @@ export default function GuessPlayer() {
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-xl text-foreground"
           >
-            {hasGuessed ? "" : "ðŸ•µï¸ Who is this cricketer?"}
+            {hasGuessed ? "" : "🕵️ Who is this cricketer?"}
           </motion.div>
         </div>
 
@@ -602,7 +605,7 @@ export default function GuessPlayer() {
                 onClick={revealNextClue}
                 className="w-full py-2.5 rounded-xl border-2 border-dashed border-candy-orange text-candy-orange font-body font-bold text-sm hover:bg-candy-orange/5 transition-colors"
               >
-                ðŸ’¡ Reveal Next Clue (âˆ’100 pts)
+                💡 Reveal Next Clue (−100 pts)
               </motion.button>
             )}
 
@@ -618,7 +621,7 @@ export default function GuessPlayer() {
               onClick={skipRound}
               className="w-full font-body font-bold text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
             >
-              Skip this round â†’
+              Skip this round →
             </button>
           </div>
         )}

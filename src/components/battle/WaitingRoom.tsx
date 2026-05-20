@@ -40,47 +40,46 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel, entr
   };
 
   return (
-    <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm text-center space-y-8">
+    <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
+      <div className="w-full max-w-sm text-center space-y-7 relative z-10">
         <div className="space-y-1">
-          <h2 className="font-display text-xl font-bold text-secondary uppercase tracking-wider">
+          <h2 className="font-display text-3xl font-black uppercase tracking-wider gold-text leading-none">
             Waiting for opponent
           </h2>
-          <p className="text-muted-foreground text-sm">
-            Share this code — {gridSize}×{gridSize} grid
+          <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest mt-2">
+            Share this code · {gridSize}×{gridSize} grid
           </p>
           {entryFee ? (
-            <p className="text-amber-400 text-sm font-display">
-              🪙 Pot: {entryFee * 2} coins · Entry held: {entryFee}
+            <p className="text-secondary text-sm font-display font-extrabold mt-2">
+              🪙 POT: {entryFee * 2} · Entry held: {entryFee}
             </p>
           ) : null}
         </div>
 
-        {/* Room code card */}
+        {/* Room code — LED scoreboard */}
         <motion.div
           animate={{ scale: [1, 1.015, 1] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="glass-card rounded-xl p-8 border border-primary/40 space-y-5"
+          className="scoreboard-dotmatrix p-7 space-y-5"
         >
-          <div className="font-display text-5xl font-extrabold text-primary tracking-[0.25em] select-all">
+          <div className="score-display color-green text-5xl font-black tracking-[0.25em] select-all animate-led-flicker">
             {roomId}
           </div>
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-2 mx-auto px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
-          >
-            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            {copied ? "Copied!" : "Copy Code"}
+          <button onClick={handleCopy} className="cta-chunky size-sm color-green mx-auto">
+            <span className="relative z-10 flex items-center gap-1.5">
+              {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? "COPIED" : "COPY CODE"}
+            </span>
           </button>
         </motion.div>
 
         {/* Pulse dots */}
-        <div className="flex items-center justify-center gap-1.5">
+        <div className="flex items-center justify-center gap-2">
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
-              className="w-2 h-2 rounded-full bg-primary/60"
-              animate={{ opacity: [0.3, 1, 0.3] }}
+              className="w-2.5 h-2.5 rounded-full bg-primary"
+              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
               transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.25 }}
             />
           ))}
@@ -89,10 +88,12 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel, entr
         <button
           onClick={handleCancel}
           disabled={refunding}
-          className="flex items-center gap-2 mx-auto text-muted-foreground hover:text-secondary transition-colors text-sm font-display uppercase tracking-wider disabled:opacity-50"
+          className={`cta-chunky size-sm color-red mx-auto ${refunding ? "is-disabled" : ""}`}
         >
-          <X className="w-4 h-4" />
-          {refunding ? "Refunding..." : entryFee ? `Cancel & Refund ${entryFee} 🪙` : "Cancel"}
+          <span className="relative z-10 flex items-center gap-2">
+            <X className="w-4 h-4" />
+            {refunding ? "REFUNDING…" : entryFee ? `CANCEL & REFUND ${entryFee} 🪙` : "CANCEL"}
+          </span>
         </button>
       </div>
     </div>

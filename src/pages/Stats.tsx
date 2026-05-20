@@ -70,21 +70,18 @@ export default function Stats() {
   ];
 
   return (
-    <div className="min-h-screen warm-bg flex flex-col items-center p-4">
-      <div className="w-full max-w-lg space-y-4">
+    <div className="min-h-screen stadium-bg flex flex-col items-center p-4 relative">
+      <div className="w-full max-w-lg space-y-4 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3"
         >
-          <button
-            onClick={() => navigate("/play")}
-            className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
+          <button onClick={() => navigate("/")} className="hud-pill" aria-label="Back to Hub">
+            <ArrowLeft className="w-4 h-4" />
           </button>
-          <h1 className="font-display text-2xl font-extrabold text-secondary uppercase tracking-wider">
+          <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text leading-none">
             Your Stats
           </h1>
         </motion.div>
@@ -124,12 +121,12 @@ export default function Stats() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="candy-card rounded-xl p-4 text-center"
+                className="scoreboard p-5 text-center"
               >
-                <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-display mb-1">
+                <div className="text-[10px] text-primary/70 uppercase tracking-widest font-display font-bold mb-1">
                   Personal Best
                 </div>
-                <div className="font-display text-4xl text-yellow-400">{bestScore}</div>
+                <div className="score-display text-5xl">{bestScore}</div>
               </motion.div>
             )}
 

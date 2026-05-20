@@ -1,7 +1,8 @@
-import { useState, memo } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { motion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import type { GridCategory, CricketPlayer } from "@/types/game";
+import { burstAtEl } from "@/lib/particles";
 
 // --- Flag images (flagcdn.com — reliable public CDN) ---
 const FLAG_IMAGES: Record<string, string> = {
@@ -552,6 +553,20 @@ export const BingoCell = memo(function BingoCell({
 }: BingoCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showDefinition, setShowDefinition] = useState(false);
+  const cellRef = useRef<HTMLButtonElement>(null);
+  const prevFeedbackRef = useRef(feedbackState);
+
+  // Particle burst when this cell *transitions to* "correct".
+  // Tracking previous state skips the initial mount (which would otherwise burst
+  // for any pre-locked cell, e.g. after a Play Again, and would also double-fire
+  // under React strict mode).
+  useEffect(() => {
+    const wasCorrect = prevFeedbackRef.current === "correct";
+    if (feedbackState === "correct" && !wasCorrect && cellRef.current) {
+      burstAtEl(cellRef.current, { count: 14, radius: 70, size: 6 });
+    }
+    prevFeedbackRef.current = feedbackState;
+  }, [feedbackState]);
 
   // Determine what visual to show for an empty cell
   const flagUrl = FLAG_IMAGES[category.id];
@@ -563,6 +578,7 @@ export const BingoCell = memo(function BingoCell({
 
   return (
     <motion.button
+      ref={cellRef}
       initial={{ opacity: 0, scale: 0.7 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.03, type: "spring", stiffness: 400, damping: 22 }}
@@ -572,11 +588,11 @@ export const BingoCell = memo(function BingoCell({
       className={`
         relative w-full aspect-square
         flex flex-col items-center justify-center gap-1 p-1.5 text-center overflow-hidden
-        ${placedPlayer ? "bingo-cell-filled cursor-default" : "bingo-cell"}
+        ${placedPlayer ? "bingo-cell-filled is-locked cursor-default" : "bingo-cell"}
         ${feedbackState === "correct" ? "animate-cell-correct" : ""}
         ${feedbackState === "wrong" ? "animate-cell-wrong" : ""}
         ${isWildcardTarget && !placedPlayer ? "!border-secondary ring-2 ring-secondary/30" : ""}
-        ${isWinLine ? "bingo-cell-win" : ""}
+        ${isWinLine ? "bingo-cell-win is-locked" : ""}
       `}
     >
       {placedPlayer ? (

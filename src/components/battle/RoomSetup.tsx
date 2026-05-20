@@ -15,12 +15,9 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
   const navigate = useNavigate();
   const [view, setView] = useState<"pick" | "create" | "join">("pick");
 
-  // Uncontrolled input: value lives in the DOM, never touched by React re-renders
   const inputRef = useRef<HTMLInputElement>(null);
-  // Only track length for enabling/disabling the button (minimal re-renders)
   const [codeLen, setCodeLen] = useState(0);
 
-  // Focus the input after the join view animation settles
   useEffect(() => {
     if (view === "join") {
       const t = setTimeout(() => inputRef.current?.focus(), 250);
@@ -34,27 +31,26 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
   };
 
   return (
-    <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-      {/* Back to /play — top-left corner */}
+    <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
       <button
-        onClick={() => navigate("/play")}
-        className="fixed top-4 left-4 flex items-center gap-1.5 text-muted-foreground hover:text-secondary transition-colors text-sm z-10"
+        onClick={() => navigate("/")}
+        className="fixed top-4 left-4 hud-pill z-20"
+        aria-label="Back to Hub"
       >
-        <ArrowLeft className="w-4 h-4" /> Play
+        <ArrowLeft className="w-4 h-4" /> HUB
       </button>
 
-      <div className="w-full max-w-sm">
-        <div className="text-center space-y-2 mb-8">
+      <div className="w-full max-w-sm relative z-10">
+        <div className="text-center space-y-2 mb-7">
           <div className="flex items-center justify-center gap-2">
             <Swords className="w-6 h-6 text-primary" />
-            <h1 className="font-display text-2xl font-extrabold text-secondary uppercase tracking-wider">
-              vs Player
+            <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text">
+              VS PLAYER
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm">Race to fill the grid first!</p>
+          <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest">Race to fill the grid first</p>
         </div>
 
-        {/* No mode="wait" — prevents Framer Motion from unmounting children during re-renders */}
         <AnimatePresence>
           {view === "pick" && (
             <motion.div
@@ -65,36 +61,30 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
               transition={{ duration: 0.22 }}
               className="space-y-3 w-full"
             >
-              <button
-                onClick={() => setView("create")}
-                className="w-full glass-card p-5 flex items-center gap-4 border border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all active:scale-[0.98] text-left rounded-xl"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
-                  <Swords className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <div className="font-display text-sm font-bold text-secondary uppercase tracking-wider">
-                    Create Game
+              <button onClick={() => setView("create")} className="mode-card color-green w-full !flex-row !items-center !min-h-0 !py-4">
+                <div className="relative z-10 flex items-center gap-3 w-full text-white">
+                  <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                    <Swords className="w-5 h-5" />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
-                    Get a 6-letter code to share with a friend
+                  <div className="text-left">
+                    <div className="font-display text-base font-black uppercase tracking-wider">CREATE GAME</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider opacity-85 mt-0.5">
+                      Get a 6-letter code
+                    </div>
                   </div>
                 </div>
               </button>
 
-              <button
-                onClick={() => setView("join")}
-                className="w-full glass-card p-5 flex items-center gap-4 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-500/5 transition-all active:scale-[0.98] text-left rounded-xl"
-              >
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6 text-emerald-400" />
-                </div>
-                <div>
-                  <div className="font-display text-sm font-bold text-secondary uppercase tracking-wider">
-                    Join Game
+              <button onClick={() => setView("join")} className="mode-card color-blue w-full !flex-row !items-center !min-h-0 !py-4">
+                <div className="relative z-10 flex items-center gap-3 w-full text-white">
+                  <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                    <Users className="w-5 h-5" />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
-                    Enter a friend's room code to play
+                  <div className="text-left">
+                    <div className="font-display text-base font-black uppercase tracking-wider">JOIN GAME</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider opacity-85 mt-0.5">
+                      Enter friend's code
+                    </div>
                   </div>
                 </div>
               </button>
@@ -110,14 +100,11 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
               transition={{ duration: 0.22 }}
               className="space-y-5 w-full"
             >
-              <button
-                onClick={() => setView("pick")}
-                className="flex items-center gap-2 text-muted-foreground hover:text-secondary transition-colors text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" /> Back
+              <button onClick={() => setView("pick")} className="hud-pill" aria-label="Back">
+                <ArrowLeft className="w-4 h-4" /> BACK
               </button>
 
-              <p className="text-center text-sm font-display uppercase tracking-wider text-muted-foreground">
+              <p className="text-center text-xs font-display font-extrabold uppercase tracking-widest text-primary/70">
                 Choose grid size
               </p>
 
@@ -127,11 +114,13 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
                     key={size}
                     disabled={creating}
                     onClick={() => onCreateRoom(size)}
-                    className="glass-card p-6 rounded-xl border border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all active:scale-[0.97] text-center space-y-1.5 disabled:opacity-50"
+                    className={`mode-card ${size === 3 ? "color-green" : "color-blue"} aspect-square !p-4 ${creating ? "is-disabled" : ""}`}
                   >
-                    <div className="font-display text-3xl font-extrabold text-primary">{size}×{size}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {size === 3 ? "9 cells · Fast" : "16 cells · Epic"}
+                    <div className="relative z-10 flex flex-col items-center justify-center gap-1 w-full text-white">
+                      <div className="font-display text-4xl font-black">{size}×{size}</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-85">
+                        {size === 3 ? "9 cells · fast" : "16 cells · epic"}
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -140,7 +129,7 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
               {creating && (
                 <div className="flex items-center justify-center gap-2 text-muted-foreground">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm font-display uppercase tracking-wider">Creating room...</span>
+                  <span className="text-xs font-display font-bold uppercase tracking-wider">Creating room…</span>
                 </div>
               )}
             </motion.div>
@@ -155,47 +144,42 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
               transition={{ duration: 0.22 }}
               className="space-y-5 w-full"
             >
-              <button
-                onClick={() => setView("pick")}
-                className="flex items-center gap-2 text-muted-foreground hover:text-secondary transition-colors text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" /> Back
+              <button onClick={() => setView("pick")} className="hud-pill" aria-label="Back">
+                <ArrowLeft className="w-4 h-4" /> BACK
               </button>
 
               <div className="space-y-3">
-                <p className="text-center text-sm font-display uppercase tracking-wider text-muted-foreground">
+                <p className="text-center text-xs font-display font-extrabold uppercase tracking-widest text-primary/70">
                   Enter room code
                 </p>
 
-                {/* Uncontrolled input — value never overwritten by React re-renders */}
                 <input
                   ref={inputRef}
                   defaultValue=""
                   placeholder="A B C 1 2 3"
                   maxLength={6}
-                  className="w-full text-center font-display text-3xl font-bold uppercase tracking-[0.35em] bg-card/50 border border-border/50 rounded-xl px-4 py-4 text-secondary focus:outline-none focus:border-primary/60 placeholder:text-muted-foreground/30 placeholder:tracking-[0.2em]"
+                  className="w-full text-center font-display text-4xl font-black uppercase tracking-[0.35em] candy-card !rounded-xl px-4 py-4 text-secondary focus:outline-none focus:border-primary placeholder:text-muted-foreground/30 placeholder:tracking-[0.2em]"
                   onChange={(e) => {
-                    // Format in-place: uppercase, alphanumeric only, max 6
                     const cleaned = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
                     if (e.target.value !== cleaned) e.target.value = cleaned;
                     setCodeLen(cleaned.length);
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSubmit();
-                  }}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
                 />
 
                 {joinError && (
-                  <p className="text-red-400 text-xs text-center font-display">{joinError}</p>
+                  <p className="text-destructive text-xs text-center font-display font-bold">{joinError}</p>
                 )}
 
                 <button
                   onClick={handleSubmit}
                   disabled={codeLen < 6 || joining}
-                  className="w-full py-3 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-display text-sm uppercase tracking-wider hover:bg-emerald-500/30 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                  className={`cta-chunky color-blue w-full ${codeLen < 6 || joining ? "is-disabled" : ""}`}
                 >
-                  {joining && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {joining ? "Joining..." : "Join Game"}
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {joining && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {joining ? "JOINING…" : "JOIN GAME"}
+                  </span>
                 </button>
               </div>
             </motion.div>

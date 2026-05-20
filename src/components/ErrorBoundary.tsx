@@ -1,4 +1,4 @@
-﻿import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen bg-[#0a0e1a] flex items-center justify-center p-6">
           <div className="text-center max-w-md space-y-4">
-            <div className="text-5xl">ðŸ</div>
+            <div className="text-5xl">🏏</div>
             <h1 className="text-xl font-bold text-white tracking-wider uppercase">
               Something went wrong
             </h1>

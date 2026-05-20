@@ -118,57 +118,45 @@ export default function Leaderboard() {
   const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
 
   return (
-    <div className="min-h-screen warm-bg flex flex-col items-center p-4">
-      <div className="w-full max-w-lg space-y-4">
+    <div className="min-h-screen stadium-bg flex flex-col items-center p-4 relative">
+      <div className="w-full max-w-lg space-y-4 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3"
         >
-          <button
-            onClick={() => navigate("/play")}
-            className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
+          <button onClick={() => navigate("/")} className="hud-pill" aria-label="Back to Hub">
+            <ArrowLeft className="w-4 h-4" />
           </button>
-          <h1 className="font-display text-2xl font-extrabold text-secondary uppercase tracking-wider">
-            {gridTab}×{gridTab} Top Scorers
+          <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text leading-none">
+            {gridTab}×{gridTab} TOP SCORERS
           </h1>
         </motion.div>
 
         {/* Grid Size Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-2"
-        >
+        <div className="flex gap-2">
           {([3, 4] as GridTab[]).map((size) => (
-            <motion.button
+            <button
               key={size}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => setGridTab(size)}
-              className={`px-4 py-2 rounded-xl font-display text-xs uppercase tracking-wider transition-all ${
-                gridTab === size
-                  ? "bg-secondary/20 border border-secondary/50 text-secondary"
-                  : "bg-card/40 border border-border/30 text-muted-foreground hover:text-secondary"
-              }`}
+              className={`cta-chunky size-sm ${gridTab === size ? "color-yellow" : ""}`}
             >
-              {size}×{size} Grid
-            </motion.button>
+              <span className="relative z-10">{size}×{size} GRID</span>
+            </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* Your rank indicator */}
         {userRank > 0 && userRank <= 50 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-center text-sm font-display text-primary uppercase tracking-wider"
+            className="scoreboard px-4 py-3 text-center"
           >
-            Your Rank: #{userRank}
+            <span className="font-display text-sm font-black uppercase tracking-widest">
+              YOUR RANK: <span className="gold-text text-lg ml-1">#{userRank}</span>
+            </span>
           </motion.div>
         )}
 

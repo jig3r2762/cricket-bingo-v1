@@ -1,10 +1,10 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Privacy() {
   useSeoHead({
-    title: "Privacy Policy â€” Cricket Bingo",
+    title: "Privacy Policy — Cricket Bingo",
     description:
       "Privacy Policy for Cricket Bingo. Learn how we collect, use, and protect your data when you play the free online cricket quiz game.",
     canonical: "https://cricket-bingo.in/privacy",
@@ -40,7 +40,7 @@ export default function Privacy() {
             <li><strong className="text-foreground">Google Sign-In:</strong> If you sign in with Google, we receive your display name, email address, and profile photo. This is used to personalize your experience and display your name on the leaderboard.</li>
             <li><strong className="text-foreground">Guest Play:</strong> If you play as a guest, no personal information is collected. A local flag is stored in your browser's localStorage.</li>
             <li><strong className="text-foreground">Game Data:</strong> Your scores, streaks, and game history are stored in Firebase Firestore, linked to your account.</li>
-            <li><strong className="text-foreground">Wallet &amp; Transactions:</strong> If you purchase coins, your transaction details (order IDs, payment IDs, amounts) are stored securely. We do not store your payment card details â€” payments are handled by Razorpay.</li>
+            <li><strong className="text-foreground">Wallet &amp; Transactions:</strong> If you purchase coins, your transaction details (order IDs, payment IDs, amounts) are stored securely. We do not store your payment card details — payments are handled by Razorpay.</li>
           </ul>
 
           <h2 className="font-display text-xl text-foreground pt-2">Cookies &amp; Advertising</h2>

@@ -28,13 +28,13 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto rounded-lg border border-border bg-card/90 backdrop-blur-sm px-4 py-3 shadow-sm">
+    <div className={`scoreboard w-full max-w-md mx-auto px-4 py-3 ${delta !== null ? "animate-score-flash" : ""}`}>
       <div className="flex items-center justify-between gap-3">
 
-        {/* Score block */}
+        {/* Score block — LED dot-matrix feel */}
         <div className="flex items-end gap-3 relative">
           <div>
-            <p className="text-[9px] text-muted-foreground font-body font-semibold uppercase tracking-[0.12em] mb-0.5">
+            <p className="text-[9px] text-primary/70 font-bold uppercase tracking-[0.18em] mb-0.5">
               Score
             </p>
             <div className="relative">
@@ -43,20 +43,20 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
                 initial={{ y: -10, opacity: 0, scale: 0.8 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 transition={{ type: "spring", stiffness: 500, damping: 24 }}
-                className="score-display text-4xl leading-none block"
+                className="score-display color-green text-4xl leading-none block"
               >
                 {score}
               </motion.span>
-              {/* Score delta pop */}
               <AnimatePresence>
                 {delta !== null && (
                   <motion.span
                     key={`delta-${score}`}
                     initial={{ y: 0, opacity: 1, scale: 0.8 }}
-                    animate={{ y: -32, opacity: 0, scale: 1.2 }}
+                    animate={{ y: -32, opacity: 0, scale: 1.3 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
-                    className="absolute -top-1 left-full ml-1.5 text-xs font-display font-bold text-primary whitespace-nowrap pointer-events-none"
+                    className="absolute -top-1 left-full ml-1.5 text-sm font-display font-black text-secondary whitespace-nowrap pointer-events-none"
+                    style={{ textShadow: "0 0 8px hsl(var(--secondary) / 0.6)" }}
                     onAnimationComplete={() => setDelta(null)}
                   >
                     +{delta}
@@ -66,7 +66,7 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
             </div>
           </div>
 
-          {/* Streak badge */}
+          {/* Streak pill — chunky HUD style */}
           <AnimatePresence>
             {streak > 0 && (
               <motion.div
@@ -74,32 +74,32 @@ export function GameHeader({ score, streak, onHowToPlay }: GameHeaderProps) {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 20 }}
-                className="mb-0.5 flex items-center gap-1 rounded-md border border-secondary/40 bg-secondary/10 px-2 py-1"
+                className="hud-pill color-pink mb-0.5"
               >
                 {streak >= 3
-                  ? <Zap className="w-3.5 h-3.5 text-secondary fill-secondary" />
-                  : <Flame className="w-3.5 h-3.5 text-secondary" />
+                  ? <Zap className="w-3.5 h-3.5 fill-current" />
+                  : <Flame className="w-3.5 h-3.5" />
                 }
-                <span className="font-display text-xs text-secondary leading-none">
-                  {streak}x
-                </span>
+                <span>{streak}x</span>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={toggleSound}
-            className="p-2 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+            className="hud-pill !px-2.5 !py-2"
             title={soundOn ? "Mute" : "Unmute"}
+            aria-label={soundOn ? "Mute" : "Unmute"}
           >
             {soundOn ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={onHowToPlay}
-            className="p-2 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+            className="hud-pill !px-2.5 !py-2"
+            aria-label="How to play"
           >
             <HelpCircle className="w-3.5 h-3.5" />
           </button>

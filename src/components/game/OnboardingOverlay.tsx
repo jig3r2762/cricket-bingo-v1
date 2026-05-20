@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, Trophy, Zap, ChevronRight, X } from "lucide-react";
 
@@ -9,7 +9,7 @@ const steps = [
     icon: Target,
     title: "A Player Appears",
     description: "Each turn, a cricket player is shown with their stats, team, and role. Study them carefully!",
-    emoji: "ðŸ",
+    emoji: "🏏",
     color: "text-primary",
     bgColor: "bg-primary/15 border-primary/30",
   },
@@ -17,7 +17,7 @@ const steps = [
     icon: Trophy,
     title: "Place in the Grid",
     description: "Tap the cell whose category matches the player. Green = correct, Red = wrong. Build your grid!",
-    emoji: "ðŸŽ¯",
+    emoji: "🎯",
     color: "text-emerald-400",
     bgColor: "bg-emerald-400/15 border-emerald-400/30",
   },
@@ -25,7 +25,7 @@ const steps = [
     icon: Zap,
     title: "Get BINGO!",
     description: "Complete a row, column, or diagonal to win! Use wildcards wisely and build streaks for bonus points.",
-    emoji: "âš¡",
+    emoji: "⚡",
     color: "text-yellow-400",
     bgColor: "bg-yellow-400/15 border-yellow-400/30",
   },

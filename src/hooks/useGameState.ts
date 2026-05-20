@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { playCorrect, playWrong, playSkip, playWildcard, playBingo, playGameOver } from "@/lib/sounds";
+import { bingoBurst } from "@/lib/particles";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
 
@@ -234,8 +235,11 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
     if (feedbackValues.includes("correct")) playCorrect();
     else if (feedbackValues.includes("wrong")) playWrong();
 
-    // Play sounds on game end
-    if (prevStatusRef.current === "playing" && gameState.status === "won") playBingo();
+    // Play sounds + particles on game end
+    if (prevStatusRef.current === "playing" && gameState.status === "won") {
+      playBingo();
+      bingoBurst();
+    }
     else if (prevStatusRef.current === "playing" && gameState.status === "lost") playGameOver();
     prevStatusRef.current = gameState.status;
   }, [gameState.feedbackStates, gameState.status]);

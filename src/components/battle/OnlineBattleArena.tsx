@@ -145,10 +145,11 @@ export function OnlineBattleArena({
       {/* Nav bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-card/40 backdrop-blur-sm">
         <button
-          onClick={() => navigate("/play")}
-          className="p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
+          onClick={() => navigate("/")}
+          className="hud-pill"
+          aria-label="Back to Hub"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4" /> HUB
         </button>
         <div className="flex items-center gap-2">
           <Swords className="w-4 h-4 text-primary" />
@@ -324,7 +325,7 @@ export function OnlineBattleArena({
           oppFilled={oppFilledCount}
           total={total}
           onPlayAgain={onPlayAgain}
-          onHome={() => navigate("/play")}
+          onHome={() => navigate("/")}
           entryFee={entryFee}
           coinsEarned={coinsEarned}
         />

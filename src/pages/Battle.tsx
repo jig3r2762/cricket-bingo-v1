@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
 import { RoomSetup } from "@/components/battle/RoomSetup";
@@ -34,7 +34,7 @@ export default function Battle() {
   const [joinError, setJoinError] = useState<string | null>(null);
 
   const myName = user?.displayName || user?.email?.split("@")[0] || "Player";
-  // user.uid is required â€” guests are blocked below before reaching any Firestore calls
+  // user.uid is required — guests are blocked below before reaching any Firestore calls
   const myUid = user?.uid ?? "";
 
   // Build player map for deck resolution
@@ -43,7 +43,7 @@ export default function Battle() {
     [allPlayers]
   );
 
-  // â”€â”€ Host: create a new room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Host: create a new room ──────────────────────────────────────────────
   const handleCreateRoom = useCallback(
     async (gridSize: 3 | 4) => {
       if (allPlayers.length === 0) return;
@@ -70,7 +70,7 @@ export default function Battle() {
     [allPlayers, myUid, myName]
   );
 
-  // â”€â”€ Guest: join existing room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Guest: join existing room ────────────────────────────────────────────
   const handleJoinRoom = useCallback(
     async (code: string) => {
       setJoining(true);
@@ -100,7 +100,7 @@ export default function Battle() {
     [myUid, myName]
   );
 
-  // â”€â”€ Host: opponent joined (WaitingRoom fires this) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Host: opponent joined (WaitingRoom fires this) ───────────────────────
   const handleOpponentJoined = useCallback((data: RoomData) => {
     setGameInfo((prev) =>
       prev ? { ...prev, opponentName: data.guestName ?? "Opponent" } : prev
@@ -108,13 +108,13 @@ export default function Battle() {
     setPhase("playing");
   }, []);
 
-  // â”€â”€ Play Again: go back to setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Play Again: go back to setup ─────────────────────────────────────────
   const handlePlayAgain = useCallback(() => {
     setGameInfo(null);
     setPhase("setup");
   }, []);
 
-  // â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (playersLoading || authLoading) {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center">
@@ -125,37 +125,33 @@ export default function Battle() {
     );
   }
 
-  // â”€â”€ Sign-in gate: guests have no Firebase auth â†’ Firestore writes fail â”€â”€â”€
+  // ── Sign-in gate: guests have no Firebase auth → Firestore writes fail ───
   if (!user || isGuest) {
     return (
-      <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
-        <div className="glass-card rounded-xl p-8 w-full max-w-sm text-center space-y-5">
+      <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
+        <div className="scoreboard p-7 w-full max-w-sm text-center space-y-5 relative z-10">
           <div className="flex items-center justify-center gap-2">
             <Swords className="w-6 h-6 text-primary" />
-            <h2 className="font-display text-xl font-bold text-secondary uppercase tracking-wider">vs Player</h2>
+            <h2 className="font-display text-2xl font-black uppercase tracking-wider gold-text">VS PLAYER</h2>
           </div>
           <p className="text-sm text-muted-foreground">
             Real-time multiplayer requires a signed-in account so your opponent can find you.
           </p>
-          <button
-            onClick={() => signInWithGoogle().catch(() => {})}
-            className="w-full py-3 rounded-xl font-display text-sm uppercase tracking-wider text-foreground font-bold transition-all active:scale-95"
-            style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
-          >
-            Sign in with Google
+          <button onClick={() => signInWithGoogle().catch(() => {})} className="cta-chunky color-green w-full">
+            <span className="relative z-10">SIGN IN WITH GOOGLE</span>
           </button>
           <button
-            onClick={() => navigate("/play")}
-            className="w-full py-2 text-xs font-display uppercase tracking-wider text-muted-foreground hover:text-secondary transition-colors"
+            onClick={() => navigate("/")}
+            className="w-full py-2 text-xs font-display font-bold uppercase tracking-wider text-muted-foreground hover:text-secondary transition-colors"
           >
-            Back to Play
+            {"← Back to Hub"}
           </button>
         </div>
       </div>
     );
   }
 
-  // â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Setup ────────────────────────────────────────────────────────────────
   if (phase === "setup") {
     return (
       <RoomSetup
@@ -168,7 +164,7 @@ export default function Battle() {
     );
   }
 
-  // â”€â”€ Waiting (host waiting for guest) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Waiting (host waiting for guest) ─────────────────────────────────────
   if (phase === "waiting" && gameInfo) {
     return (
       <WaitingRoom
@@ -180,7 +176,7 @@ export default function Battle() {
     );
   }
 
-  // â”€â”€ Playing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Playing ──────────────────────────────────────────────────────────────
   if (phase === "playing" && gameInfo) {
     // Resolve deck from deckIds + local player map
     const deck = gameInfo.deckIds

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check, Star, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -310,7 +310,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="font-display text-5xl text-yellow-500"
+              className="font-display text-6xl gold-text font-black tracking-wider"
             >
               BINGO!
             </motion.h2>
@@ -326,7 +326,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
         ) : (
           <>
             <XCircle className="w-16 h-16 text-destructive mx-auto" />
-            <h2 className="font-display text-4xl text-destructive">
+            <h2 className="font-display text-5xl text-destructive font-black tracking-wider uppercase">
               Game Over
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -379,7 +379,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           </div>
         )}
 
-        {/* Countdown to next puzzle â€” only on main site (CrazyGames plays random games) */}
+        {/* Countdown to next puzzle — only on main site (CrazyGames plays random games) */}
         {!IN_IFRAME && <CountdownTimer />}
 
         {/* Challenge CTA */}
@@ -394,15 +394,14 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
         {/* Action buttons */}
         {IN_IFRAME ? (
           /* CrazyGames layout: Play Again is the hero CTA */
-          <div className="space-y-2">
-            <button
-              onClick={handlePlayAgainFull}
-              className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-secondary/20 border-2 border-secondary/60 text-secondary font-display text-sm uppercase tracking-wider hover:bg-secondary/30 transition-all active:scale-95"
-            >
-              <RotateCcw className="w-5 h-5" />
-              {autoStartIn !== null && autoStartIn > 0
-                ? `Play Again (${autoStartIn})`
-                : "Play Again"}
+          <div className="space-y-3">
+            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow size-lg w-full">
+              <span className="relative z-10 flex items-center justify-center gap-2.5">
+                <RotateCcw className="w-5 h-5" />
+                {autoStartIn !== null && autoStartIn > 0
+                  ? `PLAY AGAIN (${autoStartIn})`
+                  : "PLAY AGAIN"}
+              </span>
             </button>
             {autoStartIn !== null && autoStartIn > 0 && (
               <button
@@ -412,76 +411,62 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
                 Cancel auto-start
               </button>
             )}
-            <div className="flex items-center justify-center gap-2 flex-wrap pt-1">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
-              >
-                {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
-                {copied ? "Copied!" : "Share"}
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <button onClick={handleShare} className="cta-chunky size-sm color-green">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copied ? "COPIED" : "SHARE"}
+                </span>
               </button>
-              <button
-                onClick={handleChallenge}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
-              >
-                {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
-                {challengeCopied ? "Copied!" : "Challenge"}
+              <button onClick={handleChallenge} className="cta-chunky size-sm color-orange">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {challengeCopied ? "COPIED" : "CHALLENGE"}
+                </span>
               </button>
-              <button
-                onClick={handleDownloadCard}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/50 text-emerald-400 font-display text-xs uppercase tracking-wider hover:bg-emerald-500/25 transition-all active:scale-95"
-              >
-                <Download className="w-3.5 h-3.5" />
-                Card
+              <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Download className="w-3.5 h-3.5" /> CARD
+                </span>
               </button>
             </div>
           </div>
         ) : (
           /* Normal site layout */
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/50 text-primary font-display text-xs uppercase tracking-wider hover:bg-primary/25 transition-all active:scale-95"
-            >
-              {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-              {copied ? "Copied!" : "Share"}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                <RotateCcw className="w-4 h-4" /> PLAY AGAIN
+              </span>
             </button>
-            <button
-              onClick={handleChallenge}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-400 font-display text-xs uppercase tracking-wider hover:bg-orange-500/25 transition-all active:scale-95"
-            >
-              {challengeCopied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
-              {challengeCopied ? "Copied!" : "Challenge"}
-            </button>
-            <button
-              onClick={handleDownloadCard}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/50 text-emerald-400 font-display text-xs uppercase tracking-wider hover:bg-emerald-500/25 transition-all active:scale-95"
-            >
-              <Download className="w-4 h-4" />
-              Card
+            <button onClick={() => navigate("/battle")} className="cta-chunky color-purple">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                <Swords className="w-4 h-4" /> vs BOT
+              </span>
             </button>
             {!isGuest && (
-              <button
-                onClick={() => navigate("/leaderboard")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/50 text-amber-400 font-display text-xs uppercase tracking-wider hover:bg-amber-500/25 transition-all active:scale-95"
-              >
-                <BarChart3 className="w-4 h-4" />
-                Ranks
+              <button onClick={() => navigate("/leaderboard")} className="cta-chunky color-orange">
+                <span className="relative z-10 flex items-center justify-center gap-1.5">
+                  <BarChart3 className="w-4 h-4" /> RANKS
+                </span>
               </button>
             )}
-            <button
-              onClick={handlePlayAgainFull}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/15 border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider hover:bg-secondary/25 transition-all active:scale-95"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Play Again
+            <button onClick={handleShare} className="cta-chunky size-sm color-green">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                {copied ? "COPIED" : "SHARE"}
+              </span>
             </button>
-            <button
-              onClick={() => navigate("/battle")}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500/15 border border-purple-500/50 text-purple-400 font-display text-xs uppercase tracking-wider hover:bg-purple-500/25 transition-all active:scale-95"
-            >
-              <Swords className="w-4 h-4" />
-              vs Bot
+            <button onClick={handleChallenge} className="cta-chunky size-sm color-pink">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                {challengeCopied ? "COPIED" : "CHALLENGE"}
+              </span>
+            </button>
+            <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                <Download className="w-3.5 h-3.5" /> CARD
+              </span>
             </button>
           </div>
         )}
@@ -496,7 +481,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           >
             {IN_IFRAME ? (
               <p className="text-xs text-muted-foreground">
-                ðŸ Sign in to save your scores, track streaks & compete on the global leaderboard!
+                🏏 Sign in to save your scores, track streaks & compete on the global leaderboard!
               </p>
             ) : (
               <>

@@ -10,10 +10,10 @@ export function BingoMeter({ filled, total, gridSize }: BingoMeterProps) {
   const pct = (filled / total) * 100;
 
   return (
-    <div className="w-full max-w-md mx-auto rounded-lg border border-border bg-card px-3 py-3 shadow-sm space-y-2">
+    <div className="candy-card w-full max-w-md mx-auto px-4 py-3 space-y-2">
       <div className="flex items-center justify-between">
-        <span className="font-display text-sm text-foreground">Grid control</span>
-        <span className="font-body font-semibold text-xs text-primary">
+        <span className="font-display text-sm font-extrabold uppercase tracking-wide">Grid control</span>
+        <span className="font-bold text-xs text-primary uppercase tracking-wider">
           {filled}/{total} placed
         </span>
       </div>
@@ -33,18 +33,19 @@ export function BingoMeter({ filled, total, gridSize }: BingoMeterProps) {
             style={{ left: `${milestone}%` }}
           >
             <div
-              className="w-2.5 h-2.5 rounded-full border transition-all"
+              className="w-3 h-3 rounded-full border-2 transition-all"
               style={{
-                background: pct >= milestone ? "hsl(var(--secondary))" : "hsl(var(--card))",
-                borderColor: pct >= milestone ? "hsl(var(--secondary))" : "hsl(var(--border))",
+                background: pct >= milestone ? "hsl(var(--neon-gold))" : "hsl(var(--card))",
+                borderColor: pct >= milestone ? "hsl(var(--shadow-yellow))" : "hsl(var(--border))",
+                boxShadow: pct >= milestone ? "0 0 8px hsl(var(--neon-gold) / 0.6)" : "none",
               }}
             />
           </div>
         ))}
       </div>
 
-      <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-        <span>{gridSize}x{gridSize}</span>
+      <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+        <span>{gridSize}×{gridSize}</span>
         <span>{Math.round(pct)}% complete</span>
       </div>
     </div>

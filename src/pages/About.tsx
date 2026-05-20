@@ -1,10 +1,10 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function About() {
   useSeoHead({
-    title: "About Cricket Bingo â€” Free Online Cricket Quiz Game",
+    title: "About Cricket Bingo — Free Online Cricket Quiz Game",
     description:
       "Cricket Bingo is a free daily cricket quiz game with 3,600+ real player cards. Learn about our mission, features, data sources, and how we built the ultimate cricket knowledge challenge.",
     canonical: "https://cricket-bingo.in/about",
@@ -58,14 +58,14 @@ export default function About() {
         <section className="mb-10">
           <h2 className="font-display text-2xl text-foreground mb-4">Our Mission</h2>
           <p className="text-muted-foreground font-body text-sm leading-relaxed mb-3">
-            Cricket is more than just a sport â€” it's a passion shared by billions of fans worldwide.
+            Cricket is more than just a sport — it's a passion shared by billions of fans worldwide.
             We built Cricket Bingo to give cricket fans a fun, daily way to test and expand their
             knowledge of the game they love.
           </p>
           <p className="text-muted-foreground font-body text-sm leading-relaxed">
             Whether you're a casual fan who follows IPL or a cricket encyclopedia who knows every
             Test player's batting average, Cricket Bingo has something for you. The game rewards
-            deep knowledge â€” knowing which players have played for which IPL teams across seasons,
+            deep knowledge — knowing which players have played for which IPL teams across seasons,
             understanding career statistics, and recognizing trophy-winning squads all give you
             an edge.
           </p>
@@ -110,7 +110,7 @@ export default function About() {
               <h3 className="font-display text-lg text-foreground mb-2">Guess the Cricketer</h3>
               <p className="text-muted-foreground font-body text-sm leading-relaxed">
                 A mystery player is hidden behind 5 progressive clues. Each clue reveals more about
-                the player â€” their role, teams, stats, and achievements. The fewer clues you need to
+                the player — their role, teams, stats, and achievements. The fewer clues you need to
                 guess correctly, the more points you earn. A true test of cricket trivia depth.
               </p>
             </div>
@@ -119,7 +119,7 @@ export default function About() {
               <p className="text-muted-foreground font-body text-sm leading-relaxed">
                 Challenge your friends to a head-to-head cricket quiz. Create a room, share the code,
                 and compete on the same grid in real-time. Both players get the same cards in the same
-                order â€” the one with better cricket knowledge wins. You can also practice against
+                order — the one with better cricket knowledge wins. You can also practice against
                 an AI bot opponent.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function About() {
           <p className="text-muted-foreground font-body text-sm leading-relaxed">
             Our database covers players from all major cricket-playing nations including India,
             Australia, England, South Africa, New Zealand, Pakistan, Sri Lanka, West Indies,
-            Bangladesh, and Afghanistan â€” plus associate nations that have appeared in ICC events.
+            Bangladesh, and Afghanistan — plus associate nations that have appeared in ICC events.
           </p>
         </section>
 
@@ -166,7 +166,7 @@ export default function About() {
           <ul className="text-muted-foreground font-body text-sm leading-relaxed space-y-2 ml-4 mb-3">
             <li><strong>Same puzzle for everyone:</strong> All players worldwide see the exact same grid and get the same deck of cards in the same order.</li>
             <li><strong>Fair leaderboard:</strong> Since everyone faces the same challenge, leaderboard rankings reflect pure cricket knowledge.</li>
-            <li><strong>Guaranteed solvable:</strong> Before any grid goes live, our algorithm verifies that it can be completed â€” you'll never face an impossible puzzle.</li>
+            <li><strong>Guaranteed solvable:</strong> Before any grid goes live, our algorithm verifies that it can be completed — you'll never face an impossible puzzle.</li>
             <li><strong>Balanced difficulty:</strong> Each cell is guaranteed to have at least 5 matching players in the deck, so you always have a fair chance.</li>
           </ul>
           <p className="text-muted-foreground font-body text-sm leading-relaxed">
@@ -199,7 +199,7 @@ export default function About() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link to="/play" className="candy-btn candy-btn-green text-lg px-10 py-4 inline-block">
-              Play Now â€” Free
+              Play Now — Free
             </Link>
             <Link to="/how-to-play" className="px-8 py-3.5 rounded-xl border border-border text-foreground font-body font-bold text-sm bg-card hover:border-gray-400 transition-all inline-block">
               Learn How to Play

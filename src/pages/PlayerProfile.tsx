@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -139,7 +139,7 @@ function ProfileContent({ player, id }: { player: CricketPlayer; id: string }) {
     player.stats.iplMatches > 0;
 
   useSeoHead({
-    title: `${player.name} â€” Cricket Stats & Profile | Cricket Bingo`,
+    title: `${player.name} — Cricket Stats & Profile | Cricket Bingo`,
     description: bio.slice(0, 155),
     canonical: `https://cricket-bingo.in/players/${id}`,
     jsonLd: {
@@ -169,7 +169,7 @@ function ProfileContent({ player, id }: { player: CricketPlayer; id: string }) {
         <span className="font-body text-muted-foreground text-sm">
           {player.countryFlag} {player.country}
         </span>
-        <span className="text-muted-foreground/40">Â·</span>
+        <span className="text-muted-foreground/40">·</span>
         <span
           className={`inline-block px-3 py-1 rounded-full text-white font-body font-bold text-xs ${ROLE_COLORS[player.primaryRole] ?? "bg-gray-400"}`}
         >
@@ -233,7 +233,7 @@ function ProfileContent({ player, id }: { player: CricketPlayer; id: string }) {
                 {(player.stats.totalRuns > 0 || player.stats.totalWickets > 0) && (
                   <tr className="bg-candy-green/5">
                     <td className="p-3 font-body font-bold text-foreground">Career Total</td>
-                    <td className="p-3 text-center font-body text-muted-foreground">â€”</td>
+                    <td className="p-3 text-center font-body text-muted-foreground">—</td>
                     <td className="p-3 text-center font-display text-candy-green">{player.stats.totalRuns.toLocaleString()}</td>
                     <td className="p-3 text-center font-display text-candy-green">{player.stats.totalWickets}</td>
                   </tr>
@@ -306,7 +306,7 @@ function ProfileContent({ player, id }: { player: CricketPlayer; id: string }) {
           and complete a bingo line.
         </p>
         <Link to="/play" className="candy-btn candy-btn-green inline-block">
-          Play Cricket Bingo â€” Free
+          Play Cricket Bingo — Free
         </Link>
       </section>
 

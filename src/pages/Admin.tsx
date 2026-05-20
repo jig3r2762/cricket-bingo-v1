@@ -33,65 +33,47 @@ export default function Admin() {
   const [tab, setTab] = useState<"grid" | "users" | "coins">("grid");
 
   return (
-    <div className="min-h-screen stadium-bg">
-      <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="min-h-screen stadium-bg relative">
+      <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="font-display text-xl uppercase tracking-wider text-secondary">
+            <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text">
               Admin Dashboard
             </h1>
-            <p className="text-muted-foreground text-xs mt-1">
+            <p className="text-muted-foreground text-xs mt-1 font-bold uppercase tracking-wider">
               {user?.email}
             </p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => navigate("/play")}
-              className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider border border-border/50 text-secondary hover:bg-secondary/10 transition-colors"
-            >
-              Back to Game
+            <button onClick={() => navigate("/")} className="hud-pill">
+              ← HUB
             </button>
-            <button
-              onClick={signOut}
-              className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors"
-            >
-              Sign Out
+            <button onClick={signOut} className="hud-pill !text-[10px]" style={{ color: "hsl(var(--destructive))" }}>
+              SIGN OUT
             </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-card/40 backdrop-blur-sm rounded-lg p-1 border border-border/30">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <button
             onClick={() => setTab("grid")}
-            className={`flex-1 px-4 py-2 rounded-md text-xs font-display uppercase tracking-wider transition-colors ${
-              tab === "grid"
-                ? "bg-primary/20 text-primary border border-primary/30"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
+            className={`cta-chunky size-sm ${tab === "grid" ? "color-green" : ""}`}
           >
-            Grid Manager
+            <span className="relative z-10">GRID MANAGER</span>
           </button>
           <button
             onClick={() => setTab("users")}
-            className={`flex-1 px-4 py-2 rounded-md text-xs font-display uppercase tracking-wider transition-colors ${
-              tab === "users"
-                ? "bg-primary/20 text-primary border border-primary/30"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
+            className={`cta-chunky size-sm ${tab === "users" ? "color-blue" : ""}`}
           >
-            User Manager
+            <span className="relative z-10">USERS</span>
           </button>
           <button
             onClick={() => setTab("coins")}
-            className={`flex-1 px-4 py-2 rounded-md text-xs font-display uppercase tracking-wider transition-colors ${
-              tab === "coins"
-                ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
+            className={`cta-chunky size-sm ${tab === "coins" ? "color-yellow" : ""}`}
           >
-            🪙 Coins
+            <span className="relative z-10">COINS</span>
           </button>
         </div>
 

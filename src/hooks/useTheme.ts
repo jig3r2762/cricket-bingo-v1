@@ -22,7 +22,8 @@ export function useTheme() {
       const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
       if (saved === "dark" || saved === "light") return saved;
     } catch {}
-    return "light";
+    // Default to dark — floodlit night stadium is the brand default.
+    return "dark";
   });
 
   useEffect(() => {

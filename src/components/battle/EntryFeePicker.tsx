@@ -62,10 +62,11 @@ export function EntryFeePicker({ onCreateRoom, onJoinRoom, creating, joining, jo
   return (
     <div className="min-h-screen stadium-bg flex items-center justify-center p-4">
       <button
-        onClick={() => navigate("/play")}
-        className="fixed top-4 left-4 flex items-center gap-1.5 text-muted-foreground hover:text-secondary transition-colors text-sm z-10"
+        onClick={() => navigate("/")}
+        className="fixed top-4 left-4 hud-pill z-20"
+        aria-label="Back to Hub"
       >
-        <ArrowLeft className="w-4 h-4" /> Play
+        <ArrowLeft className="w-4 h-4" /> HUB
       </button>
 
       <div className="w-full max-w-sm">

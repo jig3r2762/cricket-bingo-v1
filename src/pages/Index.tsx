@@ -17,7 +17,7 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft, Menu, X, Swords, Coins } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { CoinBalance } from "@/components/wallet/CoinBalance";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { GridCategory } from "@/types/game";
@@ -159,11 +159,13 @@ const Index = () => {
   }
 
   return <GameBoard gridSize={gridSize} timed={timed} mode={gameMode} howToPlay={howToPlay} setHowToPlay={setHowToPlay} adminGrid={adminGrid} gameNumber={sessionGameCount} onPlayAgain={() => setSessionGameCount(c => c + 1)} onBack={() => {
+    // Back to Hub. Clear local state so a future /play visit starts fresh at GridSelection.
     setGridSize(null);
     setTimed(false);
     setGameMode("daily");
     setSessionGameCount(1);
     try { localStorage.removeItem("cricket-bingo-gridsize"); } catch {}
+    navigate("/");
   }} />;
 };
 
@@ -219,203 +221,87 @@ function GameBoard({
     onPlayAgain?.();
   }, [playRandomGame, onPlayAgain]);
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const categories = gameState.grid;
   const total = gameState.deck.length;
 
   return (
-    <div className="min-h-screen game-bg flex flex-col">
+    <div className="min-h-screen stadium-bg flex flex-col relative">
       <div
-        className={`flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
+        className={`relative z-10 flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
         style={IN_IFRAME ? { zoom: 0.88 } : undefined}
       >
-        {/* User bar with back button */}
-        <div className="w-full relative z-30 bg-card border border-border rounded-xl px-3 py-2">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={onBack}
-              className="p-2 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
-              title="Back to Grid Selection"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
+        {/* Compact top bar — Hub handles main nav, this is just back + key actions */}
+        <div className="w-full flex items-center gap-2 flex-wrap">
+          <button
+            onClick={onBack}
+            className="hud-pill"
+            title="Back to Hub"
+            aria-label="Back to Hub"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">HUB</span>
+          </button>
 
-            {IN_IFRAME ? (
-              /* CrazyGames / iframe mode — show branding text only (no external link) */
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5">
-                <span className="text-base leading-none">🏏</span>
-                <span className="text-[10px] font-display uppercase tracking-wider text-primary">
-                  Cricket Bingo
-                </span>
-                {mode === "ipl" && (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-display uppercase tracking-wider border border-amber-500/50 text-amber-400 bg-amber-500/10">
-                    IPL
+          {IN_IFRAME ? (
+            <span className="hud-pill">
+              <span className="text-sm">🏏</span>
+              <span>CRICKET BINGO</span>
+              {mode === "ipl" && <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] bg-secondary/20 text-secondary font-black">IPL</span>}
+            </span>
+          ) : (
+            <>
+              {/* User identity pill */}
+              <div className="hud-pill !px-2 !py-1.5">
+                {isGuest ? (
+                  <span className="text-base">🎮</span>
+                ) : user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="w-5 h-5 rounded-full"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <span className="w-5 h-5 rounded-full bg-primary/25 flex items-center justify-center text-[10px] font-black text-primary">
+                    {(user?.displayName || user?.email || "?")[0].toUpperCase()}
                   </span>
                 )}
-              </span>
-            ) : (
-              <>
-                <div className="flex items-center gap-3">
-                  {isGuest ? (
-                    <div className="w-8 h-8 rounded-full bg-secondary/20 ring-2 ring-secondary/30 flex items-center justify-center text-lg">
-                      🎮
-                    </div>
-                  ) : user?.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      alt=""
-                      className="w-8 h-8 rounded-full ring-2 ring-primary/30"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center text-sm text-primary font-bold">
-                      {(user?.displayName || user?.email || "?")[0].toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex flex-col">
-                    <span className="text-sm text-secondary font-medium truncate max-w-[140px] leading-tight">
-                      {isGuest ? "Guest" : (user?.displayName || "Player")}
-                      {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
-                        <span className="ml-1.5 text-orange-400 text-xs">{"\u{1F525}"}{userData!.currentStreak}</span>
-                      )}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground/60 truncate max-w-[140px] leading-tight">
-                      {isGuest ? "Sign in to save progress" : user?.email}
-                    </span>
-                  </div>
-                </div>
-                {/* Desktop nav buttons */}
-                <div className="hidden sm:flex items-center gap-2">
-                  <CoinBalance />
-                  <button
-                    onClick={() => navigate("/battle")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors"
-                  >
-                    <Swords className="w-3.5 h-3.5" />
-                    vs Bot
-                  </button>
-                  {!isGuest && (
-                    <button
-                      onClick={() => navigate("/paid-battle")}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
-                    >
-                      <Coins className="w-3.5 h-3.5" />
-                      Paid
-                    </button>
-                  )}
-                  {!isGuest && (
-                    <>
-                      <button
-                        onClick={() => navigate("/stats")}
-                        className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                      >
-                        Stats
-                      </button>
-                      <button
-                        onClick={() => navigate("/leaderboard")}
-                        className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-colors"
-                      >
-                        Ranks
-                      </button>
-                    </>
-                  )}
-                  {isAdmin && (
-                    <button
-                      onClick={() => navigate("/admin")}
-                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                    >
-                      Admin
-                    </button>
-                  )}
-                  {isGuest ? (
-                    <button
-                      onClick={() => signInWithGoogle().catch(() => {})}
-                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                    >
-                      Sign In
-                    </button>
-                  ) : (
-                    <button
-                      onClick={signOut}
-                      className="px-3 py-1.5 rounded-lg text-[10px] font-display uppercase tracking-wider border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-                    >
-                      Sign Out
-                    </button>
-                  )}
-                </div>
-                {/* Mobile hamburger */}
-                <button
-                  onClick={() => setMenuOpen((v) => !v)}
-                  className="sm:hidden p-2 rounded-lg border border-border/30 text-muted-foreground hover:text-secondary transition-colors"
-                >
-                  {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Mobile dropdown menu — only in non-iframe mode */}
-          {!IN_IFRAME && menuOpen && (
-            <div className="sm:hidden absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl py-2 px-3 z-50 space-y-1 shadow-lg">
-              <div className="px-3 py-2.5">
-                <CoinBalance />
+                <span className="truncate max-w-[80px] sm:max-w-[120px]">
+                  {isGuest ? "GUEST" : (user?.displayName || "PLAYER")}
+                </span>
+                {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
+                  <span className="text-orange-400 font-black text-[11px]">🔥{userData!.currentStreak}</span>
+                )}
               </div>
-              <button
-                onClick={() => { setMenuOpen(false); navigate("/battle"); }}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center gap-2"
-              >
-                <Swords className="w-3.5 h-3.5" />
-                vs Bot
-              </button>
-              {!isGuest && (
-                <button
-                  onClick={() => { setMenuOpen(false); navigate("/paid-battle"); }}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-amber-400 hover:bg-amber-500/10 transition-colors flex items-center gap-2"
-                >
-                  <Coins className="w-3.5 h-3.5" />
-                  Paid Battle
-                </button>
-              )}
-              {!isGuest && (
-                <>
+
+              <div className="ml-auto flex items-center gap-2">
+                <CoinBalance />
+                {isAdmin && (
                   <button
-                    onClick={() => { setMenuOpen(false); navigate("/stats"); }}
-                    className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                    onClick={() => navigate("/admin")}
+                    className="hud-pill color-cyan !text-[10px]"
                   >
-                    Stats
+                    ADMIN
                   </button>
+                )}
+                {isGuest ? (
                   <button
-                    onClick={() => { setMenuOpen(false); navigate("/leaderboard"); }}
-                    className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-amber-400 hover:bg-amber-500/10 transition-colors"
+                    onClick={() => signInWithGoogle().catch(() => {})}
+                    className="hud-pill color-gold !text-[10px]"
                   >
-                    Ranks
+                    SIGN IN
                   </button>
-                </>
-              )}
-              {isAdmin && (
-                <button
-                  onClick={() => { setMenuOpen(false); navigate("/admin"); }}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-primary hover:bg-primary/10 transition-colors"
-                >
-                  Admin
-                </button>
-              )}
-              {isGuest ? (
-                <button
-                  onClick={() => { setMenuOpen(false); signInWithGoogle().catch(() => {}); }}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-primary hover:bg-primary/10 transition-colors"
-                >
-                  Sign In
-                </button>
-              ) : (
-                <button
-                  onClick={() => { setMenuOpen(false); signOut(); }}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-display uppercase tracking-wider text-muted-foreground hover:bg-muted/20 transition-colors"
-                >
-                  Sign Out
-                </button>
-              )}
-            </div>
+                ) : (
+                  <button
+                    onClick={signOut}
+                    className="hud-pill !text-[10px]"
+                    title="Sign out"
+                  >
+                    OUT
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
 
@@ -479,32 +365,32 @@ function GameBoard({
         </div>
       </div>
 
-      {/* Mobile bottom bar */}
+      {/* Mobile bottom bar — chunky action dock */}
       {!isGameOver && currentPlayer && (
-        <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-card border-t border-border p-3 flex items-center justify-between px-5 z-50 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
-          <button
-            onClick={handleSkip}
-            className="px-5 py-2.5 rounded-lg border border-border text-muted-foreground font-body font-semibold text-xs uppercase tracking-wider active:scale-95 transition-transform bg-card"
-          >
-            Skip
-          </button>
-          <div className="text-center">
-            <div className="font-display text-2xl leading-none text-secondary">{gameState.score}</div>
-            <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-body font-semibold">Score</div>
-          </div>
-          <button
-            onClick={gameState.wildcardMode ? cancelWildcard : handleWildcard}
-            disabled={gameState.wildcardsLeft <= 0 && !gameState.wildcardMode}
-            className={`px-5 py-2.5 rounded-lg font-body font-semibold text-xs uppercase tracking-wider active:scale-95 transition-transform border
-              ${gameState.wildcardMode
-                ? "bg-secondary/15 border-secondary/50 text-secondary"
-                : gameState.wildcardsLeft > 0
-                  ? "bg-primary text-white border-primary"
-                  : "bg-muted border-border text-muted-foreground cursor-not-allowed"
+        <div className="fixed bottom-0 left-0 right-0 sm:hidden z-50 px-3 pb-3 pt-2 backdrop-blur-md"
+             style={{ background: "linear-gradient(180deg, transparent, hsl(var(--background)) 30%)" }}>
+          <div className="scoreboard flex items-center justify-between gap-3 px-4 py-3">
+            <button onClick={handleSkip} className="cta-chunky size-sm color-yellow">
+              <span className="relative z-10">SKIP</span>
+            </button>
+            <div className="text-center px-2">
+              <div className="score-display color-green text-3xl leading-none">{gameState.score}</div>
+              <div className="text-[8px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5">Score</div>
+            </div>
+            <button
+              onClick={gameState.wildcardMode ? cancelWildcard : handleWildcard}
+              disabled={gameState.wildcardsLeft <= 0 && !gameState.wildcardMode}
+              className={`cta-chunky size-sm ${
+                gameState.wildcardMode
+                  ? "color-orange"
+                  : gameState.wildcardsLeft > 0
+                    ? "color-green"
+                    : "is-disabled"
               }`}
-          >
-            {gameState.wildcardMode ? "Cancel" : "Wild"}
-          </button>
+            >
+              <span className="relative z-10">{gameState.wildcardMode ? "CANCEL" : "WILD"}</span>
+            </button>
+          </div>
         </div>
       )}
 
