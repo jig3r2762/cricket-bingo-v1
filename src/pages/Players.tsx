@@ -214,7 +214,7 @@ export default function Players() {
 
         {/* Table */}
         <div className="candy-card overflow-x-auto mb-6">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-border/40">
                 <th className="text-left p-3 font-display text-foreground cursor-pointer hover:text-candy-green"

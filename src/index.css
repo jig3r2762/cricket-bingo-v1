@@ -140,8 +140,10 @@
 
   * { @apply border-border; }
 
-  html {
+  html, body, #root {
     -webkit-text-size-adjust: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   body {
@@ -149,8 +151,14 @@
     font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
     overscroll-behavior-y: none;
-    overflow-x: hidden;
+    /* Long unbreakable strings (room codes, IDs, URLs) must wrap rather
+       than push the viewport wider on phones. */
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
   }
+
+  /* Images and SVGs should never push past their container */
+  img, svg, video, canvas { max-width: 100%; height: auto; }
 
   /* Respect iPhone notch + home indicator across the app */
   .stadium-bg,
@@ -163,6 +171,26 @@
   /* Utility for fixed bottom UI to clear the iPhone home indicator */
   .safe-bottom {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  /* Auto-shrink Tailwind's large text utilities on phones. Many display
+     headlines use text-3xl/4xl/5xl + uppercase + tracking-wider, which
+     overflows narrow screens because letter-spacing inflates width.
+     Clamps below scale down on <=480px but never grow past the original
+     Tailwind size, so smaller utilities (text-2xl, text-xl) are
+     untouched. */
+  @media (max-width: 480px) {
+    .text-5xl { font-size: clamp(1.875rem, 8vw, 3rem) !important; line-height: 1.05 !important; }
+    .text-4xl { font-size: clamp(1.625rem, 7vw, 2.25rem) !important; line-height: 1.08 !important; }
+    .text-3xl { font-size: clamp(1.375rem, 6.2vw, 1.875rem) !important; line-height: 1.12 !important; }
+    /* Big tracking widens text further; tone it down on phones. */
+    .tracking-widest { letter-spacing: 0.08em !important; }
+    .tracking-wider { letter-spacing: 0.04em !important; }
+  }
+  @media (max-width: 360px) {
+    .text-5xl { font-size: clamp(1.5rem, 7.5vw, 3rem) !important; }
+    .text-4xl { font-size: clamp(1.375rem, 6.8vw, 2.25rem) !important; }
+    .text-3xl { font-size: clamp(1.25rem, 6vw, 1.875rem) !important; }
   }
 
   h1, h2, h3, h4, h5, h6 {

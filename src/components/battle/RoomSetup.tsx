@@ -158,7 +158,7 @@ export function RoomSetup({ onCreateRoom, onJoinRoom, creating, joining, joinErr
                   defaultValue=""
                   placeholder="A B C 1 2 3"
                   maxLength={6}
-                  className="w-full text-center font-display text-4xl font-black uppercase tracking-[0.35em] candy-card !rounded-xl px-4 py-4 text-secondary focus:outline-none focus:border-primary placeholder:text-muted-foreground/30 placeholder:tracking-[0.2em]"
+                  className="w-full text-center font-display font-black uppercase candy-card !rounded-xl px-3 py-4 text-secondary focus:outline-none focus:border-primary placeholder:text-muted-foreground/30 placeholder:tracking-[0.15em] text-[clamp(1.5rem,9vw,2.25rem)] tracking-[0.2em] sm:tracking-[0.35em]"
                   onChange={(e) => {
                     const cleaned = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
                     if (e.target.value !== cleaned) e.target.value = cleaned;

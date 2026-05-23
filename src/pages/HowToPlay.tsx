@@ -182,8 +182,8 @@ export default function HowToPlay() {
             Building a streak multiplies your score significantly.
           </p>
 
-          <div className="candy-card overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="candy-card overflow-x-auto">
+            <table className="w-full text-sm min-w-[420px]">
               <thead>
                 <tr className="border-b border-border/40">
                   <th className="text-left p-3 font-display text-foreground">Category</th>

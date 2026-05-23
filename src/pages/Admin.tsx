@@ -389,8 +389,8 @@ function UserManager() {
         </button>
       </div>
 
-      <div className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden">
-        <table className="w-full">
+      <div className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl overflow-x-auto">
+        <table className="w-full min-w-[480px]">
           <thead>
             <tr className="border-b border-border/20">
               <th className="text-left px-4 py-3 text-[10px] font-display uppercase tracking-wider text-muted-foreground">
@@ -548,8 +548,8 @@ function CoinsManager() {
         Enter an amount and click Grant to add coins to any user's balance instantly — no Razorpay involved.
       </div>
 
-      <div className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden">
-        <table className="w-full">
+      <div className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl overflow-x-auto">
+        <table className="w-full min-w-[480px]">
           <thead>
             <tr className="border-b border-border/20">
               <th className="text-left px-4 py-3 text-[10px] font-display uppercase tracking-wider text-muted-foreground">User</th>

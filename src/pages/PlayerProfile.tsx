@@ -216,7 +216,7 @@ function ProfileContent({ player, id }: { player: CricketPlayer; id: string }) {
         <section className="mb-8">
           <h2 className="font-display text-2xl text-foreground mb-4">Career Statistics</h2>
           <div className="candy-card overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[420px]">
               <thead>
                 <tr className="border-b border-border/40">
                   <th className="text-left p-3 font-display text-foreground">Format</th>

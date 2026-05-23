@@ -62,7 +62,7 @@ export function WaitingRoom({ roomId, gridSize, onOpponentJoined, onCancel, entr
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           className="scoreboard-dotmatrix p-7 space-y-5"
         >
-          <div className="score-display color-green text-5xl font-black tracking-[0.25em] select-all animate-led-flicker">
+          <div className="score-display color-green text-[clamp(2rem,11vw,3rem)] font-black tracking-[0.18em] sm:tracking-[0.25em] select-all animate-led-flicker break-all">
             {roomId}
           </div>
           <button onClick={handleCopy} className="cta-chunky size-sm color-green mx-auto">
