@@ -286,7 +286,7 @@ export function OnlineBattleArena({
 
       {/* Mobile bottom bar */}
       {!myDone && currentPlayer && (
-        <div className="fixed bottom-0 left-0 right-0 sm:hidden player-bar border-t border-border/50 p-3 flex items-center justify-between px-5 z-40">
+        <div className="fixed bottom-0 left-0 right-0 sm:hidden player-bar border-t border-border/50 px-5 pt-3 safe-bottom flex items-center justify-between z-40">
           <button
             onClick={handleSkip}
             className="px-5 py-2.5 rounded-xl border border-secondary/50 text-secondary font-display text-xs uppercase tracking-wider active:scale-95 transition-transform"

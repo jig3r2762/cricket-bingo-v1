@@ -140,11 +140,29 @@
 
   * { @apply border-border; }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
     overscroll-behavior-y: none;
+    overflow-x: hidden;
+  }
+
+  /* Respect iPhone notch + home indicator across the app */
+  .stadium-bg,
+  .warm-bg,
+  .game-bg {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Utility for fixed bottom UI to clear the iPhone home indicator */
+  .safe-bottom {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -457,7 +475,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 9px 14px;
+    min-height: 36px;
     background: linear-gradient(180deg, hsl(var(--surface-1)), hsl(var(--surface-2)));
     border: 2px solid hsl(var(--border));
     border-radius: 9999px;
@@ -471,6 +490,14 @@
     text-transform: uppercase;
     color: hsl(var(--foreground));
     transition: transform 120ms ease;
+    /* Mobile: bump touch target closer to 44px guideline */
+    touch-action: manipulation;
+  }
+  @media (max-width: 640px) {
+    .hud-pill {
+      min-height: 40px;
+      padding: 10px 14px;
+    }
   }
   .hud-pill:hover { transform: translateY(-1px); }
 
@@ -730,5 +757,15 @@
       animation-duration: 0.01ms !important;
       transition-duration: 0.05ms !important;
     }
+  }
+
+  /* Tight phones (iPhone SE, Galaxy Fold cover, etc.) — compact spacing
+     so the bingo grid + player card fit without horizontal scroll. */
+  @media (max-width: 360px) {
+    .cta-chunky { padding: 12px 18px; font-size: 17px; min-height: 50px; }
+    .cta-chunky.size-lg { font-size: 22px; min-height: 64px; padding: 16px 24px; }
+    .cta-chunky.size-sm { font-size: 13px; min-height: 38px; padding: 7px 14px; }
+    .bingo-cell { padding: 6px; }
+    .scoreboard { padding: 14px !important; }
   }
 }

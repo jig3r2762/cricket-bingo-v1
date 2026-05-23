@@ -230,78 +230,84 @@ function GameBoard({
         className={`relative z-10 flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
         style={IN_IFRAME ? { zoom: 0.88 } : undefined}
       >
-        {/* Compact top bar — Hub handles main nav, this is just back + key actions */}
-        <div className="w-full flex items-center gap-2 flex-wrap">
-          <button
-            onClick={onBack}
-            className="hud-pill"
-            title="Back to Hub"
-            aria-label="Back to Hub"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">HUB</span>
-          </button>
+        {/* Compact top bar — Hub handles main nav, this is just back + key actions.
+            Two groups in a wrap-friendly justify-between layout so the right group
+            (coin/admin/auth) wraps below the left group on small phones instead of
+            overflowing. */}
+        <div className="w-full flex items-center justify-between gap-2 flex-wrap">
+          {/* Left group: back + user identity */}
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <button
+              onClick={onBack}
+              className="hud-pill shrink-0"
+              title="Back to Hub"
+              aria-label="Back to Hub"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">HUB</span>
+            </button>
 
-          {IN_IFRAME ? (
-            <span className="hud-pill">
-              <span className="text-sm">🏏</span>
-              <span>CRICKET BINGO</span>
-              {mode === "ipl" && <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] bg-secondary/20 text-secondary font-black">IPL</span>}
-            </span>
-          ) : (
-            <>
-              {/* User identity pill */}
-              <div className="hud-pill !px-2 !py-1.5">
+            {IN_IFRAME ? (
+              <span className="hud-pill">
+                <span className="text-sm">🏏</span>
+                <span>CRICKET BINGO</span>
+                {mode === "ipl" && <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] bg-secondary/20 text-secondary font-black">IPL</span>}
+              </span>
+            ) : (
+              <div className="hud-pill !px-2 !py-1.5 min-w-0">
                 {isGuest ? (
-                  <span className="text-base">🎮</span>
+                  <span className="text-base shrink-0">🎮</span>
                 ) : user?.photoURL ? (
                   <img
                     src={user.photoURL}
                     alt=""
-                    className="w-5 h-5 rounded-full"
+                    className="w-5 h-5 rounded-full shrink-0"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <span className="w-5 h-5 rounded-full bg-primary/25 flex items-center justify-center text-[10px] font-black text-primary">
+                  <span className="w-5 h-5 rounded-full bg-primary/25 flex items-center justify-center text-[10px] font-black text-primary shrink-0">
                     {(user?.displayName || user?.email || "?")[0].toUpperCase()}
                   </span>
                 )}
-                <span className="truncate max-w-[80px] sm:max-w-[120px]">
+                <span className="truncate max-w-[80px] sm:max-w-[140px]">
                   {isGuest ? "GUEST" : (user?.displayName || "PLAYER")}
                 </span>
                 {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
-                  <span className="text-orange-400 font-black text-[11px]">🔥{userData!.currentStreak}</span>
+                  <span className="text-orange-400 font-black text-[11px] shrink-0">🔥{userData!.currentStreak}</span>
                 )}
               </div>
+            )}
+          </div>
 
-              <div className="ml-auto flex items-center gap-2">
-                <CoinBalance />
-                {isAdmin && (
-                  <button
-                    onClick={() => navigate("/admin")}
-                    className="hud-pill color-cyan !text-[10px]"
-                  >
-                    ADMIN
-                  </button>
-                )}
-                {isGuest ? (
-                  <button
-                    onClick={() => signInWithGoogle().catch(() => {})}
-                    className="hud-pill color-gold !text-[10px]"
-                  >
-                    SIGN IN
-                  </button>
-                ) : (
-                  <button
-                    onClick={signOut}
-                    className="hud-pill !text-[10px]"
-                    title="Sign out"
-                  >
-                    OUT
-                  </button>
-                )}
-              </div>
-            </>
+          {/* Right group: coin + admin + auth. Hidden in iframe mode. */}
+          {!IN_IFRAME && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <CoinBalance />
+              {isAdmin && (
+                <button
+                  onClick={() => navigate("/admin")}
+                  className="hud-pill color-cyan !text-[10px]"
+                >
+                  ADMIN
+                </button>
+              )}
+              {isGuest ? (
+                <button
+                  onClick={() => signInWithGoogle().catch(() => {})}
+                  className="hud-pill color-gold !text-[10px]"
+                >
+                  SIGN IN
+                </button>
+              ) : (
+                <button
+                  onClick={signOut}
+                  className="hud-pill !text-[10px]"
+                  title="Sign out"
+                >
+                  OUT
+                </button>
+              )}
+            </div>
           )}
         </div>
 
@@ -367,7 +373,7 @@ function GameBoard({
 
       {/* Mobile bottom bar — chunky action dock */}
       {!isGameOver && currentPlayer && (
-        <div className="fixed bottom-0 left-0 right-0 sm:hidden z-50 px-3 pb-3 pt-2 backdrop-blur-md"
+        <div className="fixed bottom-0 left-0 right-0 sm:hidden z-50 px-3 pt-2 safe-bottom backdrop-blur-md"
              style={{ background: "linear-gradient(180deg, transparent, hsl(var(--background)) 30%)" }}>
           <div className="scoreboard flex items-center justify-between gap-3 px-4 py-3">
             <button onClick={handleSkip} className="cta-chunky size-sm color-yellow">
