@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/generate-sitemap.cjs",
     "build": "tsc -p tsconfig.app.json --noEmit && vite build",
+    "postbuild": "node scripts/prerender-players.cjs && node scripts/prerender-hubs.cjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
