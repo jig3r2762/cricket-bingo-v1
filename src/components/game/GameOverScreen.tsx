@@ -8,6 +8,7 @@ import { CountdownTimer } from "./CountdownTimer";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
 import { triggerConfetti } from "@/lib/confetti";
+import { shareGameResults } from "@/lib/share";
 
 const CG_BEST_KEY = "cg-best-score";
 
@@ -129,36 +130,21 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
 
   const handleShare = useCallback(async () => {
     const text = buildShareText(gameState, currentStreak);
-
-    // Try native share on mobile
-    if (navigator.share) {
-      try {
-        await navigator.share({ text });
-        return;
-      } catch {
-        // User cancelled or not supported -- fall through to clipboard
-      }
+    const sharedNatively = await shareGameResults(text, "Cricket Bingo");
+    if (!sharedNatively) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-
-    await navigator.clipboard.writeText(text).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }, [gameState, currentStreak]);
 
   const handleChallenge = useCallback(async () => {
     const dateLabel = formatGameDate(gameState.dailyGameId);
     const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo today (${dateLabel})!\nThink you know cricket better than me? \u{1F914}\nProve it \u{1F449} cricket-bingo.in`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ text });
-        return;
-      } catch {}
+    const sharedNatively = await shareGameResults(text, "Cricket Bingo Challenge");
+    if (!sharedNatively) {
+      setChallengeCopied(true);
+      setTimeout(() => setChallengeCopied(false), 2000);
     }
-
-    await navigator.clipboard.writeText(text).catch(() => {});
-    setChallengeCopied(true);
-    setTimeout(() => setChallengeCopied(false), 2000);
   }, [gameState.score, gameState.dailyGameId]);
 
   const handleDownloadCard = useCallback(() => {

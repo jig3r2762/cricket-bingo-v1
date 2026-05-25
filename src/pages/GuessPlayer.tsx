@@ -5,6 +5,8 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { useGuessGame } from "@/hooks/useGuessGame";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { CricketPlayer } from "@/types/game";
+import { shareGameResults } from "@/lib/share";
+import { toast } from "sonner";
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -292,14 +294,9 @@ function GameOverScreen({
   const shareText = `🏏 Guess the Cricketer!\n\nI got ${correctCount}/${totalPlayed} correct\nScore: ${game.score} | Best streak: ${game.maxStreak}🔥\n\nPlay at cricket-bingo.in/guess`;
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: shareText });
-      } catch {
-        // user cancelled
-      }
-    } else {
-      await navigator.clipboard.writeText(shareText);
+    const sharedNatively = await shareGameResults(shareText, "Guess the Cricketer");
+    if (!sharedNatively) {
+      toast.success("Score copied to clipboard!");
     }
   };
 

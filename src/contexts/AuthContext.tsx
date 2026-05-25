@@ -32,6 +32,10 @@ interface UserData {
   currentStreak: number;
   longestStreak: number;
   lastPlayedDate: string;
+  lastLoginDate?: string;
+  loginStreak?: number;
+  lastRewardClaimedDate?: string;
+  coinBalance?: number;
 }
 
 interface AuthContextValue {
@@ -70,7 +74,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsGuest(false);
           try { localStorage.removeItem("cricket-bingo-guest"); } catch {}
           await ensureUserDoc(firebaseUser);
-          const data = await fetchUserData(firebaseUser.uid);
+          let data = await fetchUserData(firebaseUser.uid);
+          if (data) {
+            data = await updateLoginStreak(firebaseUser.uid, data);
+          }
           setUserData(data);
         } else {
           setUserData(null);
@@ -141,6 +148,46 @@ export function useAuth() {
 
 // --- Firestore helpers ---
 
+import { getTodayDateString } from "@/lib/dailyGame";
+
+async function updateLoginStreak(uid: string, currentData: UserData): Promise<UserData> {
+  const todayStr = getTodayDateString();
+  
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const y = yesterday.getFullYear();
+  const m = String(yesterday.getMonth() + 1).padStart(2, "0");
+  const d = String(yesterday.getDate()).padStart(2, "0");
+  const yesterdayStr = `${y}-${m}-${d}`;
+
+  let streak = currentData.loginStreak ?? 1;
+  const lastLogin = currentData.lastLoginDate ?? "";
+
+  if (!lastLogin) {
+    streak = 1;
+  } else if (lastLogin === yesterdayStr) {
+    // If they already claimed Day 7, reset streak to 1. Otherwise increment.
+    if (currentData.lastRewardClaimedDate === lastLogin && currentData.loginStreak === 7) {
+      streak = 1;
+    } else {
+      streak = (currentData.loginStreak ?? 0) + 1;
+      if (streak > 7) streak = 1;
+    }
+  } else if (lastLogin !== todayStr) {
+    // Over 1 day gap
+    streak = 1;
+  }
+
+  const ref = doc(db, "users", uid);
+  const updates = {
+    lastLoginDate: todayStr,
+    loginStreak: streak,
+  };
+
+  await setDoc(ref, updates, { merge: true });
+  return { ...currentData, ...updates };
+}
+
 async function ensureUserDoc(user: User) {
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
@@ -155,6 +202,8 @@ async function ensureUserDoc(user: User) {
       currentStreak: 0,
       longestStreak: 0,
       lastPlayedDate: "",
+      loginStreak: 1,
+      lastLoginDate: getTodayDateString(),
     };
     await setDoc(ref, data);
   }

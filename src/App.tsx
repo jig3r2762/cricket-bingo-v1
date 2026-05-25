@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +7,7 @@ import { BrowserRouter, HashRouter, Routes, Route } from "react-router-dom";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { StatusBar, Style } from "@capacitor/status-bar";
 
 // Use HashRouter on CrazyGames (external hostname or iframe) so /play doesn't 404.
 // BrowserRouter is used on Vercel where server handles all routes normally.
@@ -20,7 +21,7 @@ const HowToPlay = lazy(() => import("./pages/HowToPlay"));
 const About = lazy(() => import("./pages/About"));
 const Players = lazy(() => import("./pages/Players"));
 const PlayerProfile = lazy(() => import("./pages/PlayerProfile"));
-const Style = lazy(() => import("./pages/Style"));
+const StylePage = lazy(() => import("./pages/Style"));
 
 // AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
 // away from the landing page (login, play, battle, etc.).
@@ -38,32 +39,39 @@ function PageLoader() {
   );
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Analytics />
-      <SpeedInsights />
-      <Router>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* Public pages — no Firebase, no AuthProvider, SEO-friendly */}
-            <Route path="/" element={<Hub />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/how-to-play" element={<HowToPlay />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/players/:id" element={<PlayerProfile />} />
-            <Route path="/players" element={<Players />} />
-            <Route path="/style" element={<Style />} />
-            {/* All other routes — Firebase loads here */}
-            <Route path="/*" element={<AuthenticatedApp />} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+    StatusBar.setBackgroundColor({ color: "#0b0e14" }).catch(() => {});
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Analytics />
+        <SpeedInsights />
+        <Router>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Public pages — no Firebase, no AuthProvider, SEO-friendly */}
+              <Route path="/" element={<Hub />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/how-to-play" element={<HowToPlay />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/players/:id" element={<PlayerProfile />} />
+              <Route path="/players" element={<Players />} />
+              <Route path="/style" element={<StylePage />} />
+              {/* All other routes — Firebase loads here */}
+              <Route path="/*" element={<AuthenticatedApp />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

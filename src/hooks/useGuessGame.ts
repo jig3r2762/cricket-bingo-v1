@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import type { CricketPlayer } from "@/types/game";
+import { triggerLightTap, triggerSuccessHaptic, triggerErrorHaptic } from "@/lib/haptics";
 import {
   generateClues,
   getGuessablePlayers,
@@ -64,6 +65,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
   }, [guessablePlayers]);
 
   const revealNextClue = useCallback(() => {
+    triggerLightTap().catch(() => {});
     setGame((prev) => {
       if (!prev || prev.status !== "playing") return prev;
       const round = prev.rounds[prev.currentRound];
@@ -83,6 +85,12 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
       if (!prev || prev.status !== "playing") return prev;
       const round = prev.rounds[prev.currentRound];
       const isCorrect = guessedPlayerId === round.player.id;
+
+      if (isCorrect) {
+        triggerSuccessHaptic().catch(() => {});
+      } else {
+        triggerErrorHaptic().catch(() => {});
+      }
 
       const newStreak = isCorrect ? prev.streak + 1 : 0;
       const points = isCorrect
@@ -115,6 +123,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
   }, []);
 
   const skipRound = useCallback(() => {
+    triggerLightTap().catch(() => {});
     setGame((prev) => {
       if (!prev || prev.status !== "playing") return prev;
       const round = prev.rounds[prev.currentRound];
@@ -139,6 +148,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
   }, []);
 
   const nextRound = useCallback(() => {
+    triggerLightTap().catch(() => {});
     setGame((prev) => {
       if (!prev) return prev;
       if (prev.currentRound >= TOTAL_ROUNDS - 1 || prev.lives <= 0) {

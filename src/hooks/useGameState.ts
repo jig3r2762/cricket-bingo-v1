@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { playCorrect, playWrong, playSkip, playWildcard, playBingo, playGameOver } from "@/lib/sounds";
+import { triggerLightTap, triggerSuccessHaptic, triggerErrorHaptic } from "@/lib/haptics";
 import { bingoBurst } from "@/lib/particles";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
@@ -227,20 +228,30 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
     saveScore().catch(console.error);
   }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
 
-  // Sound effects
+  // Sound + Haptic effects
   const prevStatusRef = useRef(gameState.status);
   useEffect(() => {
-    // Play sounds on feedback
+    // Play sounds + haptics on feedback
     const feedbackValues = Object.values(gameState.feedbackStates).filter(Boolean);
-    if (feedbackValues.includes("correct")) playCorrect();
-    else if (feedbackValues.includes("wrong")) playWrong();
+    if (feedbackValues.includes("correct")) {
+      playCorrect();
+      triggerSuccessHaptic().catch(() => {});
+    }
+    else if (feedbackValues.includes("wrong")) {
+      playWrong();
+      triggerErrorHaptic().catch(() => {});
+    }
 
-    // Play sounds + particles on game end
+    // Play sounds + particles + haptics on game end
     if (prevStatusRef.current === "playing" && gameState.status === "won") {
       playBingo();
       bingoBurst();
+      triggerSuccessHaptic().catch(() => {});
     }
-    else if (prevStatusRef.current === "playing" && gameState.status === "lost") playGameOver();
+    else if (prevStatusRef.current === "playing" && gameState.status === "lost") {
+      playGameOver();
+      triggerErrorHaptic().catch(() => {});
+    }
     prevStatusRef.current = gameState.status;
   }, [gameState.feedbackStates, gameState.status]);
 
@@ -374,6 +385,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
 
   const handleSkip = useCallback(() => {
     playSkip();
+    triggerLightTap().catch(() => {});
     setGameState((prev) => {
       if (prev.status !== "playing") return prev;
       if (prev.deckIndex >= prev.deck.length) return prev;
@@ -402,6 +414,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
 
   const handleWildcard = useCallback(() => {
     playWildcard();
+    triggerLightTap().catch(() => {});
     setGameState((prev) => {
       if (prev.status !== "playing" || prev.wildcardsLeft <= 0) return prev;
       return { ...prev, wildcardMode: true };

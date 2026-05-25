@@ -26,12 +26,15 @@ const Battle = lazy(() => import("./pages/Battle"));
 const PaidBattle = lazy(() => import("./pages/PaidBattle"));
 const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
 
+import { DailyRewardsModal } from "@/components/DailyRewardsModal";
+
 export default function AuthenticatedApp() {
   return (
     <AuthProvider>
       <WalletProvider>
         <PlayersProvider>
           <Suspense fallback={<PageLoader />}>
+            <DailyRewardsModal />
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route
