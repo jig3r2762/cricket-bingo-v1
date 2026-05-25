@@ -70,7 +70,7 @@ const MODES: ModeConfig[] = [
 
 export function GridSelection({ onSelect, onBattle, onGuess }: GridSelectionProps) {
   const navigate = useNavigate();
-  const [timed, setTimed] = useState(false);
+  const timed = true;
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-lg mx-auto px-4 py-2 relative">
@@ -102,20 +102,6 @@ export function GridSelection({ onSelect, onBattle, onGuess }: GridSelectionProp
           Match players · Complete lines · Beat the world
         </p>
       </motion.div>
-
-      {/* Timer toggle */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.12 }}
-        onClick={() => setTimed((v) => !v)}
-        className={`hud-pill mx-auto ${timed ? "color-gold" : ""}`}
-      >
-        {timed
-          ? <><Zap className="w-3.5 h-3.5" /><span>TIMED · 10s/turn</span></>
-          : <><TimerOff className="w-3.5 h-3.5" /><span>RELAXED · no timer</span></>
-        }
-      </motion.button>
 
       {/* Mode cards */}
       <motion.div

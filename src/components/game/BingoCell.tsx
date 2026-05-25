@@ -593,8 +593,23 @@ export const BingoCell = memo(function BingoCell({
         ${feedbackState === "wrong" ? "animate-cell-wrong" : ""}
         ${isWildcardTarget && !placedPlayer ? "!border-secondary ring-2 ring-secondary/30" : ""}
         ${isWinLine ? "bingo-cell-win is-locked" : ""}
+        ${isRecommended && !placedPlayer ? "!border-cyan-400 ring-4 ring-cyan-400/50 shadow-[0_0_20px_rgba(34,211,238,0.75)] animate-pulse-glow" : ""}
       `}
     >
+      {isRecommended && !placedPlayer && (
+        <>
+          {/* Pulsing neon cyan border */}
+          <span className="absolute inset-0 rounded-[calc(var(--chunk-radius-sm)-4px)] border-4 border-cyan-400 animate-pulse-glow z-20 pointer-events-none" />
+          {/* Bouncing pointing finger */}
+          <motion.div
+            animate={{ y: [-3, 3, -3] }}
+            transition={{ repeat: Infinity, duration: 1.0, ease: "easeInOut" }}
+            className="absolute top-1 right-1 z-30 pointer-events-none bg-cyan-400 text-slate-900 rounded-full p-1 shadow-lg border border-white flex items-center justify-center w-6 h-6"
+          >
+            <span className="text-xs font-bold leading-none select-none">👇</span>
+          </motion.div>
+        </>
+      )}
       {placedPlayer ? (
         /* --- Filled cell: placed player --- */
         <div className="flex flex-col items-center gap-0.5 animate-pop-in">

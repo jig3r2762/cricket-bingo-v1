@@ -40,7 +40,7 @@ const Index = () => {
       return s === "3" ? 3 : s === "4" ? 4 : null;
     } catch { return null; }
   });
-  const [timed, setTimed] = useState(false);
+  const [timed, setTimed] = useState(true);
   const [gameMode, setGameMode] = useState<"daily" | "ipl">("daily");
   const [sessionGameCount, setSessionGameCount] = useState(1);
 

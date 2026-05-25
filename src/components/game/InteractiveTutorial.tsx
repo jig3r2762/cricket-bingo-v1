@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, X, Zap } from "lucide-react";
+import { triggerLightTap, triggerSuccessHaptic } from "@/lib/haptics";
 import { BingoGrid } from "./BingoGrid";
 import { PlayerCard } from "./PlayerCard";
 import {
@@ -158,6 +159,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
   }, [step, isAuto]);
 
   function advance() {
+    triggerLightTap().catch(() => {});
     setStep((s) => s + 1);
   }
 
@@ -166,6 +168,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
     if (placements[cellId]) return; // already filled
     if (cellId !== current.targetCellId) return; // not the guided cell
 
+    triggerSuccessHaptic().catch(() => {});
     const player = TUTORIAL_PLAYERS[current.playerIdx];
     setPlacements((prev) => ({ ...prev, [cellId]: player }));
     setFeedbackStates({ [cellId]: "correct" });
@@ -177,6 +180,7 @@ export function InteractiveTutorial({ onComplete }: Props) {
   }
 
   function dismiss() {
+    triggerSuccessHaptic().catch(() => {});
     try {
       localStorage.setItem(TUTORIAL_DONE_KEY, "true");
       // Also mark old onboarding key so legacy check passes
@@ -308,12 +312,12 @@ export function InteractiveTutorial({ onComplete }: Props) {
               className="px-4 pb-6 pt-1 shrink-0"
             >
               <div
-                className={`w-full max-w-md mx-auto rounded-xl border p-4 backdrop-blur-sm ${
+                className={`w-full max-w-md mx-auto rounded-xl border p-4 backdrop-blur-md transition-all shadow-xl ${
                   isBingo
-                    ? "bg-emerald-950/90 border-emerald-500/50"
+                    ? "bg-emerald-950/80 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.25)] text-emerald-100"
                     : isInteractive
-                    ? "bg-blue-950/90 border-blue-500/40"
-                    : "bg-card/90 border-border/50"
+                    ? "bg-slate-900/80 border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.25)] text-slate-100"
+                    : "bg-card/85 border-border/40 shadow-[0_0_15px_rgba(0,0,0,0.15)] text-secondary"
                 }`}
               >
                 <h3

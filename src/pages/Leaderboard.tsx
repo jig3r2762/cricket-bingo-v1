@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, query, orderBy, limit, where, getDocsFromServer } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -28,8 +28,10 @@ interface PlayerScore {
 }
 
 interface LeaderboardData {
-  grid3x3: PlayerScore[];
-  grid4x4: PlayerScore[];
+  allTime3: PlayerScore[];
+  allTime4: PlayerScore[];
+  weekly3: PlayerScore[];
+  weekly4: PlayerScore[];
 }
 
 // Medal animations for podium positions
@@ -65,7 +67,13 @@ export default function Leaderboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [gridTab, setGridTab] = useState<GridTab>(3);
-  const [leaderboards, setLeaderboards] = useState<LeaderboardData>({ grid3x3: [], grid4x4: [] });
+  const [timeTab, setTimeTab] = useState<"all" | "weekly">("all");
+  const [leaderboards, setLeaderboards] = useState<LeaderboardData>({
+    allTime3: [],
+    allTime4: [],
+    weekly3: [],
+    weekly4: [],
+  });
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
 
@@ -81,9 +89,28 @@ export default function Leaderboard() {
       const q3 = query(scoresRef, where("gridSize", "==", 3), orderBy("score", "desc"), limit(200));
       const q4 = query(scoresRef, where("gridSize", "==", 4), orderBy("score", "desc"), limit(200));
 
-      const [snap3, snap4] = await Promise.all([
+      // Query scores from the last 7 days.
+      const getSevenDaysAgoDateString = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 7);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      };
+      const sevenDaysAgoStr = getSevenDaysAgoDateString();
+
+      const qWeekly = query(
+        scoresRef,
+        where("date", ">=", sevenDaysAgoStr),
+        orderBy("date", "desc"),
+        limit(1000)
+      );
+
+      const [snap3, snap4, snapWeekly] = await Promise.all([
         getDocsFromServer(q3),
         getDocsFromServer(q4),
+        getDocsFromServer(qWeekly),
       ]);
       if (cancelled) return;
 
@@ -100,21 +127,28 @@ export default function Leaderboard() {
           .map(e => ({ uid: e.uid, displayName: e.displayName, photoURL: e.photoURL, score: e.score, status: e.status }));
       };
 
+      const weeklyEntries = snapWeekly.docs.map(d => d.data() as ScoreEntry);
+
       setLeaderboards({
-        grid3x3: toPlayerScore(snap3.docs.map(d => d.data() as ScoreEntry)),
-        grid4x4: toPlayerScore(snap4.docs.map(d => d.data() as ScoreEntry)),
+        allTime3: toPlayerScore(snap3.docs.map(d => d.data() as ScoreEntry)),
+        allTime4: toPlayerScore(snap4.docs.map(d => d.data() as ScoreEntry)),
+        weekly3: toPlayerScore(weeklyEntries.filter(e => e.gridSize === 3)),
+        weekly4: toPlayerScore(weeklyEntries.filter(e => e.gridSize === 4)),
       });
       setLoading(false);
     };
 
-    fetchScores().catch(() => {
+    fetchScores().catch((err) => {
+      console.error("Leaderboard fetch error:", err);
       if (!cancelled) { setLoading(false); setFetchError(true); }
     });
 
     return () => { cancelled = true; };
   }, []);
 
-  const scores = gridTab === 3 ? leaderboards.grid3x3 : leaderboards.grid4x4;
+  const scores = timeTab === "all"
+    ? (gridTab === 3 ? leaderboards.allTime3 : leaderboards.allTime4)
+    : (gridTab === 3 ? leaderboards.weekly3 : leaderboards.weekly4);
   const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
 
   return (
@@ -130,21 +164,40 @@ export default function Leaderboard() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text leading-none">
-            {gridTab}×{gridTab} TOP SCORERS
+            {gridTab}×{gridTab} {timeTab === "all" ? "ALL-TIME" : "WEEKLY"} SCORERS
           </h1>
         </motion.div>
 
-        {/* Grid Size Tabs */}
-        <div className="flex gap-2">
-          {([3, 4] as GridTab[]).map((size) => (
+        {/* Grid Size & Time Tabs */}
+        <div className="flex justify-between items-center gap-4 flex-wrap w-full">
+          {/* Grid Size Tabs */}
+          <div className="flex gap-2">
+            {([3, 4] as GridTab[]).map((size) => (
+              <button
+                key={size}
+                onClick={() => setGridTab(size)}
+                className={`cta-chunky size-sm ${gridTab === size ? "color-yellow" : ""}`}
+              >
+                <span className="relative z-10">{size}×{size} GRID</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Time timeframe Tabs */}
+          <div className="flex gap-2">
             <button
-              key={size}
-              onClick={() => setGridTab(size)}
-              className={`cta-chunky size-sm ${gridTab === size ? "color-yellow" : ""}`}
+              onClick={() => setTimeTab("all")}
+              className={`hud-pill !text-[11px] ${timeTab === "all" ? "color-gold" : ""}`}
             >
-              <span className="relative z-10">{size}×{size} GRID</span>
+              ALL-TIME
             </button>
-          ))}
+            <button
+              onClick={() => setTimeTab("weekly")}
+              className={`hud-pill !text-[11px] ${timeTab === "weekly" ? "color-gold" : ""}`}
+            >
+              WEEKLY
+            </button>
+          </div>
         </div>
 
         {/* Your rank indicator */}

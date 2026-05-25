@@ -787,13 +787,49 @@
     }
   }
 
+  /* Mobile devices (phones and portrait tablets) — compact spacings */
+  @media (max-width: 640px) {
+    .cta-chunky {
+      padding: 10px 20px !important;
+      font-size: 16px !important;
+      min-height: 46px !important;
+      --chunk-depth: 4px !important;
+      --chunk-depth-hover: 6px !important;
+    }
+    .cta-chunky.size-lg {
+      font-size: 20px !important;
+      min-height: 56px !important;
+      padding: 12px 24px !important;
+      --chunk-depth: 6px !important;
+    }
+    .cta-chunky.size-sm {
+      font-size: 12px !important;
+      min-height: 36px !important;
+      padding: 6px 12px !important;
+      --chunk-depth: 3px !important;
+    }
+    .hud-pill {
+      min-height: 32px !important;
+      padding: 6px 10px !important;
+      font-size: 12px !important;
+    }
+    .mode-card {
+      padding: 12px !important;
+      min-height: 110px !important;
+      gap: 6px !important;
+    }
+    .mode-card .font-display {
+      font-size: 18px !important;
+    }
+  }
+
   /* Tight phones (iPhone SE, Galaxy Fold cover, etc.) — compact spacing
      so the bingo grid + player card fit without horizontal scroll. */
   @media (max-width: 360px) {
-    .cta-chunky { padding: 12px 18px; font-size: 17px; min-height: 50px; }
-    .cta-chunky.size-lg { font-size: 22px; min-height: 64px; padding: 16px 24px; }
-    .cta-chunky.size-sm { font-size: 13px; min-height: 38px; padding: 7px 14px; }
-    .bingo-cell { padding: 6px; }
+    .cta-chunky { padding: 12px 18px !important; font-size: 15px !important; min-height: 44px !important; }
+    .cta-chunky.size-lg { font-size: 18px !important; min-height: 52px !important; padding: 12px 20px !important; }
+    .cta-chunky.size-sm { font-size: 11px !important; min-height: 32px !important; padding: 5px 10px !important; }
+    .bingo-cell { padding: 6px !important; }
     .scoreboard { padding: 14px !important; }
   }
 }
