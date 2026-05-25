@@ -362,7 +362,7 @@ function GameBoard({
               feedbackStates={gameState.feedbackStates}
               onCellClick={handleCellClick}
               eligibleCells={eligibleCells}
-              recommendedCell={recommendedCell}
+              recommendedCell={null}
               wildcardMode={gameState.wildcardMode}
               winLine={gameState.winLine}
             />
