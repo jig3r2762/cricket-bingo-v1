@@ -150,7 +150,7 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
-    overscroll-behavior-y: none;
+    overscroll-behavior-y: auto;
     /* Long unbreakable strings (room codes, IDs, URLs) must wrap rather
        than push the viewport wider on phones. */
     word-wrap: break-word;

@@ -227,7 +227,7 @@ function GameBoard({
   return (
     <div className="min-h-screen stadium-bg flex flex-col relative">
       <div
-        className={`relative z-10 flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
+        className={`relative z-10 flex-1 flex flex-col items-center px-3 mx-auto w-full ${IN_IFRAME ? "max-w-xl gap-2 pt-2 pb-24 sm:pb-4" : "max-w-5xl gap-4 pt-3 pb-24 sm:pb-4"}`}
         style={IN_IFRAME ? { zoom: 0.88 } : undefined}
       >
         {/* Compact top bar — Hub handles main nav, this is just back + key actions.

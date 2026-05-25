@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useMemo, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Swords, Trophy, Users, RotateCcw, Home, Timer } from "lucide-react";
@@ -164,7 +164,7 @@ export function OnlineBattleArena({
       </div>
 
       {/* Main layout: player left | opponent right (stacked on mobile) */}
-      <div className="flex-1 flex flex-col sm:flex-row gap-4 px-3 py-4 max-w-5xl mx-auto w-full">
+      <div className="flex-1 flex flex-col sm:flex-row gap-4 px-3 pt-4 pb-24 sm:pb-4 max-w-5xl mx-auto w-full">
 
         {/* ── MY SIDE ── */}
         <div className="flex-1 flex flex-col gap-3">
