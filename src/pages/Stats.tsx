@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -78,7 +78,7 @@ export default function Stats() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3"
         >
-          <button onClick={() => navigate("/")} className="hud-pill" aria-label="Back to Hub">
+          <button onClick={() => navigate(-1)} className="hud-pill" aria-label="Back to Hub">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text leading-none">

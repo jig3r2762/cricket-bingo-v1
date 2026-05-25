@@ -46,7 +46,7 @@ export default function Admin() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => navigate("/")} className="hud-pill">
+            <button onClick={() => navigate(-1)} className="hud-pill">
               ← HUB
             </button>
             <button onClick={signOut} className="hud-pill !text-[10px]" style={{ color: "hsl(var(--destructive))" }}>
