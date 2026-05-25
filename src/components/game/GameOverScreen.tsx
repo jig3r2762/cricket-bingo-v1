@@ -419,41 +419,50 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
           </div>
         ) : (
           /* Normal site layout */
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow">
-              <span className="relative z-10 flex items-center justify-center gap-1.5">
-                <RotateCcw className="w-4 h-4" /> PLAY AGAIN
+          <div className="flex flex-col gap-2.5">
+            {/* Primary high-priority action */}
+            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow w-full">
+              <span className="relative z-10 flex items-center justify-center gap-1.5 text-base font-black">
+                <RotateCcw className="w-5 h-5" /> PLAY AGAIN
               </span>
             </button>
-            <button onClick={() => navigate("/battle")} className="cta-chunky color-purple">
-              <span className="relative z-10 flex items-center justify-center gap-1.5">
-                <Swords className="w-4 h-4" /> vs BOT
-              </span>
-            </button>
-            {!isGuest && (
-              <button onClick={() => navigate("/leaderboard")} className="cta-chunky color-orange">
-                <span className="relative z-10 flex items-center justify-center gap-1.5">
-                  <BarChart3 className="w-4 h-4" /> RANKS
+
+            {/* Game mode links */}
+            <div className={`grid ${isGuest ? "grid-cols-1" : "grid-cols-2"} gap-2`}>
+              <button onClick={() => navigate("/battle")} className="cta-chunky color-purple">
+                <span className="relative z-10 flex items-center justify-center gap-1.5 text-xs font-black">
+                  <Swords className="w-4 h-4" /> VS BOT
                 </span>
               </button>
-            )}
-            <button onClick={handleShare} className="cta-chunky size-sm color-green">
-              <span className="relative z-10 flex items-center justify-center gap-1.5">
-                {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
-                {copied ? "COPIED" : "SHARE"}
-              </span>
-            </button>
-            <button onClick={handleChallenge} className="cta-chunky size-sm color-pink">
-              <span className="relative z-10 flex items-center justify-center gap-1.5">
-                {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
-                {challengeCopied ? "COPIED" : "CHALLENGE"}
-              </span>
-            </button>
-            <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
-              <span className="relative z-10 flex items-center justify-center gap-1.5">
-                <Download className="w-3.5 h-3.5" /> CARD
-              </span>
-            </button>
+              {!isGuest && (
+                <button onClick={() => navigate("/leaderboard")} className="cta-chunky color-orange">
+                  <span className="relative z-10 flex items-center justify-center gap-1.5 text-xs font-black">
+                    <BarChart3 className="w-4 h-4" /> RANKS
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Sharing / Card actions */}
+            <div className="grid grid-cols-3 gap-1.5">
+              <button onClick={handleShare} className="cta-chunky size-sm color-green">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copied ? "COPIED" : "SHARE"}
+                </span>
+              </button>
+              <button onClick={handleChallenge} className="cta-chunky size-sm color-pink">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {challengeCopied ? "COPIED" : "CHALLENGE"}
+                </span>
+              </button>
+              <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  <Download className="w-3.5 h-3.5" /> CARD
+                </span>
+              </button>
+            </div>
           </div>
         )}
 

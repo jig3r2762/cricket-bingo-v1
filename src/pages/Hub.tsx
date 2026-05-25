@@ -121,10 +121,10 @@ export default function Hub() {
         </header>
 
         {/* ─── HUD strip ──────────────────────────────── */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <span className="hud-pill color-gold"><Coins size={14} /> 0</span>
-          <span className="hud-pill color-pink"><Flame size={14} /> STREAK · 0</span>
-          <span className="hud-pill"><Award size={14} /> UNRANKED</span>
+        <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap mb-6">
+          <span className="hud-pill color-gold justify-center"><Coins size={14} /> 0</span>
+          <span className="hud-pill color-pink justify-center"><Flame size={14} /> <span className="truncate text-xs">STREAK · 0</span></span>
+          <span className="hud-pill justify-center"><Award size={14} /> <span className="truncate text-xs">UNRANKED</span></span>
         </div>
 
         {/* ─── Today's match hero ─────────────────────── */}

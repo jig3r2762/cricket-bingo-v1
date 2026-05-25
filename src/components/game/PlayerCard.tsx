@@ -114,9 +114,6 @@ export function PlayerCard({
                 {player.name}
               </h2>
               <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                  {player.countryCode}
-                </span>
                 {player.primaryRole && (
                   <span className={`hud-pill ${rolePillClass} !text-[9px] !px-2 !py-0.5`}>
                     {player.primaryRole}

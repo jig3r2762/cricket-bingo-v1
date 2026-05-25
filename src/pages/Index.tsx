@@ -17,7 +17,7 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { CoinBalance } from "@/components/wallet/CoinBalance";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { GridCategory } from "@/types/game";
@@ -234,27 +234,27 @@ function GameBoard({
             Two groups in a wrap-friendly justify-between layout so the right group
             (coin/admin/auth) wraps below the left group on small phones instead of
             overflowing. */}
-        <div className="w-full flex items-center justify-between gap-2 flex-wrap">
+        <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2">
           {/* Left group: back + user identity */}
-          <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <button
               onClick={onBack}
-              className="hud-pill shrink-0"
+              className="hud-pill shrink-0 !p-2 flex items-center justify-center"
               title="Back to Hub"
               aria-label="Back to Hub"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">HUB</span>
+              <span className="hidden sm:inline ml-1 text-xs">HUB</span>
             </button>
 
             {IN_IFRAME ? (
-              <span className="hud-pill">
+              <span className="hud-pill shrink-0">
                 <span className="text-sm">🏏</span>
-                <span>CRICKET BINGO</span>
+                <span className="text-xs">CRICKET BINGO</span>
                 {mode === "ipl" && <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] bg-secondary/20 text-secondary font-black">IPL</span>}
               </span>
             ) : (
-              <div className="hud-pill !px-2 !py-1.5 min-w-0">
+              <div className="hud-pill !px-2 !py-1.5 min-w-0 flex items-center gap-1">
                 {isGuest ? (
                   <span className="text-base shrink-0">🎮</span>
                 ) : user?.photoURL ? (
@@ -269,7 +269,7 @@ function GameBoard({
                     {(user?.displayName || user?.email || "?")[0].toUpperCase()}
                   </span>
                 )}
-                <span className="truncate max-w-[80px] sm:max-w-[140px]">
+                <span className="truncate max-w-[80px] sm:max-w-[140px] hidden sm:inline text-xs">
                   {isGuest ? "GUEST" : (user?.displayName || "PLAYER")}
                 </span>
                 {!isGuest && (userData?.currentStreak ?? 0) >= 2 && (
@@ -281,12 +281,12 @@ function GameBoard({
 
           {/* Right group: coin + admin + auth. Hidden in iframe mode. */}
           {!IN_IFRAME && (
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <CoinBalance />
               {isAdmin && (
                 <button
                   onClick={() => navigate("/admin")}
-                  className="hud-pill color-cyan !text-[10px]"
+                  className="hud-pill color-cyan !text-[10px] !px-2.5 !py-1"
                 >
                   ADMIN
                 </button>
@@ -294,17 +294,18 @@ function GameBoard({
               {isGuest ? (
                 <button
                   onClick={() => signInWithGoogle().catch(() => {})}
-                  className="hud-pill color-gold !text-[10px]"
+                  className="hud-pill color-gold !text-[10px] !px-2.5 !py-1"
                 >
                   SIGN IN
                 </button>
               ) : (
                 <button
                   onClick={signOut}
-                  className="hud-pill !text-[10px]"
+                  className="hud-pill !text-[10px] !p-2 flex items-center justify-center shrink-0"
                   title="Sign out"
+                  aria-label="Sign out"
                 >
-                  OUT
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
