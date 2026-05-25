@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { GridSelection } from "@/components/game/GridSelection";
 import { PlayerCard } from "@/components/game/PlayerCard";
@@ -17,9 +17,16 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTodayDateString } from "@/lib/dailyGame";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { ArrowLeft, LogOut, Menu, Home, Trophy, BarChart3, HelpCircle, Settings, Award, Flame, Coins } from "lucide-react";
 import { CoinBalance } from "@/components/wallet/CoinBalance";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import type { GridCategory } from "@/types/game";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } from "@/lib/crazyGamesSDK";
@@ -280,34 +287,179 @@ function GameBoard({
           </div>
 
           {/* Right group: coin + admin + auth. Hidden in iframe mode. */}
+          {/* Right group: coin + admin + auth. Hidden in iframe mode. */}
           {!IN_IFRAME && (
             <div className="flex items-center gap-1.5 sm:gap-2">
               <CoinBalance />
-              {isAdmin && (
-                <button
-                  onClick={() => navigate("/admin")}
-                  className="hud-pill color-cyan !text-[10px] !px-2.5 !py-1"
-                >
-                  ADMIN
-                </button>
-              )}
-              {isGuest ? (
-                <button
-                  onClick={() => signInWithGoogle().catch(() => {})}
-                  className="hud-pill color-gold !text-[10px] !px-2.5 !py-1"
-                >
-                  SIGN IN
-                </button>
-              ) : (
-                <button
-                  onClick={signOut}
-                  className="hud-pill !text-[10px] !p-2 flex items-center justify-center shrink-0"
-                  title="Sign out"
-                  aria-label="Sign out"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              )}
+              
+              {/* Desktop-only controls */}
+              <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
+                {isAdmin && (
+                  <button
+                    onClick={() => navigate("/admin")}
+                    className="hud-pill color-cyan !text-[10px] !px-2.5 !py-1"
+                  >
+                    ADMIN
+                  </button>
+                )}
+                {isGuest ? (
+                  <button
+                    onClick={() => signInWithGoogle().catch(() => {})}
+                    className="hud-pill color-gold !text-[10px] !px-2.5 !py-1"
+                  >
+                    SIGN IN
+                  </button>
+                ) : (
+                  <button
+                    onClick={signOut}
+                    className="hud-pill !text-[10px] !p-2 flex items-center justify-center shrink-0"
+                    title="Sign out"
+                    aria-label="Sign out"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Drawer Menu for Mobile Navigation & Stats */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button
+                    className="hud-pill !p-2 flex items-center justify-center shrink-0"
+                    aria-label="Open menu"
+                  >
+                    <Menu className="w-4 h-4 text-foreground" />
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[350px] bg-background border-l border-border p-6 flex flex-col justify-between">
+                  <div className="flex flex-col gap-6 h-full justify-between">
+                    {/* Top Section: Header & Profile info */}
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-border pb-4">
+                        <SheetTitle className="font-display text-lg font-black tracking-wide">
+                          CRICKET BINGO
+                        </SheetTitle>
+                      </div>
+
+                      {/* Profile & Stats Panel */}
+                      <div className="candy-card p-4 space-y-4">
+                        <div className="flex items-center gap-3">
+                          {isGuest ? (
+                            <div className="w-12 h-12 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center text-lg font-black text-primary shrink-0">
+                              🎮
+                            </div>
+                          ) : user?.photoURL ? (
+                            <img
+                              src={user.photoURL}
+                              alt=""
+                              className="w-12 h-12 rounded-full border-2 border-primary/40 shrink-0"
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center text-lg font-black text-primary shrink-0">
+                              {(user?.displayName || user?.email || "?")[0].toUpperCase()}
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="font-display text-sm font-black truncate">
+                              {isGuest ? "GUEST PLAYER" : (user?.displayName || "PLAYER")}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                              {isAdmin ? "Admin" : "Player"}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* User Stats Grid inside the Drawer */}
+                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/60">
+                          <div className="flex flex-col items-center justify-center bg-background/50 rounded-lg p-2 border border-border/40">
+                            <Coins size={14} className="text-yellow-400 mb-1" />
+                            <span className="text-[11px] font-black">{userData?.coinBalance ?? 0}</span>
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-widest mt-0.5">Coins</span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center bg-background/50 rounded-lg p-2 border border-border/40">
+                            <Flame size={14} className="text-pink-500 mb-1" />
+                            <span className="text-[11px] font-black">{userData?.currentStreak ?? 0}</span>
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-widest mt-0.5">Streak</span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center bg-background/50 rounded-lg p-2 border border-border/40">
+                            <Award size={14} className="text-primary mb-1" />
+                            <span className="text-[10px] font-black truncate max-w-full text-center">
+                              {isAdmin ? "ADMIN" : "PLAYING"}
+                            </span>
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-widest mt-0.5">Rank</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Navigation Links */}
+                      <div className="flex flex-col gap-2">
+                        <SheetClose asChild>
+                          <button
+                            onClick={onBack}
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold w-full text-left"
+                          >
+                            <Home size={16} className="text-muted-foreground" />
+                            Back to Hub
+                          </button>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <Link to="/leaderboard" className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold">
+                            <Trophy size={16} className="text-muted-foreground" />
+                            Leaderboard
+                          </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <Link to="/stats" className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold">
+                            <BarChart3 size={16} className="text-muted-foreground" />
+                            My Stats
+                          </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <Link to="/how-to-play" className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold">
+                            <HelpCircle size={16} className="text-muted-foreground" />
+                            How to Play
+                          </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <Link to="/about" className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold">
+                            <Settings size={16} className="text-muted-foreground" />
+                            About
+                          </Link>
+                        </SheetClose>
+                        {isAdmin && (
+                          <SheetClose asChild>
+                            <Link to="/admin" className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-colors text-sm font-bold text-cyan-400">
+                              <Settings size={16} className="text-cyan-400" />
+                              Admin Panel
+                            </Link>
+                          </SheetClose>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bottom Section: Theme & Auth Actions */}
+                    <div className="space-y-4 border-t border-border pt-4">
+                      {isGuest ? (
+                        <button
+                          onClick={() => signInWithGoogle().catch(() => {})}
+                          className="hud-pill w-full justify-center gap-2 text-gold border-gold/30 hover:bg-gold/10"
+                        >
+                          SIGN IN
+                        </button>
+                      ) : (
+                        <button
+                          onClick={signOut}
+                          className="hud-pill w-full justify-center gap-2 text-destructive border-destructive/30 hover:bg-destructive/10"
+                        >
+                          <LogOut size={14} />
+                          SIGN OUT
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           )}
         </div>

@@ -52,6 +52,26 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function cacheUserStats(data: UserData | null) {
+  try {
+    if (data) {
+      localStorage.setItem("cricket-bingo-coins", String(data.coinBalance ?? 0));
+      localStorage.setItem("cricket-bingo-streak", String(data.currentStreak ?? 0));
+      localStorage.setItem("cricket-bingo-role", data.role ?? "player");
+      localStorage.setItem("cricket-bingo-username", data.displayName ?? "");
+      localStorage.setItem("cricket-bingo-photo", data.photoURL ?? "");
+    } else {
+      localStorage.removeItem("cricket-bingo-coins");
+      localStorage.removeItem("cricket-bingo-streak");
+      localStorage.removeItem("cricket-bingo-role");
+      localStorage.removeItem("cricket-bingo-username");
+      localStorage.removeItem("cricket-bingo-photo");
+    }
+  } catch (err) {
+    console.error("Failed to cache user stats in localStorage:", err);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -78,8 +98,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (data) {
             data = await updateLoginStreak(firebaseUser.uid, data);
           }
+          cacheUserStats(data);
           setUserData(data);
         } else {
+          cacheUserStats(null);
           setUserData(null);
           // Auto-guest on CrazyGames / external hosting so ProtectedRoute
           // doesn't redirect to a login page that can't work there.
@@ -112,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
+    cacheUserStats(null);
     setUserData(null);
     setIsGuest(false);
     try { localStorage.removeItem("cricket-bingo-guest"); } catch {}
@@ -127,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshUserData = async () => {
     if (user) {
       const data = await fetchUserData(user.uid);
+      cacheUserStats(data);
       setUserData(data);
     }
   };
