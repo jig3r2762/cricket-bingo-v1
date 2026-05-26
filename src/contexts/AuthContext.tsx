@@ -172,6 +172,11 @@ export function useAuth() {
   return ctx;
 }
 
+export function useOptionalAuth() {
+  const ctx = useContext(AuthContext);
+  return ctx;
+}
+
 // --- Firestore helpers ---
 
 import { getTodayDateString } from "@/lib/dailyGame";

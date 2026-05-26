@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useOptionalAuth } from "@/contexts/AuthContext";
 import { getTodayDateString } from "@/lib/dailyGame";
 import {
   getDailyQuestsForDate,
@@ -17,7 +17,11 @@ import { toast } from "sonner";
 export interface QuestWithProgress extends QuestDef, QuestProgress {}
 
 export function useDailyQuests() {
-  const { user, userData, isGuest, refreshUserData } = useAuth();
+  const auth = useOptionalAuth();
+  const user = auth?.user ?? null;
+  const userData = auth?.userData ?? null;
+  const isGuest = auth?.isGuest ?? false;
+  const refreshUserData = auth?.refreshUserData ?? (async () => {});
   const today = getTodayDateString();
 
   const [questsState, setQuestsState] = useState<DailyQuestsState>(() => {
