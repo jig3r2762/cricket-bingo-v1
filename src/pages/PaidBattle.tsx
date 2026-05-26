@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Coins, Swords } from "lucide-react";
 import { EntryFeePicker } from "@/components/battle/EntryFeePicker";
@@ -11,6 +11,7 @@ import { generateRandomGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
 import type { CricketPlayer, GridCategory } from "@/types/game";
 import { toast } from "sonner";
+import { trackQuestProgress } from "@/lib/quests";
 
 type Phase = "setup" | "waiting" | "playing";
 
@@ -42,6 +43,13 @@ export default function PaidBattle() {
     () => new Map(allPlayers.map((p) => [p.id, p])),
     [allPlayers]
   );
+
+  // Track quest progress when Paid Battle gameplay begins
+  useEffect(() => {
+    if (phase === "playing" && myUid) {
+      trackQuestProgress("play_paid_battle", 1, myUid).catch(console.error);
+    }
+  }, [phase, myUid]);
 
   // ── Host: create paid room ────────────────────────────────────────────────
   const handleCreateRoom = useCallback(

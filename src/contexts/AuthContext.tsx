@@ -36,6 +36,7 @@ interface UserData {
   loginStreak?: number;
   lastRewardClaimedDate?: string;
   coinBalance?: number;
+  dailyQuests?: unknown;
 }
 
 interface AuthContextValue {
@@ -67,6 +68,7 @@ function cacheUserStats(data: UserData | null) {
       localStorage.removeItem("cricket-bingo-username");
       localStorage.removeItem("cricket-bingo-photo");
     }
+    window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
   } catch (err) {
     console.error("Failed to cache user stats in localStorage:", err);
   }

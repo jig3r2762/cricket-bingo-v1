@@ -12,6 +12,7 @@ import { triggerLightTap, triggerSuccessHaptic, triggerErrorHaptic } from "@/lib
 import { bingoBurst } from "@/lib/particles";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
+import { trackQuestProgress } from "@/lib/quests";
 
 const IN_CRAZYGAMES = shouldUseHashRouter();
 
@@ -227,6 +228,31 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
 
     saveScore().catch(console.error);
   }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
+
+  // Update Daily Quests progress when daily grid ends
+  const questTrackedRef = useRef(false);
+  useEffect(() => {
+    if (gameState.status === "playing" || mode !== "daily" || questTrackedRef.current) return;
+    questTrackedRef.current = true;
+
+    const uid = user && !isGuest ? user.uid : null;
+    trackQuestProgress("daily_bingo_play", 1, uid).catch(console.error);
+
+    if (gameState.status === "won") {
+      trackQuestProgress("daily_bingo_win", 1, uid).catch(console.error);
+    }
+
+    if (gameState.score >= 1000) {
+      trackQuestProgress("score_milestone", 1, uid).catch(console.error);
+    }
+  }, [gameState.status, gameState.score, mode, user, isGuest]);
+
+  // Reset quest tracking ref if user resets/replays (e.g. from state change back to playing)
+  useEffect(() => {
+    if (gameState.status === "playing") {
+      questTrackedRef.current = false;
+    }
+  }, [gameState.status]);
 
   // Sound + Haptic effects
   const prevStatusRef = useRef(gameState.status);

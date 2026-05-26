@@ -1,17 +1,27 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Swords } from "lucide-react";
+import { Swords, Bot, Users, ArrowLeft } from "lucide-react";
 import { RoomSetup } from "@/components/battle/RoomSetup";
 import { WaitingRoom } from "@/components/battle/WaitingRoom";
 import { OnlineBattleArena } from "@/components/battle/OnlineBattleArena";
+import { DifficultyPicker } from "@/components/battle/DifficultyPicker";
+import { BotBattleArena } from "@/components/battle/BotBattleArena";
+import type { BotDifficulty } from "@/hooks/useBotOpponent";
 import { createRoom, joinRoom, type RoomData } from "@/hooks/useOnlineBattle";
 import { usePlayers } from "@/contexts/PlayersContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { generateRandomGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
 import type { CricketPlayer, GridCategory } from "@/types/game";
+import { toast } from "sonner";
 
-type Phase = "setup" | "waiting" | "playing";
+type Phase =
+  | "mode-select"
+  | "bot-setup"
+  | "bot-playing"
+  | "online-setup"
+  | "online-waiting"
+  | "online-playing";
 
 interface GameInfo {
   roomId: string;
@@ -27,19 +37,39 @@ export default function Battle() {
   const { user, isGuest, signInWithGoogle, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [phase, setPhase] = useState<Phase>("setup");
+  const [phase, setPhase] = useState<Phase>("mode-select");
   const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
+  
+  // Bot match state
+  const [botDifficulty, setBotDifficulty] = useState<BotDifficulty>("medium");
+  const [botGridSize, setBotGridSize] = useState<3 | 4>(3);
+  const [botGrid, setBotGrid] = useState<GridCategory[]>([]);
+  const [botDeck, setBotDeck] = useState<CricketPlayer[]>([]);
+
   const [creating, setCreating] = useState(false);
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
 
   const myName = user?.displayName || user?.email?.split("@")[0] || "Player";
-  // user.uid is required — guests are blocked below before reaching any Firestore calls
   const myUid = user?.uid ?? "";
 
   // Build player map for deck resolution
   const playerMap = useMemo(
     () => new Map(allPlayers.map((p) => [p.id, p])),
+    [allPlayers]
+  );
+
+  // ── Start Bot Game ────────────────────────────────────────────────────────
+  const handleStartBotGame = useCallback(
+    (difficulty: BotDifficulty, size: 3 | 4) => {
+      if (allPlayers.length === 0) return;
+      const game = generateRandomGame(size, allPlayers, FULL_CATEGORY_POOL);
+      setBotDifficulty(difficulty);
+      setBotGridSize(size);
+      setBotGrid(game.grid as GridCategory[]);
+      setBotDeck(game.deck);
+      setPhase("bot-playing");
+    },
     [allPlayers]
   );
 
@@ -60,9 +90,10 @@ export default function Battle() {
           gridSize,
           opponentName: "Opponent",
         });
-        setPhase("waiting");
+        setPhase("online-waiting");
       } catch (e) {
         console.error(e);
+        toast.error("Failed to create multiplayer room");
       } finally {
         setCreating(false);
       }
@@ -90,7 +121,7 @@ export default function Battle() {
           gridSize: data.gridSize,
           opponentName: data.hostName,
         });
-        setPhase("playing");
+        setPhase("online-playing");
       } catch {
         setJoinError("Something went wrong. Please try again.");
       } finally {
@@ -100,18 +131,18 @@ export default function Battle() {
     [myUid, myName]
   );
 
-  // ── Host: opponent joined (WaitingRoom fires this) ───────────────────────
+  // ── Host: opponent joined ───────────────────────────────────────────────
   const handleOpponentJoined = useCallback((data: RoomData) => {
     setGameInfo((prev) =>
       prev ? { ...prev, opponentName: data.guestName ?? "Opponent" } : prev
     );
-    setPhase("playing");
+    setPhase("online-playing");
   }, []);
 
-  // ── Play Again: go back to setup ─────────────────────────────────────────
-  const handlePlayAgain = useCallback(() => {
+  // ── Go back to mode selection ─────────────────────────────────────────────
+  const handleBackToSetup = useCallback(() => {
     setGameInfo(null);
-    setPhase("setup");
+    setPhase("mode-select");
   }, []);
 
   // ── Loading ──────────────────────────────────────────────────────────────
@@ -125,34 +156,123 @@ export default function Battle() {
     );
   }
 
-  // ── Sign-in gate: guests have no Firebase auth → Firestore writes fail ───
-  if (!user || isGuest) {
+  // ── Mode select phase ─────────────────────────────────────────────────────
+  if (phase === "mode-select") {
     return (
       <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
-        <div className="scoreboard p-7 w-full max-w-sm text-center space-y-5 relative z-10">
-          <div className="flex items-center justify-center gap-2">
-            <Swords className="w-6 h-6 text-primary" />
-            <h2 className="font-display text-2xl font-black uppercase tracking-wider gold-text">VS PLAYER</h2>
+        <button
+          onClick={() => navigate("/")}
+          className="fixed top-4 left-4 hud-pill z-20"
+          aria-label="Back to Hub"
+        >
+          <ArrowLeft className="w-4 h-4" /> HUB
+        </button>
+
+        <div className="w-full max-w-sm relative z-10 space-y-6">
+          <div className="text-center space-y-2">
+            <div className="flex items-center justify-center gap-2">
+              <Swords className="w-6 h-6 text-primary" />
+              <h1 className="font-display text-3xl font-black uppercase tracking-wider gold-text">
+                Battle Mode
+              </h1>
+            </div>
+            <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest">
+              Select your challenge
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Real-time multiplayer requires a signed-in account so your opponent can find you.
-          </p>
-          <button onClick={() => signInWithGoogle().catch(() => {})} className="cta-chunky color-green w-full">
-            <span className="relative z-10">SIGN IN WITH GOOGLE</span>
-          </button>
-          <button
-            onClick={() => navigate("/")}
-            className="w-full py-2 text-xs font-display font-bold uppercase tracking-wider text-muted-foreground hover:text-secondary transition-colors"
-          >
-            {"← Back to Hub"}
-          </button>
+
+          <div className="space-y-3">
+            {/* CricBot card (free, local) */}
+            <button
+              onClick={() => setPhase("bot-setup")}
+              className="mode-card color-orange w-full !flex-row !items-center !min-h-0 !py-4"
+            >
+              <div className="relative z-10 flex items-center gap-3 w-full text-white">
+                <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="font-display text-base font-black uppercase tracking-wider">
+                    vs CricBot
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider opacity-85 mt-0.5">
+                    Practice offline · Free
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* VS Player card (online multiplayer) */}
+            <button
+              onClick={() => {
+                if (!user || isGuest) {
+                  toast.error("Multiplayer requires a signed-in account");
+                  setPhase("mode-select");
+                } else {
+                  setPhase("online-setup");
+                }
+              }}
+              className="mode-card color-blue w-full !flex-row !items-center !min-h-0 !py-4"
+            >
+              <div className="relative z-10 flex items-center gap-3 w-full text-white">
+                <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="font-display text-base font-black uppercase tracking-wider">
+                    vs Player
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider opacity-85 mt-0.5">
+                    Real-time multiplayer PvP
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          {/* Prompt to sign in if guest/logged out */}
+          {(!user || isGuest) && (
+            <div className="candy-card p-4 rounded-xl text-center space-y-2">
+              <p className="text-[11px] text-muted-foreground">
+                Want to play against real players? Sign in to unlock online matchmaking!
+              </p>
+              <button
+                onClick={() => signInWithGoogle().catch(() => {})}
+                className="text-xs font-display font-black text-primary uppercase tracking-wider hover:underline"
+              >
+                Sign in with Google
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // ── Setup ────────────────────────────────────────────────────────────────
-  if (phase === "setup") {
+  // ── Bot setup ────────────────────────────────────────────────────────────
+  if (phase === "bot-setup") {
+    return (
+      <DifficultyPicker
+        onStart={handleStartBotGame}
+      />
+    );
+  }
+
+  // ── Bot playing ──────────────────────────────────────────────────────────
+  if (phase === "bot-playing") {
+    return (
+      <BotBattleArena
+        grid={botGrid}
+        deck={botDeck}
+        gridSize={botGridSize}
+        difficulty={botDifficulty}
+        onPlayAgain={() => handleStartBotGame(botDifficulty, botGridSize)}
+      />
+    );
+  }
+
+  // ── Online setup ─────────────────────────────────────────────────────────
+  if (phase === "online-setup") {
     return (
       <RoomSetup
         onCreateRoom={handleCreateRoom}
@@ -164,21 +284,20 @@ export default function Battle() {
     );
   }
 
-  // ── Waiting (host waiting for guest) ─────────────────────────────────────
-  if (phase === "waiting" && gameInfo) {
+  // ── Online waiting ───────────────────────────────────────────────────────
+  if (phase === "online-waiting" && gameInfo) {
     return (
       <WaitingRoom
         roomId={gameInfo.roomId}
         gridSize={gameInfo.gridSize}
         onOpponentJoined={handleOpponentJoined}
-        onCancel={handlePlayAgain}
+        onCancel={handleBackToSetup}
       />
     );
   }
 
-  // ── Playing ──────────────────────────────────────────────────────────────
-  if (phase === "playing" && gameInfo) {
-    // Resolve deck from deckIds + local player map
+  // ── Online playing ───────────────────────────────────────────────────────
+  if (phase === "online-playing" && gameInfo) {
     const deck = gameInfo.deckIds
       .map((id) => playerMap.get(id))
       .filter((p): p is CricketPlayer => !!p);
@@ -193,7 +312,7 @@ export default function Battle() {
         gridSize={gameInfo.gridSize}
         myName={myName}
         opponentName={gameInfo.opponentName}
-        onPlayAgain={handlePlayAgain}
+        onPlayAgain={handleBackToSetup}
       />
     );
   }

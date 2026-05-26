@@ -8,6 +8,8 @@ import {
   calculateGuessScore,
   type Clue,
 } from "@/lib/guessGameEngine";
+import { useAuth } from "@/contexts/AuthContext";
+import { trackQuestProgress } from "@/lib/quests";
 
 export interface GuessRound {
   player: CricketPlayer;
@@ -35,6 +37,7 @@ const MAX_CLUES = 5;
 
 export function useGuessGame(allPlayers: CricketPlayer[]) {
   const [game, setGame] = useState<GuessGameState | null>(null);
+  const { user, isGuest } = useAuth();
 
   const guessablePlayers = useMemo(
     () => getGuessablePlayers(allPlayers),
@@ -81,6 +84,21 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
   }, []);
 
   const submitGuess = useCallback((guessedPlayerId: string) => {
+    if (!game || game.status !== "playing") return;
+    const round = game.rounds[game.currentRound];
+    const isCorrect = guessedPlayerId === round.player.id;
+
+    const uid = user && !isGuest ? user.uid : null;
+    if (isCorrect) {
+      if (round.cluesRevealed <= 3) {
+        trackQuestProgress("clue_master", 1, uid).catch(console.error);
+      }
+      const newStreak = game.streak + 1;
+      if (newStreak >= 3) {
+        trackQuestProgress("guess_streak", 3, uid).catch(console.error);
+      }
+    }
+
     setGame((prev) => {
       if (!prev || prev.status !== "playing") return prev;
       const round = prev.rounds[prev.currentRound];

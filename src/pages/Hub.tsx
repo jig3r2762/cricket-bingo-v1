@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Target, Zap, Trophy, Crown, Coins, Flame,
@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { useTheme } from "@/hooks/useTheme";
+import { useDailyQuests } from "@/hooks/useDailyQuests";
 import {
   Sheet,
   SheetContent,
@@ -58,6 +59,7 @@ const MODES = [
 
 export default function Hub() {
   const { theme, toggle: toggleTheme } = useTheme();
+  const { quests, claimQuestReward } = useDailyQuests();
 
   const [userCoins, setUserCoins] = useState<number | null>(null);
   const [userStreak, setUserStreak] = useState<number | null>(null);
@@ -66,7 +68,7 @@ export default function Hub() {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [isGuest, setIsGuest] = useState<boolean>(false);
 
-  useEffect(() => {
+  const refreshLocalStats = useCallback(() => {
     try {
       const coinsVal = localStorage.getItem("cricket-bingo-coins");
       const streakVal = localStorage.getItem("cricket-bingo-streak");
@@ -85,6 +87,16 @@ export default function Hub() {
       console.error("Error reading from localStorage:", e);
     }
   }, []);
+
+  useEffect(() => {
+    refreshLocalStats();
+    window.addEventListener("cricket-bingo-coins-updated", refreshLocalStats);
+    window.addEventListener("storage", refreshLocalStats);
+    return () => {
+      window.removeEventListener("cricket-bingo-coins-updated", refreshLocalStats);
+      window.removeEventListener("storage", refreshLocalStats);
+    };
+  }, [refreshLocalStats]);
 
   const handleSignOut = async () => {
     try {
@@ -378,6 +390,90 @@ export default function Hub() {
               background: "radial-gradient(circle, hsl(var(--primary) / 0.18), transparent 60%)",
             }}
           />
+        </section>
+
+        {/* ─── Daily Quests / Missions ────────────────── */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-400 animate-float" />
+              <h2 className="font-display text-lg font-extrabold uppercase tracking-wide">Daily Quests</h2>
+            </div>
+            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest bg-muted/20 px-2 py-0.5 rounded border border-border/20">
+              Resets Daily
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            {quests.map((q) => {
+              const pct = Math.min(100, (q.current / q.target) * 100);
+              return (
+                <div key={q.id} className="candy-card p-4 flex flex-col gap-2.5 relative overflow-hidden">
+                  <div className="flex items-start justify-between gap-3 relative z-10">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-display text-sm font-black leading-tight flex items-center gap-1.5">
+                        {q.completed ? (
+                          <span className="text-emerald-400">✓</span>
+                        ) : (
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        )}
+                        {q.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5 leading-snug">
+                        {q.description}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <span className="text-[9px] text-muted-foreground/60 font-bold uppercase tracking-wider">Reward</span>
+                      <div className="flex items-center gap-1 text-amber-400 font-display text-sm font-black leading-none">
+                        +{q.reward} <Coins size={12} className="text-amber-400" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar & CTA */}
+                  <div className="flex items-center justify-between gap-4 mt-1 relative z-10">
+                    <div className="flex-1">
+                      <div className="flex justify-between text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">
+                        <span>Progress</span>
+                        <span>{q.current} / {q.target}</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden border border-border/10">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            q.completed ? "bg-emerald-500" : "bg-primary"
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="shrink-0">
+                      {q.claimed ? (
+                        <span className="text-[9px] font-display font-black text-muted-foreground uppercase tracking-widest border border-border/30 rounded px-2.5 py-1 bg-muted/10">
+                          CLAIMED
+                        </span>
+                      ) : q.completed ? (
+                        <button
+                          onClick={() => claimQuestReward(q.id)}
+                          className="cta-chunky color-gold size-sm !py-1 !px-3 font-black tracking-wider animate-pulse-glow"
+                        >
+                          <span className="relative z-10 flex items-center gap-1">
+                            CLAIM
+                          </span>
+                        </button>
+                      ) : (
+                        <span className="text-[9px] font-display font-black text-muted-foreground/60 uppercase tracking-widest border border-border/10 rounded px-2.5 py-1 bg-muted/5">
+                          LOCKED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {/* ─── Mode rail ──────────────────────────────── */}
