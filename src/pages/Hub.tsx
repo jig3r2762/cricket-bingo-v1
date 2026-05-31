@@ -129,9 +129,9 @@ export default function Hub() {
   };
 
   useSeoHead({
-    title: "Cricket Bingo — Daily Cricket Immaculate Grid & Cric Tac Toe Game",
+    title: "Play Free Online Cricket Game on Mobile & PC | Cricket Bingo",
     description:
-      "Play Cricket Bingo online. Match cricket legends to IPL teams, country, career stats & trophies on a daily 3×3 or 4×4 grid. The ultimate cricket immaculate grid and cric tac toe challenge!",
+      "Play the best online cricket game for mobile and web browser. Cricket Bingo is a free daily cricket immaculate grid & cric tac toe card game. Match players to IPL teams, country, career stats & trophies!",
     canonical: "https://cricket-bingo.in/",
     ogImage: "https://cricket-bingo.in/og-image.png",
     jsonLd: {
