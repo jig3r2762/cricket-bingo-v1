@@ -11,8 +11,9 @@ export interface Clue {
  * Generate 5 clues for a player, ordered from broad → specific.
  * 1. Country  2. Role  3. IPL Team  4. Stat  5. Achievement/Trophy
  */
-export function generateClues(player: CricketPlayer): Clue[] {
+export function generateClues(player: CricketPlayer, rng?: () => number): Clue[] {
   const clues: Clue[] = [];
+  const random = rng || Math.random;
 
   // 1. Country
   clues.push({
@@ -42,7 +43,7 @@ export function generateClues(player: CricketPlayer): Clue[] {
     const team =
       player.iplTeams.length === 1
         ? player.iplTeams[0]
-        : player.iplTeams[Math.floor(Math.random() * player.iplTeams.length)];
+        : player.iplTeams[Math.floor(random() * player.iplTeams.length)];
     const teamLabel =
       player.iplTeams.length > 1
         ? `They have played for ${team} (and ${player.iplTeams.length - 1} other IPL team${player.iplTeams.length > 2 ? "s" : ""})`
@@ -63,7 +64,7 @@ export function generateClues(player: CricketPlayer): Clue[] {
   }
 
   // 4. Stat clue — pick the most interesting stat
-  const statClue = pickStatClue(player);
+  const statClue = pickStatClue(player, random);
   clues.push({
     icon: "📊",
     label: "Career Stat",
@@ -72,7 +73,7 @@ export function generateClues(player: CricketPlayer): Clue[] {
   });
 
   // 5. Achievement / Trophy / Teammate
-  const achievementClue = pickAchievementClue(player);
+  const achievementClue = pickAchievementClue(player, random);
   clues.push({
     icon: achievementClue.icon,
     label: achievementClue.label,
@@ -83,7 +84,7 @@ export function generateClues(player: CricketPlayer): Clue[] {
   return clues;
 }
 
-function pickStatClue(player: CricketPlayer): string {
+function pickStatClue(player: CricketPlayer, random: () => number): string {
   const s = player.stats;
   const options: string[] = [];
 
@@ -125,10 +126,13 @@ function pickStatClue(player: CricketPlayer): string {
     return `They have played ${s.odiMatches + s.testMatches + s.t20iMatches} international matches`;
   }
 
-  return options[Math.floor(Math.random() * options.length)];
+  return options[Math.floor(random() * options.length)];
 }
 
-function pickAchievementClue(player: CricketPlayer): {
+function pickAchievementClue(
+  player: CricketPlayer,
+  random: () => number
+): {
   icon: string;
   label: string;
   text: string;
@@ -185,7 +189,7 @@ function pickAchievementClue(player: CricketPlayer): {
     };
   }
 
-  return options[Math.floor(Math.random() * options.length)];
+  return options[Math.floor(random() * options.length)];
 }
 
 /**

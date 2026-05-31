@@ -8,6 +8,7 @@ import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { StatusBar, Style } from "@capacitor/status-bar";
+import { CookieConsent } from "@/components/CookieConsent";
 
 // Use HashRouter on CrazyGames (external hostname or iframe) so /play doesn't 404.
 // BrowserRouter is used on Vercel where server handles all routes normally.
@@ -19,6 +20,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const HowToPlay = lazy(() => import("./pages/HowToPlay"));
 const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
 const Players = lazy(() => import("./pages/Players"));
 const PlayerProfile = lazy(() => import("./pages/PlayerProfile"));
 const StylePage = lazy(() => import("./pages/Style"));
@@ -50,6 +52,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CookieConsent />
         <Analytics />
         <SpeedInsights />
         <Router>
@@ -61,6 +64,7 @@ const App = () => {
               <Route path="/terms" element={<Terms />} />
               <Route path="/how-to-play" element={<HowToPlay />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/players/:id" element={<PlayerProfile />} />
               <Route path="/players" element={<Players />} />
               <Route path="/style" element={<StylePage />} />

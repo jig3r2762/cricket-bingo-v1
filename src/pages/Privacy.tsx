@@ -88,8 +88,8 @@ export default function Privacy() {
           <h2 className="font-display text-xl text-foreground pt-2">Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, contact us at:{" "}
-            <a href="mailto:privacy@cricket-bingo.in" className="text-candy-green hover:underline">
-              privacy@cricket-bingo.in
+            <a href="mailto:sjigar2762@gmail.com" className="text-candy-green hover:underline">
+              sjigar2762@gmail.com
             </a>
           </p>
         </div>

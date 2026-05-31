@@ -10,6 +10,26 @@ import {
 } from "@/lib/guessGameEngine";
 import { useAuth } from "@/contexts/AuthContext";
 import { trackQuestProgress } from "@/lib/quests";
+import { getTodayDateString } from "@/lib/dailyGame";
+
+function createRng(seed: number): () => number {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function dateSeed(dateStr: string): number {
+  let hash = 0;
+  const key = "cricket-bingo-guess-" + dateStr;
+  for (let i = 0; i < key.length; i++) {
+    hash = ((hash << 5) - hash + key.charCodeAt(i)) | 0;
+  }
+  return hash;
+}
 
 export interface GuessRound {
   player: CricketPlayer;
@@ -29,6 +49,7 @@ export interface GuessGameState {
   maxStreak: number;
   lives: number;
   status: "playing" | "finished";
+  mode: "daily" | "practice";
 }
 
 const TOTAL_ROUNDS = 10;
@@ -44,17 +65,36 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
     [allPlayers]
   );
 
-  const startGame = useCallback(() => {
-    const selected = pickRandomPlayers(guessablePlayers, TOTAL_ROUNDS);
-    const rounds: GuessRound[] = selected.map((player) => ({
-      player,
-      clues: generateClues(player),
-      cluesRevealed: 3, // start with 3 clues shown (country + role + IPL team)
-      guessed: false,
-      skipped: false,
-      correct: false,
-      pointsEarned: 0,
-    }));
+  const startGame = useCallback((mode: "daily" | "practice" = "practice") => {
+    let selected: CricketPlayer[] = [];
+    
+    if (mode === "daily") {
+      const dateStr = getTodayDateString();
+      const seed = dateSeed(dateStr);
+      const rng = createRng(seed);
+      const index = Math.floor(rng() * guessablePlayers.length);
+      selected = [guessablePlayers[index]];
+    } else {
+      selected = pickRandomPlayers(guessablePlayers, TOTAL_ROUNDS);
+    }
+
+    const rounds: GuessRound[] = selected.map((player) => {
+      let playerRng: (() => number) | undefined = undefined;
+      if (mode === "daily") {
+        const dateStr = getTodayDateString();
+        const pSeed = dateSeed(dateStr + "-" + player.id + "-clues");
+        playerRng = createRng(pSeed);
+      }
+      return {
+        player,
+        clues: generateClues(player, playerRng),
+        cluesRevealed: 3, // start with 3 clues shown (country + role + IPL team)
+        guessed: false,
+        skipped: false,
+        correct: false,
+        pointsEarned: 0,
+      };
+    });
 
     setGame({
       rounds,
@@ -62,8 +102,9 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
       score: 0,
       streak: 0,
       maxStreak: 0,
-      lives: MAX_LIVES,
+      lives: mode === "daily" ? 1 : MAX_LIVES,
       status: "playing",
+      mode,
     });
   }, [guessablePlayers]);
 
@@ -124,7 +165,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
         pointsEarned: points,
       };
 
-      const isLastRound = prev.currentRound >= TOTAL_ROUNDS - 1;
+      const isLastRound = prev.currentRound >= prev.rounds.length - 1;
       const outOfLives = newLives <= 0;
 
       return {
@@ -154,7 +195,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
         pointsEarned: 0,
       };
 
-      const isLastRound = prev.currentRound >= TOTAL_ROUNDS - 1;
+      const isLastRound = prev.currentRound >= prev.rounds.length - 1;
 
       return {
         ...prev,
@@ -169,11 +210,15 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
     triggerLightTap().catch(() => {});
     setGame((prev) => {
       if (!prev) return prev;
-      if (prev.currentRound >= TOTAL_ROUNDS - 1 || prev.lives <= 0) {
+      if (prev.currentRound >= prev.rounds.length - 1 || prev.lives <= 0) {
         return { ...prev, status: "finished" };
       }
       return { ...prev, currentRound: prev.currentRound + 1 };
     });
+  }, []);
+
+  const restoreGame = useCallback((savedState: GuessGameState) => {
+    setGame(savedState);
   }, []);
 
   return {
@@ -183,7 +228,8 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
     submitGuess,
     skipRound,
     nextRound,
-    totalRounds: TOTAL_ROUNDS,
+    restoreGame,
+    totalRounds: game?.rounds.length || TOTAL_ROUNDS,
     maxClues: MAX_CLUES,
   };
 }

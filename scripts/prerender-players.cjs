@@ -219,6 +219,44 @@ function renderPlayerPage(p, csshref) {
     ],
   };
 
+  const trophyListNames = (p.trophies || []).map((t) => TROPHY_NAMES[t] || t);
+  const iplListNames = (p.iplTeams || []).map((t) => IPL_TEAM_FULL[t] || t);
+
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Which IPL teams did ${p.name} play for?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": p.iplTeams && p.iplTeams.length > 0
+            ? `${p.name} represented ${joinList(iplListNames)} in the Indian Premier League.`
+            : `${p.name} has not represented any IPL franchises in our database.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `What are the career statistics of ${p.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `${p.name} is a ${p.primaryRole.toLowerCase()} who has scored ${(p.stats.totalRuns || 0).toLocaleString()} runs and taken ${p.stats.totalWickets || 0} wickets across formats.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Has ${p.name} won any cricket trophies?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": p.trophies && p.trophies.length > 0
+            ? `${p.name} is a winner of the ${joinList(trophyListNames)}.`
+            : `${p.name} has not won any major ICC or franchise trophies tracked in our records.`
+        }
+      }
+    ]
+  };
+
   const totalRuns = (p.stats.totalRuns || 0).toLocaleString();
   const totalWickets = p.stats.totalWickets || 0;
   const centuries = p.stats.centuries || 0;
@@ -252,6 +290,7 @@ function renderPlayerPage(p, csshref) {
 
   <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbLd)}</script>
+  <script type="application/ld+json">${JSON.stringify(faqLd)}</script>
 
   <style>
     :root {
@@ -509,7 +548,7 @@ function renderPlayerPage(p, csshref) {
 
   <script>
     (function(){
-      var contentPaths = ['/', '/about', '/how-to-play', '/players', '/privacy', '/terms'];
+      var contentPaths = ['/', '/about', '/how-to-play', '/players', '/privacy', '/terms', '/contact'];
       var path = window.location.pathname.replace(/\\/$/, '') || '/';
       var isContent = contentPaths.indexOf(path) !== -1 || path.indexOf('/players/') === 0 || path.indexOf('/teams/') === 0 || path.indexOf('/countries/') === 0 || path.indexOf('/trophies/') === 0;
       window.adsbygoogle = window.adsbygoogle || [];

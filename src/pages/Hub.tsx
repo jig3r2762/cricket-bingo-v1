@@ -55,6 +55,14 @@ const MODES = [
     icon: Crown,
     color: "purple" as const,
   },
+  {
+    href: "/chase",
+    title: "CHASE",
+    sub: "6-Ball Over",
+    desc: "Chase down target in 6 balls",
+    icon: Flame,
+    color: "red" as const,
+  },
 ];
 
 export default function Hub() {
@@ -119,9 +127,9 @@ export default function Hub() {
   };
 
   useSeoHead({
-    title: "Cricket Bingo — Free Daily Cricket Quiz Game | 3,600+ Player Cards",
+    title: "Cricket Bingo — Daily Cricket Immaculate Grid & Cric Tac Toe Game",
     description:
-      "Play Cricket Bingo free online. Match cricket legends to IPL teams, stats, roles & trophies on a daily 3×3 or 4×4 bingo grid. Same grid every day for every player. No download — just open and play.",
+      "Play Cricket Bingo online. Match cricket legends to IPL teams, country, career stats & trophies on a daily 3×3 or 4×4 grid. The ultimate cricket immaculate grid and cric tac toe challenge!",
     canonical: "https://cricket-bingo.in/",
     ogImage: "https://cricket-bingo.in/og-image.png",
     jsonLd: {
@@ -129,10 +137,10 @@ export default function Hub() {
       "@type": "Game",
       name: "Cricket Bingo",
       description:
-        "A free daily cricket knowledge game. Match cricket players to teams, roles, stats and trophies on a bingo grid.",
+        "A daily cricket immaculate grid and cric tac toe game. Match players to franchises, stats, and achievements.",
       url: "https://cricket-bingo.in/",
       image: "https://cricket-bingo.in/og-image.png",
-      genre: ["Trivia", "Sports", "Puzzle"],
+      genre: ["Trivia", "Sports", "Puzzle", "Immaculate Grid", "Tic Tac Toe"],
       gamePlatform: ["Web", "Android"],
       applicationCategory: "GameApplication",
       operatingSystem: "Web, Android",
@@ -567,6 +575,8 @@ export default function Hub() {
           <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           <span>·</span>
           <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
+          <span>·</span>
+          <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
           <span>·</span>
           <Link to="/how-to-play" className="hover:text-foreground transition-colors">How to play</Link>
           <span>·</span>

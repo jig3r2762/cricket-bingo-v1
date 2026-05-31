@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import type { CricketPlayer } from "@/types/game";
 import { shareGameResults } from "@/lib/share";
 import { toast } from "sonner";
+import { getTodayDateString } from "@/lib/dailyGame";
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -269,6 +270,8 @@ function RoundResult({
 
 /* ───────────────────────── game over ───────────────────────── */
 
+/* ───────────────────────── game over ───────────────────────── */
+
 function GameOverScreen({
   game,
   onPlayAgain,
@@ -280,8 +283,16 @@ function GameOverScreen({
 }) {
   const correctCount = game.rounds.filter((r) => r.correct).length;
   const totalPlayed = game.rounds.filter((r) => r.guessed).length;
+  const isDaily = game.mode === "daily";
 
   const getMessage = () => {
+    if (isDaily) {
+      const r = game.rounds[0];
+      if (r && r.correct) {
+        return { emoji: "🎯", text: "Daily Guess Correct!" };
+      }
+      return { emoji: "❌", text: "Better luck tomorrow!" };
+    }
     if (correctCount === 10) return { emoji: "🏆", text: "Perfect Game!" };
     if (correctCount >= 8) return { emoji: "🔥", text: "Cricket Expert!" };
     if (correctCount >= 5) return { emoji: "👏", text: "Well Played!" };
@@ -291,9 +302,40 @@ function GameOverScreen({
 
   const msg = getMessage();
 
-  const shareText = `🏏 Guess the Cricketer!\n\nI got ${correctCount}/${totalPlayed} correct\nScore: ${game.score} | Best streak: ${game.maxStreak}🔥\n\nPlay at cricket-bingo.in/guess`;
+  const getStreak = () => {
+    if (isDaily) {
+      return (game as any).dailyStreak || parseInt(localStorage.getItem("cricket_bingo_daily_guess_streak") || "0", 10);
+    }
+    return game.maxStreak;
+  };
+
+  const getShareText = () => {
+    if (isDaily) {
+      const r = game.rounds[0];
+      const dateStr = getTodayDateString();
+      let attemptStatus = "";
+      let emojiBlocks = "";
+      if (r.correct) {
+        attemptStatus = `Guessed the player in ${r.cluesRevealed} clues!`;
+        emojiBlocks = "🟩 ".repeat(r.cluesRevealed) + "⬜ ".repeat(5 - r.cluesRevealed);
+        emojiBlocks = emojiBlocks.trim();
+      } else if (r.skipped) {
+        attemptStatus = "Skipped!";
+        emojiBlocks = "⬜ ⬜ ⬜ ⬜ ⬜";
+      } else {
+        attemptStatus = "Attempt failed!";
+        emojiBlocks = "🟥 🟥 🟥 🟥 🟥";
+      }
+      const streak = getStreak();
+      const streakText = streak > 0 ? ` | Streak: ${streak}🔥` : "";
+      return `🏏 Cricket Guess #Daily (${dateStr})\n\n${attemptStatus}\n${emojiBlocks}\nScore: ${game.score} pts${streakText}\n\nPlay here: cricket-bingo.in/guess`;
+    } else {
+      return `🏏 Guess the Cricketer (Practice)!\n\nI got ${correctCount}/${totalPlayed} correct\nScore: ${game.score} | Best streak: ${game.maxStreak}🔥\n\nPlay here: cricket-bingo.in/guess`;
+    }
+  };
 
   const handleShare = async () => {
+    const shareText = getShareText();
     const sharedNatively = await shareGameResults(shareText, "Guess the Cricketer");
     if (!sharedNatively) {
       toast.success("Score copied to clipboard!");
@@ -328,40 +370,65 @@ function GameOverScreen({
             <div className="font-body font-bold text-[10px] text-muted-foreground uppercase tracking-widest">Score</div>
           </div>
           <div className="candy-card py-3">
-            <div className="font-display text-2xl text-candy-red">{game.maxStreak}🔥</div>
+            <div className="font-display text-2xl text-candy-red">{getStreak()}{isDaily ? "🔥" : "🔥"}</div>
             <div className="font-body font-bold text-[10px] text-muted-foreground uppercase tracking-widest">Streak</div>
           </div>
         </div>
 
         {/* Round-by-round summary */}
-        <div className="flex justify-center gap-1 flex-wrap">
-          {game.rounds
-            .filter((r) => r.guessed)
-            .map((r, i) => (
-              <div
-                key={i}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
-                  r.correct
-                    ? "bg-candy-green text-white"
-                    : r.skipped
-                      ? "bg-gray-300 dark:bg-gray-600 text-foreground"
-                      : "bg-candy-red text-white"
-                }`}
-              >
-                {r.correct ? "✓" : r.skipped ? "–" : "✗"}
-              </div>
-            ))}
-        </div>
+        {!isDaily && (
+          <div className="flex justify-center gap-1 flex-wrap">
+            {game.rounds
+              .filter((r) => r.guessed)
+              .map((r, i) => (
+                <div
+                  key={i}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                    r.correct
+                      ? "bg-candy-green text-white"
+                      : r.skipped
+                        ? "bg-gray-300 dark:bg-gray-600 text-foreground"
+                        : "bg-candy-red text-white"
+                  }`}
+                >
+                  {r.correct ? "✓" : r.skipped ? "–" : "✗"}
+                </div>
+              ))}
+          </div>
+        )}
+
+        {isDaily && game.rounds[0]?.guessed && (
+          <div className="candy-card p-4 space-y-3">
+            <h4 className="font-body font-bold text-xs uppercase tracking-wider text-muted-foreground">Today's Mystery Cricketer</h4>
+            <HeadshotOrInitials player={game.rounds[0].player} size={80} />
+            <div className="font-display text-lg font-bold text-foreground">{game.rounds[0].player.name}</div>
+            <p className="text-xs text-muted-foreground leading-normal">
+              {game.rounds[0].player.countryFlag} {game.rounds[0].player.country} · {game.rounds[0].player.primaryRole}
+              {game.rounds[0].player.iplTeams.length > 0 && ` · ${game.rounds[0].player.iplTeams.join(", ")}`}
+            </p>
+          </div>
+        )}
 
         <div className="flex flex-col gap-3">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onPlayAgain}
-            className="candy-btn candy-btn-green text-base px-8 py-4 w-full"
-          >
-            🎮 Play Again
-          </motion.button>
+          {isDaily ? (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onPlayAgain}
+              className="candy-btn candy-btn-green text-base px-8 py-4 w-full"
+            >
+              🎮 Try Practice Mode
+            </motion.button>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onPlayAgain}
+              className="candy-btn candy-btn-green text-base px-8 py-4 w-full"
+            >
+              🎮 Play Again
+            </motion.button>
+          )}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -384,7 +451,25 @@ function GameOverScreen({
 
 /* ───────────────────────── start screen ───────────────────────── */
 
-function StartScreen({ onStart, onBack }: { onStart: () => void; onBack: () => void }) {
+/* ───────────────────────── start screen ───────────────────────── */
+
+interface StartScreenProps {
+  onStartPractice: () => void;
+  onStartDaily: () => void;
+  dailyCompleted: boolean;
+  onViewDailyResults: () => void;
+  onBack: () => void;
+}
+
+function StartScreen({
+  onStartPractice,
+  onStartDaily,
+  dailyCompleted,
+  onViewDailyResults,
+  onBack,
+}: StartScreenProps) {
+  const dailyStreak = parseInt(localStorage.getItem("cricket_bingo_daily_guess_streak") || "0", 10);
+
   return (
     <div className="min-h-screen stadium-bg flex items-center justify-center p-4 relative">
       <motion.div
@@ -407,24 +492,19 @@ function StartScreen({ onStart, onBack }: { onStart: () => void; onBack: () => v
           Guess who it is with fewer clues for more points!
         </p>
 
-        <div className="grid grid-cols-3 gap-2.5">
-          <div className="tile-3d color-green is-locked aspect-square !rounded-xl">
-            <div className="relative z-10 flex flex-col items-center gap-0.5">
-              <div className="score-display color-green text-3xl">10</div>
-              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Rounds</div>
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="candy-card p-4 text-center">
+            <h3 className="font-display text-lg text-candy-green leading-none">Daily Challenge</h3>
+            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">1 Player · Seeded</p>
+            {dailyStreak > 0 && (
+              <div className="text-xs text-candy-orange font-bold mt-2">
+                Streak: {dailyStreak} 🔥
+              </div>
+            )}
           </div>
-          <div className="tile-3d color-red is-locked aspect-square !rounded-xl">
-            <div className="relative z-10 flex flex-col items-center gap-0.5">
-              <div className="font-display text-4xl font-black">3</div>
-              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Lives</div>
-            </div>
-          </div>
-          <div className="tile-3d color-orange is-locked aspect-square !rounded-xl">
-            <div className="relative z-10 flex flex-col items-center gap-0.5">
-              <div className="font-display text-4xl font-black">5</div>
-              <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">Clues</div>
-            </div>
+          <div className="candy-card p-4 text-center">
+            <h3 className="font-display text-lg text-candy-orange leading-none">Practice Mode</h3>
+            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">10 Rounds · Random</p>
           </div>
         </div>
 
@@ -447,14 +527,31 @@ function StartScreen({ onStart, onBack }: { onStart: () => void; onBack: () => v
           </div>
         </div>
 
-        <button onClick={onStart} className="cta-chunky color-green size-lg w-full">
-          <span className="relative z-10 flex items-center justify-center gap-2">
-            🎯 START GUESSING
-          </span>
-        </button>
+        <div className="flex flex-col gap-3 pt-2">
+          {dailyCompleted ? (
+            <button onClick={onViewDailyResults} className="cta-chunky color-green size-lg w-full">
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                📊 VIEW TODAY'S DAILY RESULT
+              </span>
+            </button>
+          ) : (
+            <button onClick={onStartDaily} className="cta-chunky color-green size-lg w-full">
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                🎯 PLAY DAILY CHALLENGE
+              </span>
+            </button>
+          )}
+
+          <button onClick={onStartPractice} className="cta-chunky color-orange size-lg w-full">
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              🎮 RANDOM PRACTICE MODE
+            </span>
+          </button>
+        </div>
+
         <button
           onClick={onBack}
-          className="text-xs font-display font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+          className="text-xs font-display font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors pt-1"
         >
           ← Back to Hub
         </button>
@@ -468,8 +565,79 @@ function StartScreen({ onStart, onBack }: { onStart: () => void; onBack: () => v
 export default function GuessPlayer() {
   const navigate = useNavigate();
   const { players, loading } = usePlayers();
-  const { game, startGame, revealNextClue, submitGuess, skipRound, nextRound, totalRounds, maxClues } =
+  const { game, startGame, revealNextClue, submitGuess, skipRound, nextRound, restoreGame, totalRounds, maxClues } =
     useGuessGame(players);
+
+  const todayStr = useMemo(() => getTodayDateString(), []);
+
+  // Check if daily is completed for today
+  const [dailyCompleted, setDailyCompleted] = useState(false);
+  const [savedDailyState, setSavedDailyState] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const savedDate = localStorage.getItem("cricket_bingo_daily_guess_date");
+      const savedStateStr = localStorage.getItem("cricket_bingo_daily_guess_state");
+      if (savedDate === todayStr && savedStateStr) {
+        const parsed = JSON.parse(savedStateStr);
+        setDailyCompleted(true);
+        setSavedDailyState(parsed);
+      } else {
+        setDailyCompleted(false);
+        setSavedDailyState(null);
+      }
+    } catch (e) {
+      console.error("Failed to load daily guess state", e);
+    }
+  }, [todayStr]);
+
+  // When game changes, check if daily game finished, and save it
+  useEffect(() => {
+    if (game && game.mode === "daily" && game.status === "finished") {
+      try {
+        const isCorrect = game.rounds[0]?.correct;
+        let newStreak = 0;
+        if (isCorrect) {
+          const currentStreak = parseInt(localStorage.getItem("cricket_bingo_daily_guess_streak") || "0", 10);
+          newStreak = currentStreak + 1;
+          localStorage.setItem("cricket_bingo_daily_guess_streak", newStreak.toString());
+        } else {
+          localStorage.setItem("cricket_bingo_daily_guess_streak", "0");
+        }
+
+        // Save game state
+        const savedState = {
+          ...game,
+          dailyStreak: newStreak, // attach streak to the saved state
+        };
+
+        localStorage.setItem("cricket_bingo_daily_guess_date", todayStr);
+        localStorage.setItem("cricket_bingo_daily_guess_state", JSON.stringify(savedState));
+        setDailyCompleted(true);
+        setSavedDailyState(savedState);
+      } catch (e) {
+        console.error("Failed to save daily guess state", e);
+      }
+    }
+  }, [game, todayStr]);
+
+  const handleStartDaily = () => {
+    if (dailyCompleted && savedDailyState) {
+      restoreGame(savedDailyState);
+    } else {
+      startGame("daily");
+    }
+  };
+
+  const handleStartPractice = () => {
+    startGame("practice");
+  };
+
+  const handleViewDailyResults = () => {
+    if (savedDailyState) {
+      restoreGame(savedDailyState);
+    }
+  };
 
   if (loading) {
     return (
@@ -483,7 +651,15 @@ export default function GuessPlayer() {
 
   // Start screen
   if (!game) {
-    return <StartScreen onStart={startGame} onBack={() => navigate("/")} />;
+    return (
+      <StartScreen
+        onStartPractice={handleStartPractice}
+        onStartDaily={handleStartDaily}
+        dailyCompleted={dailyCompleted}
+        onViewDailyResults={handleViewDailyResults}
+        onBack={() => navigate("/")}
+      />
+    );
   }
 
   // Game over
@@ -491,7 +667,7 @@ export default function GuessPlayer() {
     return (
       <GameOverScreen
         game={game}
-        onPlayAgain={startGame}
+        onPlayAgain={handleStartPractice}
         onHome={() => navigate("/")}
       />
     );
@@ -524,7 +700,7 @@ export default function GuessPlayer() {
                 {game.streak}🔥
               </motion.div>
             )}
-            <LivesDisplay lives={game.lives} max={3} />
+            <LivesDisplay lives={game.lives} max={game.mode === "daily" ? 1 : 3} />
           </div>
 
           <ThemeToggle />

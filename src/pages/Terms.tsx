@@ -180,8 +180,8 @@ export default function Terms() {
             <h2 className="font-display text-xl text-foreground mb-3">12. Contact Us</h2>
             <p>
               For any questions about these Terms, please contact us at:{" "}
-              <a href="mailto:support@cricket-bingo.in" className="text-candy-green hover:underline">
-                support@cricket-bingo.in
+              <a href="mailto:sjigar2762@gmail.com" className="text-candy-green hover:underline">
+                sjigar2762@gmail.com
               </a>
             </p>
           </section>

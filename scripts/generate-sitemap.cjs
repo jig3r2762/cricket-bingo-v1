@@ -14,6 +14,9 @@ const STATIC = [
   { loc: "/trophies", changefreq: "monthly", priority: "0.8" },
   { loc: "/privacy", changefreq: "yearly", priority: "0.3" },
   { loc: "/terms", changefreq: "yearly", priority: "0.3" },
+  { loc: "/contact", changefreq: "monthly", priority: "0.5" },
+  { loc: "/chase", changefreq: "daily", priority: "0.9" },
+  { loc: "/guess", changefreq: "daily", priority: "0.9" },
 ];
 
 const IPL_TEAMS = ["mi", "csk", "rcb", "kkr", "dc", "srh", "rr", "pbks", "gt", "lsg"];

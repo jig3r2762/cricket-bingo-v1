@@ -1,7 +1,31 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/players.json", "destination": "/players.json" },
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
+    { "source": "/favicon.svg", "destination": "/favicon.svg" },
+    { "source": "/icon-192.png", "destination": "/icon-192.png" },
+    { "source": "/icon-512.png", "destination": "/icon-512.png" },
+    { "source": "/apple-touch-icon.png", "destination": "/apple-touch-icon.png" },
+    { "source": "/og-image.png", "destination": "/og-image.png" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/players/:id", "destination": "/players/:id/index.html" },
+    { "source": "/teams/:id", "destination": "/teams/:id/index.html" },
+    { "source": "/countries/:id", "destination": "/countries/:id/index.html" },
+    { "source": "/trophies/:id", "destination": "/trophies/:id/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/how-to-play", "destination": "/how-to-play/index.html" },
+    { "source": "/privacy", "destination": "/privacy/index.html" },
+    { "source": "/terms", "destination": "/terms/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" },
+    { "source": "/players", "destination": "/players/index.html" },
+    { "source": "/teams", "destination": "/teams/index.html" },
+    { "source": "/countries", "destination": "/countries/index.html" },
+    { "source": "/trophies", "destination": "/trophies/index.html" },
+    { "source": "/((?!api|assets|players|teams|countries|trophies|about|how-to-play|privacy|terms|contact|players.json|sitemap.xml|robots.txt|manifest.json|favicon|icon-|apple-touch-icon|og-image).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

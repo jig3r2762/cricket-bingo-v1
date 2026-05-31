@@ -25,6 +25,7 @@ const Stats = lazy(() => import("./pages/Stats"));
 const Battle = lazy(() => import("./pages/Battle"));
 const PaidBattle = lazy(() => import("./pages/PaidBattle"));
 const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
+const ChaseGame = lazy(() => import("./pages/ChaseGame"));
 
 import { DailyRewardsModal } from "@/components/DailyRewardsModal";
 
@@ -90,6 +91,14 @@ export default function AuthenticatedApp() {
                 element={
                   <ProtectedRoute>
                     <GuessPlayer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chase"
+                element={
+                  <ProtectedRoute>
+                    <ChaseGame />
                   </ProtectedRoute>
                 }
               />
