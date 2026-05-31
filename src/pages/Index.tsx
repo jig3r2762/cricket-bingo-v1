@@ -145,6 +145,7 @@ const Index = () => {
           }}
           onBattle={() => navigate("/battle")}
           onGuess={() => navigate("/guess")}
+          onChase={() => navigate("/chase")}
         />
         <AnimatePresence>
           {!tutorialDone && (

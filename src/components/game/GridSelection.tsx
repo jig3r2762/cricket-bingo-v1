@@ -10,6 +10,7 @@ interface GridSelectionProps {
   onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
   onBattle?: () => void;
   onGuess?: () => void;
+  onChase?: () => void;
 }
 
 const stagger = {
@@ -28,8 +29,13 @@ interface ModeConfig {
   sub: string;
   tag?: string;
   icon: React.FC<{ className?: string }>;
-  color: "green" | "blue" | "yellow" | "purple";
-  onClick: (onSelect: GridSelectionProps["onSelect"], timed: boolean, onGuess?: () => void) => void;
+  color: "green" | "blue" | "yellow" | "purple" | "pink";
+  onClick: (
+    onSelect: GridSelectionProps["onSelect"],
+    timed: boolean,
+    onGuess?: () => void,
+    onChase?: () => void
+  ) => void;
 }
 
 const MODES: ModeConfig[] = [
@@ -50,12 +56,13 @@ const MODES: ModeConfig[] = [
     onClick: (s, t) => s(4, t, "daily"),
   },
   {
-    id: "ipl",
-    label: "IPL MODE",
-    sub: "10 teams · IPL only",
-    icon: Trophy,
-    color: "yellow",
-    onClick: (s, t) => s(3, t, "ipl"),
+    id: "chase",
+    label: "6-BALL OVER",
+    sub: "Chase down target",
+    tag: "NEW",
+    icon: Zap,
+    color: "pink",
+    onClick: (_, __, ___, oc) => oc?.(),
   },
   {
     id: "guess",
@@ -66,9 +73,17 @@ const MODES: ModeConfig[] = [
     color: "purple",
     onClick: (_, __, og) => og?.(),
   },
+  {
+    id: "ipl",
+    label: "IPL MODE",
+    sub: "10 teams · IPL only",
+    icon: Trophy,
+    color: "yellow",
+    onClick: (s, t) => s(3, t, "ipl"),
+  },
 ];
 
-export function GridSelection({ onSelect, onBattle, onGuess }: GridSelectionProps) {
+export function GridSelection({ onSelect, onBattle, onGuess, onChase }: GridSelectionProps) {
   const navigate = useNavigate();
   const timed = true;
 
@@ -112,12 +127,13 @@ export function GridSelection({ onSelect, onBattle, onGuess }: GridSelectionProp
       >
         {MODES.map((mode) => {
           if (mode.id === "guess" && !onGuess) return null;
+          if (mode.id === "chase" && !onChase) return null;
           const Icon = mode.icon;
           return (
             <motion.button
               key={mode.id}
               variants={fadeUp}
-              onClick={() => mode.onClick(onSelect, timed, onGuess)}
+              onClick={() => mode.onClick(onSelect, timed, onGuess, onChase)}
               className={`mode-card color-${mode.color}`}
             >
               <div className="relative z-10 flex flex-col items-start gap-2 w-full text-white">

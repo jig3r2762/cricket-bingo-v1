@@ -32,6 +32,24 @@ const MODES = [
     color: "green" as const,
   },
   {
+    href: "/chase",
+    title: "CHASE",
+    sub: "6-Ball Over",
+    desc: "Chase down target in 6 balls",
+    tag: "NEW",
+    icon: Flame,
+    color: "red" as const,
+  },
+  {
+    href: "/guess",
+    title: "GUESS",
+    sub: "Identify player",
+    desc: "From clues, name the cricketer",
+    tag: "NEW",
+    icon: Crown,
+    color: "purple" as const,
+  },
+  {
     href: "/battle",
     title: "BATTLE",
     sub: "vs Bot · free",
@@ -46,22 +64,6 @@ const MODES = [
     desc: "Real coins, real winners",
     icon: Trophy,
     color: "yellow" as const,
-  },
-  {
-    href: "/guess",
-    title: "GUESS",
-    sub: "Identify player",
-    desc: "From clues, name the cricketer",
-    icon: Crown,
-    color: "purple" as const,
-  },
-  {
-    href: "/chase",
-    title: "CHASE",
-    sub: "6-Ball Over",
-    desc: "Chase down target in 6 balls",
-    icon: Flame,
-    color: "red" as const,
   },
 ];
 
@@ -400,6 +402,41 @@ export default function Hub() {
           />
         </section>
 
+        {/* ─── Mode rail ──────────────────────────────── */}
+        <section className="mb-6">
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide">Game Modes</h2>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {MODES.map((m) => {
+              const Icon = m.icon;
+              return (
+                <Link
+                  key={m.href}
+                  to={m.href}
+                  className={`mode-card color-${m.color}`}
+                >
+                  <div className="relative z-10 flex flex-col items-start gap-2 w-full text-white">
+                    {m.tag && (
+                      <span className="absolute top-0 right-0 px-2 py-0.5 rounded-md text-[9px] font-display font-black bg-white text-foreground uppercase tracking-widest">
+                        {m.tag}
+                      </span>
+                    )}
+                    <div className="w-9 h-9 rounded-xl bg-black/20 flex items-center justify-center">
+                      <Icon size={20} />
+                    </div>
+                    <div className="font-display text-xl sm:text-2xl font-black leading-none">{m.title}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider opacity-85">{m.sub}</div>
+                    <div className="text-[11px] opacity-75 leading-snug mt-auto">{m.desc}</div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
         {/* ─── Daily Quests / Missions ────────────────── */}
         <section className="mb-6">
           <div className="flex items-center justify-between mb-3">
@@ -479,36 +516,6 @@ export default function Hub() {
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ─── Mode rail ──────────────────────────────── */}
-        <section className="mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide">Game Modes</h2>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {MODES.map((m) => {
-              const Icon = m.icon;
-              return (
-                <Link
-                  key={m.href}
-                  to={m.href}
-                  className={`mode-card color-${m.color}`}
-                >
-                  <div className="relative z-10 flex flex-col items-start gap-2 w-full text-white">
-                    <div className="w-9 h-9 rounded-xl bg-black/20 flex items-center justify-center">
-                      <Icon size={20} />
-                    </div>
-                    <div className="font-display text-xl sm:text-2xl font-black leading-none">{m.title}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider opacity-85">{m.sub}</div>
-                    <div className="text-[11px] opacity-75 leading-snug mt-auto">{m.desc}</div>
-                  </div>
-                </Link>
               );
             })}
           </div>
