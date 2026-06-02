@@ -1,11 +1,10 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Target, Zap, Trophy, Crown, Coins, Flame,
   BarChart3, Award, Settings, Calendar, ChevronRight,
   Menu, LogOut, Home, HelpCircle,
 } from "lucide-react";
-import { Capacitor } from "@capacitor/core";
 import { useSeoHead } from "@/lib/useSeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useDailyQuests } from "@/hooks/useDailyQuests";
@@ -69,14 +68,6 @@ const MODES = [
 ];
 
 export default function Hub() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
-      navigate("/play", { replace: true });
-    }
-  }, [navigate]);
-
   const { theme, toggle: toggleTheme } = useTheme();
   const { quests, claimQuestReward } = useDailyQuests();
 
