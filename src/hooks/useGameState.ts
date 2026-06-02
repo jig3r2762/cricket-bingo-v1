@@ -10,11 +10,11 @@ import { usePlayers } from "@/contexts/PlayersContext";
 import { playCorrect, playWrong, playSkip, playWildcard, playBingo, playGameOver } from "@/lib/sounds";
 import { triggerLightTap, triggerSuccessHaptic, triggerErrorHaptic } from "@/lib/haptics";
 import { bingoBurst } from "@/lib/particles";
-import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { isInIframe } from "@/lib/iframeUtils";
 import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
 import { trackQuestProgress } from "@/lib/quests";
 
-const IN_CRAZYGAMES = shouldUseHashRouter();
+const IN_CRAZYGAMES = isInIframe();
 
 // --- Storage helpers ---
 

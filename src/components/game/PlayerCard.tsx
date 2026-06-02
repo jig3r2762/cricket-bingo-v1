@@ -2,10 +2,10 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Info, SkipForward, Sparkles } from "lucide-react";
 import { TEAM_COLORS } from "@/data/categories";
-import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { isInIframe } from "@/lib/iframeUtils";
 import type { CricketPlayer } from "@/types/game";
 
-const IN_IFRAME = shouldUseHashRouter();
+const IN_IFRAME = isInIframe();
 
 const ROLE_COLORS: Record<string, string> = {
   Batsman: "color-green",

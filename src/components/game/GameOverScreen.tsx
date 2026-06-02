@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import type { GameState } from "@/types/game";
 import { useAuth } from "@/contexts/AuthContext";
 import { CountdownTimer } from "./CountdownTimer";
-import { shouldUseHashRouter } from "@/lib/iframeUtils";
+import { isInIframe } from "@/lib/iframeUtils";
 import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
 import { triggerConfetti } from "@/lib/confetti";
 import { shareGameResults } from "@/lib/share";
@@ -13,7 +13,7 @@ import { Capacitor } from "@capacitor/core";
 
 const CG_BEST_KEY = "cg-best-score";
 
-const IN_IFRAME = shouldUseHashRouter();
+const IN_IFRAME = isInIframe();
 const IS_NATIVE = Capacitor.isNativePlatform();
 
 interface GameOverScreenProps {
@@ -469,7 +469,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
         )}
 
         {/* Guest sign-in prompt / iframe CTA */}
-        {isGuest && !IS_NATIVE && (
+        {isGuest && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
