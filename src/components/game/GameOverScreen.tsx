@@ -9,10 +9,12 @@ import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
 import { triggerConfetti } from "@/lib/confetti";
 import { shareGameResults } from "@/lib/share";
+import { Capacitor } from "@capacitor/core";
 
 const CG_BEST_KEY = "cg-best-score";
 
 const IN_IFRAME = shouldUseHashRouter();
+const IS_NATIVE = Capacitor.isNativePlatform();
 
 interface GameOverScreenProps {
   gameState: GameState;
@@ -467,7 +469,7 @@ export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScree
         )}
 
         {/* Guest sign-in prompt / iframe CTA */}
-        {isGuest && (
+        {isGuest && !IS_NATIVE && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

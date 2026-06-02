@@ -21,13 +21,13 @@ function isOnOurDomain(): boolean {
   return OUR_HOSTS.some((h) => host === h) || host.includes("vercel.app");
 }
 
+import { Capacitor } from "@capacitor/core";
+
 /**
  * Returns true when running on external hosting (CrazyGames CDN, QA tool, etc.)
- * OR inside an iframe. In both cases we need HashRouter and guest-only mode.
- *
- * Why hostname check: CrazyGames QA loads the game directly (not in an iframe)
- * so isInIframe() alone is not enough to detect external hosting.
+ * OR inside an iframe OR native mobile app container (Capacitor).
+ * In all these cases we need HashRouter and guest-only mode.
  */
 export function shouldUseHashRouter(): boolean {
-  return !isOnOurDomain() || isInIframe();
+  return !isOnOurDomain() || isInIframe() || Capacitor.isNativePlatform();
 }

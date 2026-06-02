@@ -30,8 +30,10 @@ import {
 import type { GridCategory } from "@/types/game";
 import { shouldUseHashRouter } from "@/lib/iframeUtils";
 import { cgGameLoadingStop, cgGameplayStart, cgGameplayStop, cgShowRewardedAd } from "@/lib/crazyGamesSDK";
+import { Capacitor } from "@capacitor/core";
 
 const IN_IFRAME = shouldUseHashRouter();
+const IS_NATIVE = Capacitor.isNativePlatform();
 
 const Index = () => {
   const navigate = useNavigate();
@@ -304,12 +306,14 @@ function GameBoard({
                   </button>
                 )}
                 {isGuest ? (
-                  <button
-                    onClick={() => signInWithGoogle().catch(() => {})}
-                    className="hud-pill color-gold !text-[10px] !px-2.5 !py-1"
-                  >
-                    SIGN IN
-                  </button>
+                  !IS_NATIVE && (
+                    <button
+                      onClick={() => signInWithGoogle().catch(() => {})}
+                      className="hud-pill color-gold !text-[10px] !px-2.5 !py-1"
+                    >
+                      SIGN IN
+                    </button>
+                  )
                 ) : (
                   <button
                     onClick={signOut}
@@ -442,12 +446,14 @@ function GameBoard({
                     {/* Bottom Section: Theme & Auth Actions */}
                     <div className="space-y-4 border-t border-border pt-4">
                       {isGuest ? (
-                        <button
-                          onClick={() => signInWithGoogle().catch(() => {})}
-                          className="hud-pill w-full justify-center gap-2 text-gold border-gold/30 hover:bg-gold/10"
-                        >
-                          SIGN IN
-                        </button>
+                        !IS_NATIVE && (
+                          <button
+                            onClick={() => signInWithGoogle().catch(() => {})}
+                            className="hud-pill w-full justify-center gap-2 text-gold border-gold/30 hover:bg-gold/10"
+                          >
+                            SIGN IN
+                          </button>
+                        )
                       ) : (
                         <button
                           onClick={signOut}
