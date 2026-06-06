@@ -10,7 +10,10 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   type User,
+  GoogleAuthProvider,
+  signInWithCredential,
 } from "firebase/auth";
+import { Capacitor } from "@capacitor/core";
 import {
   doc,
   getDoc,
@@ -123,8 +126,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    let appUrlListener: any = null;
+
+    const setupDeepLink = async () => {
+      const { App } = await import("@capacitor/app");
+      const { Browser } = await import("@capacitor/browser");
+
+      appUrlListener = await App.addListener("appUrlOpen", async (event: { url: string }) => {
+        console.log("App opened with URL:", event.url);
+        try {
+          const urlObj = new URL(event.url);
+          if (urlObj.host === "auth-callback" || urlObj.protocol === "in.cricketbingo.app:") {
+            const params = new URLSearchParams(urlObj.search);
+            const idToken = params.get("idToken");
+            if (idToken) {
+              setLoading(true);
+              const credential = GoogleAuthProvider.credential(idToken);
+              await signInWithCredential(auth, credential);
+              console.log("Firebase signInWithCredential successful!");
+            }
+          }
+        } catch (err) {
+          console.error("Deep link sign-in error:", err);
+        } finally {
+          await Browser.close().catch(() => {});
+          setLoading(false);
+        }
+      });
+    };
+
+    setupDeepLink();
+
+    return () => {
+      if (appUrlListener) {
+        appUrlListener.remove();
+      }
+    };
+  }, []);
+
   const signInWithGoogle = async () => {
     try {
+      if (Capacitor.isNativePlatform()) {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.open({ url: "https://cricket-bingo.in/mobile-auth-trigger" });
+        return;
+      }
       await signInWithPopup(auth, googleProvider);
     } catch (err) {
       if (err instanceof Error) {
@@ -240,6 +289,19 @@ async function ensureUserDoc(user: User) {
       lastLoginDate: getTodayDateString(),
     };
     await setDoc(ref, data);
+  } else {
+    // Sync Google profile updates (name/avatar) if they changed
+    const existing = snap.data();
+    const updates: Partial<UserData> = {};
+    if (user.displayName && existing.displayName !== user.displayName) {
+      updates.displayName = user.displayName;
+    }
+    if (user.photoURL && existing.photoURL !== user.photoURL) {
+      updates.photoURL = user.photoURL;
+    }
+    if (Object.keys(updates).length > 0) {
+      await setDoc(ref, updates, { merge: true });
+    }
   }
 }
 

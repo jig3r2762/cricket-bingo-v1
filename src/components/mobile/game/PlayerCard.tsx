@@ -124,7 +124,7 @@ export function PlayerCard({
 
             <button
               onClick={onSkip}
-              className="cta-chunky size-sm color-yellow shrink-0"
+              className="cta-chunky size-sm color-yellow shrink-0 hidden sm:inline-flex"
               aria-label="Skip"
             >
               <span className="relative z-10 flex items-center gap-1.5">
@@ -152,7 +152,7 @@ export function PlayerCard({
             </motion.div>
           )}
 
-          <div className="flex items-center justify-between mt-3 pl-2">
+          <div className="flex items-center justify-between mt-3 pl-2 hidden sm:flex">
             <div className="flex items-center gap-2">
               <button
                 onClick={onWildcard}

@@ -30,7 +30,7 @@ export default function Login() {
   }
 
   if (user || isGuest) {
-    return <Navigate to="/play" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const handleSignIn = async () => {
@@ -52,7 +52,7 @@ export default function Login() {
 
   const handleGuestPlay = () => {
     playAsGuest();
-    navigate("/play");
+    navigate("/");
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -75,7 +75,7 @@ export default function Login() {
         // Sign In
         await signInWithEmailAndPassword(auth, email.trim(), password);
       }
-      navigate("/play");
+      navigate("/");
     } catch (err: any) {
       console.error("Email auth error:", err);
       let errMsg = "Authentication failed. Please try again.";

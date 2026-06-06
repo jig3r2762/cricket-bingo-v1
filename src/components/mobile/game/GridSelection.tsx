@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 interface GridSelectionProps {
-  onSelect: (size: 3 | 4, timed?: boolean, mode?: "daily" | "ipl") => void;
+  onSelect: (size: 3 | 4 | 5, timed?: boolean, mode?: "daily" | "ipl") => void;
   onBattle?: () => void;
   onGuess?: () => void;
   onChase?: () => void;
@@ -54,6 +54,14 @@ const MODES: ModeConfig[] = [
     icon: Calendar,
     color: "blue",
     onClick: (s, t) => s(4, t, "daily"),
+  },
+  {
+    id: "daily-5",
+    label: "DAILY 5×5",
+    sub: "25 cells · Expert",
+    icon: Calendar,
+    color: "yellow",
+    onClick: (s, t) => s(5, t, "daily"),
   },
   {
     id: "chase",

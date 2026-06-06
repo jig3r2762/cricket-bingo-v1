@@ -18,7 +18,7 @@ const IN_CRAZYGAMES = isInIframe();
 
 // --- Storage helpers ---
 
-function storageKey(date: string, gridSize: 3 | 4) {
+function storageKey(date: string, gridSize: 3 | 4 | 5) {
   return `cricket-bingo-${date}-${gridSize}`;
 }
 
@@ -28,7 +28,7 @@ function saveState(state: GameState) {
   } catch { /* full or unavailable */ }
 }
 
-function loadState(date: string, gridSize: 3 | 4): GameState | null {
+function loadState(date: string, gridSize: 3 | 4 | 5): GameState | null {
   try {
     const raw = localStorage.getItem(storageKey(date, gridSize));
     if (!raw) return null;
@@ -71,9 +71,9 @@ export interface AdminGrid {
   deckPlayerIds: string[];
 }
 
-function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily"): GameState {
+function createInitialState(gridSize: 3 | 4 | 5, allPlayers: CricketPlayer[], adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily"): GameState {
   const date = getTodayDateString();
-  const remaining = gridSize === 3 ? 20 : 25;
+  const remaining = gridSize === 3 ? 20 : gridSize === 4 ? 25 : 30;
 
   if (adminGrid) {
     // Use admin-customized grid, resolve deck player IDs to full objects
@@ -134,7 +134,7 @@ function createInitialState(gridSize: 3 | 4, allPlayers: CricketPlayer[], adminG
 // Hook
 // =============================================================
 
-export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily") {
+export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "daily" | "ipl" = "daily") {
   const { players: allPlayers } = usePlayers();
 
   const [gameState, setGameState] = useState<GameState>(() => {
@@ -229,6 +229,43 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
     saveScore().catch(console.error);
   }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
 
+  // Save guest user stats locally when daily grid ends
+  const guestSavedRef = useRef(false);
+  useEffect(() => {
+    if (gameState.status === "playing" || mode !== "daily" || guestSavedRef.current) return;
+    if (user && !isGuest) return;
+    guestSavedRef.current = true;
+
+    try {
+      const date = gameState.dailyGameId;
+      const lastPlayed = localStorage.getItem("cricket-bingo-last-played") ?? "";
+
+      if (lastPlayed !== date) {
+        let currentStreak = Number(localStorage.getItem("cricket-bingo-streak") ?? "0");
+        let longestStreak = Number(localStorage.getItem("cricket-bingo-longest-streak") ?? "0");
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+        if (lastPlayed === yesterdayStr) {
+          currentStreak += 1;
+        } else {
+          currentStreak = 1;
+        }
+
+        const newLongest = Math.max(longestStreak, currentStreak);
+        localStorage.setItem("cricket-bingo-streak", String(currentStreak));
+        localStorage.setItem("cricket-bingo-longest-streak", String(newLongest));
+        localStorage.setItem("cricket-bingo-last-played", date);
+
+        window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
+      }
+    } catch (e) {
+      console.error("Failed to save guest streak:", e);
+    }
+  }, [gameState.status, gameState.dailyGameId, mode, user, isGuest]);
+
   // Update Daily Quests progress when daily grid ends
   const questTrackedRef = useRef(false);
   useEffect(() => {
@@ -251,6 +288,8 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
   useEffect(() => {
     if (gameState.status === "playing") {
       questTrackedRef.current = false;
+      guestSavedRef.current = false;
+      scoreSavedRef.current = false;
     }
   }, [gameState.status]);
 
@@ -481,7 +520,7 @@ export function useGameState(gridSize: 3 | 4, adminGrid?: AdminGrid, mode: "dail
       deck: randomGame.deck,
       deckIndex: 0,
       placements: {},
-      remainingPlayers: gridSize === 3 ? 20 : 25,
+      remainingPlayers: gridSize === 3 ? 20 : gridSize === 4 ? 25 : 30,
       wildcardsLeft: 1,
       wildcardMode: false,
       score: 0,

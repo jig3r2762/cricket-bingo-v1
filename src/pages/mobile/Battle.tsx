@@ -205,22 +205,17 @@ export default function Battle() {
             {/* VS Player card (online multiplayer) */}
             <button
               onClick={() => {
-                if (!user || isGuest) {
-                  toast.error("Multiplayer requires a signed-in account");
-                  setPhase("mode-select");
-                } else {
-                  setPhase("online-setup");
-                }
+                toast.info("Online Multiplayer is undergoing maintenance. Try practice matches vs CricBot!");
               }}
-              className="mode-card color-blue w-full !flex-row !items-center !min-h-0 !py-4"
+              className="mode-card color-blue w-full !flex-row !items-center !min-h-0 !py-4 opacity-60"
             >
               <div className="relative z-10 flex items-center gap-3 w-full text-white">
                 <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
                   <Users className="w-5 h-5" />
                 </div>
                 <div className="text-left">
-                  <div className="font-display text-base font-black uppercase tracking-wider">
-                    vs Player
+                  <div className="font-display text-base font-black uppercase tracking-wider flex items-center gap-2">
+                    vs Player <span className="bg-white text-blue-600 text-[8px] font-black px-1.5 py-0.5 rounded">MAINTENANCE</span>
                   </div>
                   <div className="text-[10px] font-bold uppercase tracking-wider opacity-85 mt-0.5">
                     Real-time multiplayer PvP

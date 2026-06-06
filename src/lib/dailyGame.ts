@@ -139,7 +139,7 @@ function buildCoverDeck(
 
 export function generateDailyGame(
   date: string,
-  gridSize: 3 | 4,
+  gridSize: 3 | 4 | 5,
   allPlayers: CricketPlayer[],
   categoryPool: GridCategory[]
 ): DailyGame {
@@ -198,7 +198,7 @@ function randomShuffle<T>(arr: T[]): T[] {
 }
 
 export function generateRandomGame(
-  gridSize: 3 | 4,
+  gridSize: 3 | 4 | 5,
   allPlayers: CricketPlayer[],
   categoryPool: GridCategory[]
 ): DailyGame {
@@ -229,7 +229,7 @@ export function generateRandomGame(
 import { IPL_EASY_POOL, IPL_MEDIUM_POOL, IPL_HARD_POOL } from "@/data/categories";
 
 export function generateIPLGame(
-  gridSize: 3 | 4,
+  gridSize: 3 | 4 | 5,
   allPlayers: CricketPlayer[]
 ): DailyGame {
   // Filter to IPL players only
@@ -243,9 +243,10 @@ export function generateIPLGame(
   // Balanced pick per grid size:
   // 3×3 → 3 easy + 3 medium + 3 hard
   // 4×4 → 4 easy + 6 medium + 6 hard
-  const easyCount   = gridSize === 3 ? 3 : 4;
-  const mediumCount = gridSize === 3 ? 3 : 6;
-  const hardCount   = gridSize === 3 ? 3 : 6;
+  // 5×5 → 5 easy + 10 medium + 10 hard
+  const easyCount   = gridSize === 3 ? 3 : gridSize === 4 ? 4 : 5;
+  const mediumCount = gridSize === 3 ? 3 : gridSize === 4 ? 6 : 10;
+  const hardCount   = gridSize === 3 ? 3 : gridSize === 4 ? 6 : 10;
 
   let grid: GridCategory[] = [];
   let attempts = 0;

@@ -55,7 +55,7 @@ export interface GridCategory {
 
 export interface GameState {
   dailyGameId: string;
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   grid: GridCategory[];
   deck: CricketPlayer[];
   deckIndex: number;
@@ -83,7 +83,7 @@ export interface HistoryEntry {
 
 export interface DailyGame {
   date: string;
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   grid: GridCategory[];
   deck: CricketPlayer[];
   seed: number;

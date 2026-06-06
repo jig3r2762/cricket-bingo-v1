@@ -57,14 +57,6 @@ const MODES = [
     icon: Zap,
     color: "orange" as const,
   },
-  {
-    href: "/paid-battle",
-    title: "PAID",
-    sub: "Stake & win",
-    desc: "Real coins, real winners",
-    icon: Trophy,
-    color: "yellow" as const,
-  },
 ];
 
 export default function Hub() {

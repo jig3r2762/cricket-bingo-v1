@@ -106,7 +106,7 @@ export function calculateScore(category: GridCategory, streak: number): number {
 
 // --- Bingo Detection ---
 
-function getWinLines(gridSize: 3 | 4): number[][] {
+function getWinLines(gridSize: 3 | 4 | 5): number[][] {
   const lines: number[][] = [];
   const n = gridSize;
 
@@ -139,7 +139,7 @@ function getWinLines(gridSize: 3 | 4): number[][] {
 export function checkBingo(
   placements: Record<string, CricketPlayer | null>,
   grid: GridCategory[],
-  gridSize: 3 | 4
+  gridSize: 3 | 4 | 5
 ): number[] | null {
   const totalCells = gridSize * gridSize;
 

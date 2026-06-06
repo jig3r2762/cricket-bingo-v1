@@ -35,6 +35,7 @@ const CookieConsent = () => {
 // AuthenticatedApp lazy-loads Firebase + AuthProvider only when user navigates
 // away from the landing page (login, play, battle, etc.).
 const AuthenticatedApp = lazy(() => import("./AuthenticatedApp"));
+const MobileAuthTrigger = lazy(() => import("./pages/web/MobileAuthTrigger"));
 
 const queryClient = new QueryClient();
 
@@ -70,7 +71,7 @@ const App = () => {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* Public pages — no Firebase, no AuthProvider, SEO-friendly */}
-              <Route path="/" element={<Hub />} />
+              {!isMobile() && <Route path="/" element={<Hub />} />}
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/how-to-play" element={<HowToPlay />} />
@@ -79,6 +80,7 @@ const App = () => {
               <Route path="/players/:id" element={<PlayerProfile />} />
               <Route path="/players" element={<Players />} />
               <Route path="/style" element={<StylePage />} />
+              <Route path="/mobile-auth-trigger" element={<MobileAuthTrigger />} />
               {/* All other routes — Firebase loads here */}
               <Route path="/*" element={<AuthenticatedApp />} />
             </Routes>

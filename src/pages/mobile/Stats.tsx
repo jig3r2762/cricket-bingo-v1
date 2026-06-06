@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 interface ScoreRecord {
   score: number;
   status: "won" | "lost";
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   filledCount: number;
   date: string;
 }

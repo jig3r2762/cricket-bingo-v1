@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 interface BingoMeterProps {
   filled: number;
   total: number;
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
 }
 
 export function BingoMeter({ filled, total, gridSize }: BingoMeterProps) {

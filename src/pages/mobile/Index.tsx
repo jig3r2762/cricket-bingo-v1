@@ -43,10 +43,10 @@ const Index = () => {
   useEffect(() => {
     if (allPlayers.length > 0) cgGameLoadingStop();
   }, [allPlayers.length]);
-  const [gridSize, setGridSize] = useState<3 | 4 | null>(() => {
+  const [gridSize, setGridSize] = useState<3 | 4 | 5 | null>(() => {
     try {
       const s = localStorage.getItem("cricket-bingo-gridsize");
-      return s === "3" ? 3 : s === "4" ? 4 : null;
+      return s === "3" ? 3 : s === "4" ? 4 : s === "5" ? 5 : null;
     } catch { return null; }
   });
   const [timed, setTimed] = useState(true);
@@ -190,7 +190,7 @@ function GameBoard({
   gameNumber = 1,
   onPlayAgain,
 }: {
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   timed: boolean;
   mode: "daily" | "ipl";
   howToPlay: boolean;

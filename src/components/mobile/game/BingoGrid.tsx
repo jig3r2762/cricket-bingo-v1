@@ -4,7 +4,7 @@ import type { GridCategory, CricketPlayer } from "@/types/game";
 
 interface BingoGridProps {
   categories: GridCategory[];
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   placements: Record<string, CricketPlayer | null>;
   feedbackStates: Record<string, "correct" | "wrong" | null>;
   onCellClick: (categoryId: string) => void;
@@ -28,7 +28,9 @@ export function BingoGrid({
         className={`grid gap-2 w-full mx-auto ${
           gridSize === 3
             ? "grid-cols-3 max-w-xs sm:max-w-none"
-            : "grid-cols-4 max-w-sm sm:max-w-none"
+            : gridSize === 4
+              ? "grid-cols-4 max-w-sm sm:max-w-none"
+              : "grid-cols-5 max-w-md sm:max-w-none"
         }`}
       >
         {categories.map((cat, i) => (

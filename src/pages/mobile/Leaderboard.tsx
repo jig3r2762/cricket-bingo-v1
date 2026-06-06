@@ -12,12 +12,12 @@ interface ScoreEntry {
   photoURL: string;
   score: number;
   status: "won" | "lost";
-  gridSize: 3 | 4;
+  gridSize: 3 | 4 | 5;
   filledCount: number;
   date: string;
 }
 
-type GridTab = 3 | 4;
+type GridTab = 3 | 4 | 5;
 
 interface PlayerScore {
   uid: string;
@@ -30,8 +30,10 @@ interface PlayerScore {
 interface LeaderboardData {
   allTime3: PlayerScore[];
   allTime4: PlayerScore[];
+  allTime5: PlayerScore[];
   weekly3: PlayerScore[];
   weekly4: PlayerScore[];
+  weekly5: PlayerScore[];
 }
 
 // Medal animations for podium positions
@@ -71,8 +73,10 @@ export default function Leaderboard() {
   const [leaderboards, setLeaderboards] = useState<LeaderboardData>({
     allTime3: [],
     allTime4: [],
+    allTime5: [],
     weekly3: [],
     weekly4: [],
+    weekly5: [],
   });
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -85,9 +89,10 @@ export default function Leaderboard() {
     const fetchScores = async () => {
       const scoresRef = collection(db, "scores");
 
-      // Query each grid size separately so high 4x4 scores don't push out 3x3 scores
+      // Query each grid size separately so high scores don't mix
       const q3 = query(scoresRef, where("gridSize", "==", 3), orderBy("score", "desc"), limit(200));
       const q4 = query(scoresRef, where("gridSize", "==", 4), orderBy("score", "desc"), limit(200));
+      const q5 = query(scoresRef, where("gridSize", "==", 5), orderBy("score", "desc"), limit(200));
 
       // Query scores from the last 7 days.
       const getSevenDaysAgoDateString = () => {
@@ -107,9 +112,10 @@ export default function Leaderboard() {
         limit(1000)
       );
 
-      const [snap3, snap4, snapWeekly] = await Promise.all([
+      const [snap3, snap4, snap5, snapWeekly] = await Promise.all([
         getDocsFromServer(q3),
         getDocsFromServer(q4),
+        getDocsFromServer(q5),
         getDocsFromServer(qWeekly),
       ]);
       if (cancelled) return;
@@ -132,8 +138,10 @@ export default function Leaderboard() {
       setLeaderboards({
         allTime3: toPlayerScore(snap3.docs.map(d => d.data() as ScoreEntry)),
         allTime4: toPlayerScore(snap4.docs.map(d => d.data() as ScoreEntry)),
+        allTime5: toPlayerScore(snap5.docs.map(d => d.data() as ScoreEntry)),
         weekly3: toPlayerScore(weeklyEntries.filter(e => e.gridSize === 3)),
         weekly4: toPlayerScore(weeklyEntries.filter(e => e.gridSize === 4)),
+        weekly5: toPlayerScore(weeklyEntries.filter(e => e.gridSize === 5)),
       });
       setLoading(false);
     };
@@ -147,8 +155,8 @@ export default function Leaderboard() {
   }, []);
 
   const scores = timeTab === "all"
-    ? (gridTab === 3 ? leaderboards.allTime3 : leaderboards.allTime4)
-    : (gridTab === 3 ? leaderboards.weekly3 : leaderboards.weekly4);
+    ? (gridTab === 3 ? leaderboards.allTime3 : gridTab === 4 ? leaderboards.allTime4 : leaderboards.allTime5)
+    : (gridTab === 3 ? leaderboards.weekly3 : gridTab === 4 ? leaderboards.weekly4 : leaderboards.weekly5);
   const userRank = scores.findIndex((e) => e.uid === user?.uid) + 1;
 
   return (
@@ -172,7 +180,7 @@ export default function Leaderboard() {
         <div className="flex justify-between items-center gap-4 flex-wrap w-full">
           {/* Grid Size Tabs */}
           <div className="flex gap-2">
-            {([3, 4] as GridTab[]).map((size) => (
+            {([3, 4, 5] as GridTab[]).map((size) => (
               <button
                 key={size}
                 onClick={() => setGridTab(size)}

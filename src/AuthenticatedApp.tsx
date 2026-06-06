@@ -32,6 +32,8 @@ const PaidBattle = lazy(() => isMobile() ? import("./pages/mobile/PaidBattle") :
 const GuessPlayer = lazy(() => isMobile() ? import("./pages/mobile/GuessPlayer") : import("./pages/web/GuessPlayer"));
 const ChaseGame = lazy(() => isMobile() ? import("./pages/mobile/ChaseGame") : import("./pages/web/ChaseGame"));
 
+const Hub = lazy(() => isMobile() ? import("./pages/mobile/Hub") : import("./pages/web/Hub"));
+
 export default function AuthenticatedApp() {
   return (
     <AuthProvider>
@@ -40,6 +42,16 @@ export default function AuthenticatedApp() {
           <Suspense fallback={<PageLoader />}>
             {isMobile() && <DailyRewardsModal />}
             <Routes>
+              {isMobile() && (
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Hub />
+                    </ProtectedRoute>
+                  }
+                />
+              )}
               <Route path="/login" element={<Login />} />
               <Route
                 path="/play"
