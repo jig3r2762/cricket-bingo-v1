@@ -156,11 +156,43 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Google AdSense — pause by default on non-content pages to comply with policy.
+    <!-- Google AdSense — Auto-loaded only on Web UI. Excluded completely on Mobile/Capacitor app.
          Auto ads are only enabled on public content pages (/, /about, /how-to-play, /players, /privacy, /terms).
          Game screens, login, admin and battle pages are excluded. -->
     <script>
       (function () {
+        // Platform detection logic (matches src/lib/platform.ts)
+        var isMobile = false;
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("platform") === "mobile") {
+          isMobile = true;
+        } else if (params.get("platform") === "web") {
+          isMobile = false;
+        } else {
+          try {
+            var stored = localStorage.getItem("cricket-bingo-platform");
+            if (stored === "mobile") {
+              isMobile = true;
+            } else if (stored === "web") {
+              isMobile = false;
+            } else {
+              var ua = navigator.userAgent.toLowerCase();
+              var isNative = !!(window.Capacitor && window.Capacitor.isNative);
+              var isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+              var isSmallViewport = window.innerWidth <= 768;
+              isMobile = isNative || isMobileUA || isSmallViewport;
+            }
+          } catch (e) {
+            var ua = navigator.userAgent.toLowerCase();
+            isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua) || window.innerWidth <= 768;
+          }
+        }
+
+        if (isMobile) {
+          // Do not load AdSense on Mobile UI/Capacitor to comply with policy
+          return;
+        }
+
         var contentPaths = ['/', '/about', '/how-to-play', '/players', '/privacy', '/terms', '/contact'];
         var path = window.location.pathname.replace(/\/$/, '') || '/';
         var isContent = contentPaths.indexOf(path) !== -1;
@@ -168,10 +200,14 @@
         if (!isContent) {
           window.adsbygoogle.pauseAdRequests = 1;
         }
+
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7606459883233703";
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
       })();
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7606459883233703"
-         crossorigin="anonymous"></script>
 
     <!-- SEO: Fallback content for crawlers without JS -->
     <noscript>

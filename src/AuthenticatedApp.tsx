@@ -5,29 +5,32 @@ import { PlayersProvider } from "@/contexts/PlayersContext";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminRoute } from "@/components/auth/AdminRoute";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
+import { isMobile } from "@/lib/platform";
+import { DailyRewardsModal } from "@/components/mobile/DailyRewardsModal";
 
 function PageLoader() {
+  const bgClass = isMobile() ? "stadium-bg" : "warm-bg";
+  const textClass = isMobile() ? "text-secondary/60" : "text-primary/60";
   return (
-    <div className="min-h-screen stadium-bg flex items-center justify-center">
-      <div className="text-secondary/60 font-display text-sm uppercase tracking-widest animate-pulse">
+    <div className={`min-h-screen ${bgClass} flex items-center justify-center`}>
+      <div className={`${textClass} font-display text-sm uppercase tracking-widest animate-pulse`}>
         Loading...
       </div>
     </div>
   );
 }
 
-const Index = lazy(() => import("./pages/Index"));
-const Admin = lazy(() => import("./pages/Admin"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
-const Stats = lazy(() => import("./pages/Stats"));
-const Battle = lazy(() => import("./pages/Battle"));
-const PaidBattle = lazy(() => import("./pages/PaidBattle"));
-const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
-const ChaseGame = lazy(() => import("./pages/ChaseGame"));
-
-import { DailyRewardsModal } from "@/components/DailyRewardsModal";
+// Platform-aware lazy imports
+const Login = lazy(() => isMobile() ? import("./pages/mobile/Login") : import("./pages/web/Login"));
+const NotFound = lazy(() => isMobile() ? import("./pages/mobile/NotFound") : import("./pages/web/NotFound"));
+const Index = lazy(() => isMobile() ? import("./pages/mobile/Index") : import("./pages/web/Index"));
+const Admin = lazy(() => isMobile() ? import("./pages/mobile/Admin") : import("./pages/web/Admin"));
+const Leaderboard = lazy(() => isMobile() ? import("./pages/mobile/Leaderboard") : import("./pages/web/Leaderboard"));
+const Stats = lazy(() => isMobile() ? import("./pages/mobile/Stats") : import("./pages/web/Stats"));
+const Battle = lazy(() => isMobile() ? import("./pages/mobile/Battle") : import("./pages/web/Battle"));
+const PaidBattle = lazy(() => isMobile() ? import("./pages/mobile/PaidBattle") : import("./pages/web/PaidBattle"));
+const GuessPlayer = lazy(() => isMobile() ? import("./pages/mobile/GuessPlayer") : import("./pages/web/GuessPlayer"));
+const ChaseGame = lazy(() => isMobile() ? import("./pages/mobile/ChaseGame") : import("./pages/web/ChaseGame"));
 
 export default function AuthenticatedApp() {
   return (
@@ -35,7 +38,7 @@ export default function AuthenticatedApp() {
       <WalletProvider>
         <PlayersProvider>
           <Suspense fallback={<PageLoader />}>
-            <DailyRewardsModal />
+            {isMobile() && <DailyRewardsModal />}
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route

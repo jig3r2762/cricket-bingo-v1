@@ -103,7 +103,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           cacheUserStats(data);
           setUserData(data);
         } else {
-          cacheUserStats(null);
+          const isGuestMode = shouldUseHashRouter() || localStorage.getItem("cricket-bingo-guest") === "true";
+          if (!isGuestMode) {
+            cacheUserStats(null);
+          }
           setUserData(null);
           // Auto-guest on CrazyGames / external hosting so ProtectedRoute
           // doesn't redirect to a login page that can't work there.

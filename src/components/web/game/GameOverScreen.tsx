@@ -1,0 +1,502 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { Trophy, XCircle, Share2, RotateCcw, Download, BarChart3, Link2, Check, Star, Swords } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { GameState } from "@/types/game";
+import { useAuth } from "@/contexts/AuthContext";
+import { CountdownTimer } from "./CountdownTimer";
+import { isInIframe } from "@/lib/iframeUtils";
+import { cgGameplayStop, cgShowMidgameAd } from "@/lib/crazyGamesSDK";
+import { triggerConfetti } from "@/lib/confetti";
+import { shareGameResults } from "@/lib/share";
+import { Capacitor } from "@capacitor/core";
+
+const CG_BEST_KEY = "cg-best-score";
+
+const IN_IFRAME = isInIframe();
+const IS_NATIVE = Capacitor.isNativePlatform();
+
+interface GameOverScreenProps {
+  gameState: GameState;
+  onReset: () => void;
+  /** Session game number (CrazyGames only -- undefined on regular site) */
+  gameNumber?: number;
+}
+
+function buildEmojiGrid(state: GameState): string {
+  const { grid, gridSize, placements } = state;
+  const n = gridSize;
+  let rows = "";
+  for (let r = 0; r < n; r++) {
+    let row = "";
+    for (let c = 0; c < n; c++) {
+      const cat = grid[r * n + c];
+      const filled = placements[cat.id] != null;
+      const isWin = state.winLine?.includes(r * n + c);
+      if (isWin) row += "\u{1F7E9}";
+      else if (filled) row += "\u{1F7E6}";
+      else row += "\u{2B1B}";
+    }
+    rows += row + "\n";
+  }
+  return rows;
+}
+
+function formatGameDate(dailyGameId: string): string {
+  // dailyGameId is like "2026-02-18" or "2026-02-18-3"
+  const dateStr = dailyGameId.split("-").slice(0, 3).join("-");
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d.getTime())) return dailyGameId;
+  return d.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+}
+
+function buildShareText(state: GameState, streak: number): string {
+  const { gridSize, placements, status, score } = state;
+  const n = gridSize;
+  const filledCount = Object.values(placements).filter(Boolean).length;
+  const total = n * n;
+  const won = status === "won";
+  const dateLabel = formatGameDate(state.dailyGameId);
+
+  let text = `\u{1F3CF} Cricket Bingo \u2013 ${dateLabel}\n`;
+  text += `${won ? "\u{1F3C6} BINGO!" : "\u{274C} Game Over"} | ${n}\u00D7${n} Grid\n`;
+  text += "\n";
+  text += buildEmojiGrid(state);
+  text += "\n";
+  text += `Score: ${score}`;
+  if (filledCount < total) text += ` \u00B7 Cells: ${filledCount}/${total}`;
+  if (streak >= 2) text += ` \u00B7 \u{1F525}${streak} days`;
+  text += "\n";
+  text += won
+    ? `Can you beat my score? \u{1F447}\ncricket-bingo.in`
+    : `Think you can do better? \u{1F447}\ncricket-bingo.in`;
+
+  return text;
+}
+
+export function GameOverScreen({ gameState, onReset, gameNumber }: GameOverScreenProps) {
+  const isWin = gameState.status === "won";
+  const navigate = useNavigate();
+  const { userData, isGuest, signInWithGoogle } = useAuth();
+  const currentStreak = userData?.currentStreak ?? 0;
+  const filledCount = Object.values(gameState.placements).filter(Boolean).length;
+  const total = gameState.gridSize * gameState.gridSize;
+  const [copied, setCopied] = useState(false);
+  const [challengeCopied, setChallengeCopied] = useState(false);
+
+  // --- CrazyGames: best score tracking ---
+  const [prevBest] = useState(() => {
+    if (!IN_IFRAME) return 0;
+    try { return parseInt(localStorage.getItem(CG_BEST_KEY) ?? "0", 10) || 0; } catch { return 0; }
+  });
+  const isNewBest = IN_IFRAME && gameState.score > 0 && gameState.score > prevBest;
+
+  // Persist new best on mount (game just ended)
+  useEffect(() => {
+    if (!IN_IFRAME || gameState.score === 0) return;
+    const newBest = Math.max(gameState.score, prevBest);
+    try { localStorage.setItem(CG_BEST_KEY, String(newBest)); } catch { /* ok */ }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // --- CrazyGames: auto-countdown to next game ---
+  const [autoStartIn, setAutoStartIn] = useState<number | null>(IN_IFRAME ? 5 : null);
+  const autoStartTriggered = useRef(false);
+
+  useEffect(() => {
+    if (autoStartIn === null || autoStartIn <= 0) return;
+    const t = setTimeout(() => setAutoStartIn(n => (n ?? 1) - 1), 1000);
+    return () => clearTimeout(t);
+  }, [autoStartIn]);
+
+  const handlePlayAgainFull = useCallback(async () => {
+    if (autoStartTriggered.current) return;
+    autoStartTriggered.current = true;
+    setAutoStartIn(null);
+    if (IN_IFRAME) {
+      cgGameplayStop();
+      await cgShowMidgameAd();
+    }
+    onReset();
+  }, [onReset]);
+
+  useEffect(() => {
+    if (autoStartIn === 0) handlePlayAgainFull();
+  }, [autoStartIn, handlePlayAgainFull]);
+
+  useEffect(() => {
+    if (isWin) {
+      const timer = setTimeout(() => triggerConfetti(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isWin]);
+
+  const handleShare = useCallback(async () => {
+    const text = buildShareText(gameState, currentStreak);
+    const sharedNatively = await shareGameResults(text, "Cricket Bingo");
+    if (!sharedNatively) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [gameState, currentStreak]);
+
+  const handleChallenge = useCallback(async () => {
+    const dateLabel = formatGameDate(gameState.dailyGameId);
+    const text = `\u{1F3CF} I scored ${gameState.score} on Cricket Bingo today (${dateLabel})!\nThink you know cricket better than me? \u{1F914}\nProve it \u{1F449} cricket-bingo.in`;
+    const sharedNatively = await shareGameResults(text, "Cricket Bingo Challenge");
+    if (!sharedNatively) {
+      setChallengeCopied(true);
+      setTimeout(() => setChallengeCopied(false), 2000);
+    }
+  }, [gameState.score, gameState.dailyGameId]);
+
+  const handleDownloadCard = useCallback(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 480;
+    canvas.height = 520;
+    const ctx = canvas.getContext("2d")!;
+
+    ctx.fillStyle = "#0a0e27";
+    ctx.fillRect(0, 0, 480, 520);
+    ctx.strokeStyle = "#6366f1";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, 478, 518);
+
+    const w = 480;
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "bold 22px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Cricket Bingo", w / 2, 40);
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "14px system-ui, sans-serif";
+    ctx.fillText(gameState.dailyGameId, w / 2, 62);
+
+    ctx.fillStyle = isWin ? "#facc15" : "#ef4444";
+    ctx.font = "bold 28px system-ui, sans-serif";
+    ctx.fillText(isWin ? "BINGO!" : "Game Over", w / 2, 105);
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "bold 18px system-ui, sans-serif";
+    ctx.fillText(`Score: ${gameState.score}`, w / 2, 135);
+
+    const n = gameState.gridSize;
+    let statsText = `${n}x${n} Grid | Cells: ${filledCount}/${total}`;
+    if (gameState.maxStreak > 0) statsText += ` | Streak: ${gameState.maxStreak}`;
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "13px system-ui, sans-serif";
+    ctx.fillText(statsText, w / 2, 160);
+
+    let gridTop = 185;
+    if (currentStreak >= 2) {
+      ctx.fillStyle = "#f97316";
+      ctx.font = "bold 14px system-ui, sans-serif";
+      ctx.fillText(`${currentStreak}-day streak`, w / 2, 182);
+      gridTop = 200;
+    }
+
+    const cellSize = Math.min(60, (w - 80) / n);
+    const gridWidth = cellSize * n;
+    const gridLeft = (w - gridWidth) / 2;
+
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        const idx = r * n + c;
+        const cat = gameState.grid[idx];
+        const filled = gameState.placements[cat.id] != null;
+        const isWinCell = gameState.winLine?.includes(idx);
+
+        const x = gridLeft + c * cellSize + 2;
+        const y = gridTop + r * cellSize + 2;
+        const s = cellSize - 4;
+
+        ctx.fillStyle = isWinCell ? "#22c55e" : filled ? "#3b82f6" : "#1e293b";
+        ctx.beginPath();
+        ctx.roundRect(x, y, s, s, 6);
+        ctx.fill();
+      }
+    }
+
+    const footerY = gridTop + n * cellSize + 30;
+    ctx.fillStyle = "#64748b";
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("cricket-bingo.in", w / 2, footerY);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `cricket-bingo-${gameState.dailyGameId}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }, [gameState, isWin, filledCount, total, currentStreak]);
+
+  // Calculate percentile rank based on score (deterministic hash)
+  const getPercentileRank = (): number => {
+    const score = gameState.score;
+    // Simple deterministic percentile: higher scores get better percentiles
+    const percentile = Math.min(99, Math.max(5, Math.floor((score / 500) * 100)));
+    // Add some variation based on score seed so it feels realistic
+    const seed = (score * 7) % 23;
+    return Math.min(99, percentile + Math.floor(seed / 2));
+  };
+
+  const percentile = getPercentileRank();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="w-full max-w-md mx-auto"
+    >
+      <div className="candy-card rounded-xl p-6 text-center space-y-4">
+        {/* CrazyGames: game number chip */}
+        {IN_IFRAME && gameNumber !== undefined && gameNumber > 1 && (
+          <div className="flex items-center justify-center gap-2">
+            <span className="px-3 py-1 rounded-full text-[10px] font-display uppercase tracking-widest border border-primary/30 text-primary/70 bg-primary/5">
+              Game #{gameNumber}
+            </span>
+            {prevBest > 0 && !isNewBest && (
+              <span className="px-3 py-1 rounded-full text-[10px] font-display uppercase tracking-widest border border-amber-500/30 text-amber-400/70 bg-amber-500/5">
+                Best: {prevBest}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* New best celebration */}
+        {isNewBest && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.3 }}
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-amber-400/15 border border-amber-400/50"
+          >
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <span className="font-display text-sm uppercase tracking-wider text-amber-400 font-bold">New Best Score!</span>
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+          </motion.div>
+        )}
+
+        {isWin ? (
+          <>
+            <motion.div
+              initial={{ rotate: -20, scale: 0, y: -50 }}
+              animate={{ rotate: 0, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.2 }}
+            >
+              <motion.div
+                animate={{ y: [0, -20, 0] }}
+                transition={{ duration: 0.6, repeat: 2, repeatDelay: 0.1, delay: 0.5 }}
+              >
+                <Trophy className="w-20 h-20 text-yellow-400 mx-auto drop-shadow-lg" />
+              </motion.div>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="font-display text-6xl gold-text font-black tracking-wider"
+            >
+              BINGO!
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-primary font-body font-bold text-sm"
+            >
+              You completed a line! +500 bonus
+            </motion.p>
+          </>
+        ) : (
+          <>
+            <XCircle className="w-16 h-16 text-destructive mx-auto" />
+            <h2 className="font-display text-5xl text-destructive font-black tracking-wider uppercase">
+              Game Over
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Better luck next time!
+            </p>
+          </>
+        )}
+
+        {/* Percentile rank - social proof */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="rounded-xl border border-primary/30 bg-primary/10 p-3"
+        >
+          <div className="text-sm font-body font-bold">
+            <span className="text-primary font-bold">{percentile}%</span><span className="text-muted-foreground"> of players today</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+          {percentile >= 90 ? "Top performer!" : percentile >= 70 ? "Great job!" : percentile >= 50 ? "Above average" : "Keep improving!"}
+          </p>
+        </motion.div>
+
+        <div className="flex items-center justify-center gap-6 pt-2">
+          <div className="text-center">
+            <div className="score-display font-display text-3xl">{gameState.score}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
+              Final Score
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-3xl text-foreground">{filledCount}/{total}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
+              Cells Filled
+            </div>
+          </div>
+          {gameState.maxStreak > 0 && (
+            <div className="text-center">
+              <div className="font-display text-3xl text-secondary">{gameState.maxStreak}</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-body font-bold">
+                Best Streak
+              </div>
+            </div>
+          )}
+        </div>
+
+        {!isGuest && currentStreak >= 2 && (
+          <div className="text-orange-400 font-display text-sm tracking-wider">
+            {"\u{1F525}"} {currentStreak}-day streak!
+          </div>
+        )}
+
+        {/* Countdown to next puzzle — only on main site (CrazyGames plays random games) */}
+        {!IN_IFRAME && <CountdownTimer />}
+
+        {/* Challenge CTA */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+          className="text-xs text-primary/80 font-display tracking-wide"
+        >          Challenge a friend to beat this score
+        </motion.p>
+
+        {/* Action buttons */}
+        {IN_IFRAME ? (
+          /* CrazyGames layout: Play Again is the hero CTA */
+          <div className="space-y-3">
+            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow size-lg w-full">
+              <span className="relative z-10 flex items-center justify-center gap-2.5">
+                <RotateCcw className="w-5 h-5" />
+                {autoStartIn !== null && autoStartIn > 0
+                  ? `PLAY AGAIN (${autoStartIn})`
+                  : "PLAY AGAIN"}
+              </span>
+            </button>
+            {autoStartIn !== null && autoStartIn > 0 && (
+              <button
+                onClick={() => setAutoStartIn(null)}
+                className="w-full text-center text-[10px] text-muted-foreground/60 font-display uppercase tracking-wider hover:text-muted-foreground transition-colors"
+              >
+                Cancel auto-start
+              </button>
+            )}
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <button onClick={handleShare} className="cta-chunky size-sm color-green">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copied ? "COPIED" : "SHARE"}
+                </span>
+              </button>
+              <button onClick={handleChallenge} className="cta-chunky size-sm color-orange">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {challengeCopied ? "COPIED" : "CHALLENGE"}
+                </span>
+              </button>
+              <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Download className="w-3.5 h-3.5" /> CARD
+                </span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Normal site layout */
+          <div className="flex flex-col gap-2.5">
+            {/* Primary high-priority action */}
+            <button onClick={handlePlayAgainFull} className="cta-chunky color-yellow w-full">
+              <span className="relative z-10 flex items-center justify-center gap-1.5 text-base font-black">
+                <RotateCcw className="w-5 h-5" /> PLAY AGAIN
+              </span>
+            </button>
+
+            {/* Game mode links */}
+            <div className={`grid ${isGuest ? "grid-cols-1" : "grid-cols-2"} gap-2`}>
+              <button onClick={() => navigate("/battle")} className="cta-chunky color-purple">
+                <span className="relative z-10 flex items-center justify-center gap-1.5 text-xs font-black">
+                  <Swords className="w-4 h-4" /> VS BOT
+                </span>
+              </button>
+              {!isGuest && (
+                <button onClick={() => navigate("/leaderboard")} className="cta-chunky color-orange">
+                  <span className="relative z-10 flex items-center justify-center gap-1.5 text-xs font-black">
+                    <BarChart3 className="w-4 h-4" /> RANKS
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Sharing / Card actions */}
+            <div className="grid grid-cols-3 gap-1.5">
+              <button onClick={handleShare} className="cta-chunky size-sm color-green">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copied ? "COPIED" : "SHARE"}
+                </span>
+              </button>
+              <button onClick={handleChallenge} className="cta-chunky size-sm color-pink">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  {challengeCopied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {challengeCopied ? "COPIED" : "CHALLENGE"}
+                </span>
+              </button>
+              <button onClick={handleDownloadCard} className="cta-chunky size-sm color-blue">
+                <span className="relative z-10 flex items-center justify-center gap-1 text-[11px] font-black">
+                  <Download className="w-3.5 h-3.5" /> CARD
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Guest sign-in prompt / iframe CTA */}
+        {isGuest && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mt-2 p-3 rounded-xl border border-primary/30 bg-primary/10"
+          >
+            {IN_IFRAME ? (
+              <p className="text-xs text-muted-foreground">
+                🏏 Sign in to save your scores, track streaks & compete on the global leaderboard!
+              </p>
+            ) : (
+              <>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Sign in to save your scores, track streaks & compete on the leaderboard!
+                </p>
+                <button
+                  onClick={() => signInWithGoogle().catch(() => {})}
+                  className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider text-foreground font-medium transition-all"
+                  style={{ background: "linear-gradient(135deg, #00ff41 0%, #00ff88 100%)" }}
+                >
+                  Sign in with Google
+                </button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </div>
+    </motion.div>
+  );
+}

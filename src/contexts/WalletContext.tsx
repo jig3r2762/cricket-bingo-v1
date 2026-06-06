@@ -29,12 +29,29 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user || isGuest) {
-      setCoinBalance(0);
+      const updateCoins = () => {
+        try {
+          const storedCoins = localStorage.getItem("cricket-bingo-coins");
+          setCoinBalance(storedCoins ? Number(storedCoins) : 0);
+        } catch {
+          setCoinBalance(0);
+        }
+      };
+
+      updateCoins();
       setBonusCoins(0);
       setLoading(false);
-      return;
+
+      window.addEventListener("cricket-bingo-coins-updated", updateCoins);
+      window.addEventListener("storage", updateCoins);
+
+      return () => {
+        window.removeEventListener("cricket-bingo-coins-updated", updateCoins);
+        window.removeEventListener("storage", updateCoins);
+      };
     }
 
+    setLoading(true);
     const ref = doc(db, "users", user.uid);
     const unsubscribe = onSnapshot(
       ref,
