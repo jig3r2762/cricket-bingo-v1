@@ -17,14 +17,19 @@ import { toast } from "sonner";
 const REWARDS = [50, 100, 150, 200, 300, 400, 750];
 
 export function DailyRewardsModal() {
-  const { user, userData, refreshUserData } = useAuth();
+  const { user, userData, isGuest, refreshUserData } = useAuth();
   const [open, setOpen] = useState(false);
   const [claiming, setClaiming] = useState(false);
+  
+  // Guest-specific reward state
+  const [guestStreak, setGuestStreak] = useState(1);
+  const [guestClaimedToday, setGuestClaimedToday] = useState(false);
 
   const todayStr = getTodayDateString();
 
   // Show modal if user is logged in, has a valid streak, and hasn't claimed today's reward yet
   useEffect(() => {
+    if (isGuest) return;
     if (!user || !userData) {
       setOpen(false);
       return;
@@ -34,33 +39,90 @@ export function DailyRewardsModal() {
     if (!hasClaimedToday) {
       setOpen(true);
     }
-  }, [user, userData, todayStr]);
+  }, [user, userData, todayStr, isGuest]);
 
-  if (!userData) return null;
+  // Guest users login streak and rewards initialization
+  useEffect(() => {
+    if (!isGuest) return;
 
-  const currentStreak = userData.loginStreak ?? 1;
-  const hasClaimedToday = userData.lastRewardClaimedDate === todayStr;
+    try {
+      const lastLogin = localStorage.getItem("cricket-bingo-guest-last-login") ?? "";
+      const lastClaim = localStorage.getItem("cricket-bingo-guest-last-claim") ?? "";
+      let streak = Number(localStorage.getItem("cricket-bingo-guest-streak") ?? "1");
+
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+      if (!lastLogin) {
+        streak = 1;
+      } else if (lastLogin === yesterdayStr) {
+        if (lastClaim === lastLogin && streak === 7) {
+          streak = 1;
+        } else {
+          streak = streak + 1;
+          if (streak > 7) streak = 1;
+        }
+      } else if (lastLogin !== todayStr) {
+        streak = 1;
+      }
+
+      localStorage.setItem("cricket-bingo-guest-last-login", todayStr);
+      localStorage.setItem("cricket-bingo-guest-streak", String(streak));
+      
+      setGuestStreak(streak);
+      setGuestClaimedToday(lastClaim === todayStr);
+
+      if (lastClaim !== todayStr) {
+        setOpen(true);
+      }
+    } catch (e) {
+      console.error("Failed to initialize guest daily rewards:", e);
+    }
+  }, [isGuest, todayStr]);
+
+  if (!isGuest && !userData) return null;
+
+  const currentStreak = isGuest ? guestStreak : (userData?.loginStreak ?? 1);
+  const hasClaimedToday = isGuest ? guestClaimedToday : (userData?.lastRewardClaimedDate === todayStr);
 
   const handleClaim = async () => {
-    if (!user || claiming || hasClaimedToday) return;
+    if (claiming || hasClaimedToday) return;
     setClaiming(true);
 
     try {
       const rewardAmount = REWARDS[(currentStreak - 1) % 7];
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        coinBalance: increment(rewardAmount),
-        lastRewardClaimedDate: todayStr,
-      });
 
-      triggerConfetti();
-      playCorrect();
-      toast.success(`Claimed Day ${currentStreak} Reward: ${rewardAmount} 🪙!`);
-      
-      await refreshUserData();
-      setOpen(false);
-    } catch (err: any) {
-      toast.error(err.message ?? "Failed to claim reward");
+      if (isGuest) {
+        const currentCoins = Number(localStorage.getItem("cricket-bingo-coins") ?? "0");
+        localStorage.setItem("cricket-bingo-coins", String(currentCoins + rewardAmount));
+        localStorage.setItem("cricket-bingo-guest-last-claim", todayStr);
+        setGuestClaimedToday(true);
+
+        window.dispatchEvent(new Event("storage"));
+        window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
+
+        triggerConfetti();
+        playCorrect();
+        toast.success(`Claimed Day ${currentStreak} Reward: ${rewardAmount} 🪙!`);
+        setOpen(false);
+      } else if (user) {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          coinBalance: increment(rewardAmount),
+          lastRewardClaimedDate: todayStr,
+        });
+
+        triggerConfetti();
+        playCorrect();
+        toast.success(`Claimed Day ${currentStreak} Reward: ${rewardAmount} 🪙!`);
+        
+        await refreshUserData();
+        setOpen(false);
+      }
+    } catch (err) {
+      const error = err as Error;
+      toast.error(error.message ?? "Failed to claim reward");
     } finally {
       setClaiming(false);
     }

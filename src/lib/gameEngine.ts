@@ -71,7 +71,7 @@ export function validate(player: CricketPlayer, category: GridCategory): boolean
 // Handles stat keys like "stat:totalWickets>=300"
 function splitCombo(combo: string): string[] {
   const parts: string[] = [];
-  let depth = 0;
+  const depth = 0;
   let current = "";
 
   for (let i = 0; i < combo.length; i++) {

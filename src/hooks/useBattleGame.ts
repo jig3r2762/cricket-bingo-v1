@@ -107,7 +107,7 @@ export function useBattleGame(input: BattleGameInput) {
         if (!category) return prev;
 
         const isValid = validate(player, category);
-        let next = { ...prev };
+        const next = { ...prev };
 
         if (isValid) {
           next.placements = { ...prev.placements, [categoryId]: player };

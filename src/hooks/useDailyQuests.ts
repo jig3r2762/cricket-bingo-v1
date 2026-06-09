@@ -21,7 +21,6 @@ export function useDailyQuests() {
   const user = auth?.user ?? null;
   const userData = auth?.userData ?? null;
   const isGuest = auth?.isGuest ?? false;
-  const refreshUserData = auth?.refreshUserData ?? (async () => {});
   const today = getTodayDateString();
 
   const [questsState, setQuestsState] = useState<DailyQuestsState>(() => {
@@ -32,7 +31,9 @@ export function useDailyQuests() {
         const parsed = JSON.parse(raw) as DailyQuestsState;
         if (parsed.date === today) return parsed;
       }
-    } catch {}
+    } catch {
+      // Ignore storage errors on initialization
+    }
     return createInitialQuestState(today);
   });
 
@@ -45,7 +46,9 @@ export function useDailyQuests() {
         // Save to local storage as well for fast load next time
         try {
           localStorage.setItem("cricket-bingo-quests", JSON.stringify(dbQuests));
-        } catch {}
+        } catch {
+          // Ignore storage write errors
+        }
       }
     }
   }, [user, isGuest, userData, today]);
@@ -75,11 +78,16 @@ export function useDailyQuests() {
     const quest = quests.find((q) => q.id === questId);
     if (!quest || !quest.completed || quest.claimed) return;
 
-    // Build next state
-    const nextState = { ...questsState };
-    nextState.progress[questId] = {
-      ...nextState.progress[questId],
-      claimed: true,
+    // Build next state (avoiding direct nested mutation)
+    const nextState = {
+      ...questsState,
+      progress: {
+        ...questsState.progress,
+        [questId]: {
+          ...questsState.progress[questId],
+          claimed: true,
+        }
+      }
     };
 
     try {
@@ -90,7 +98,9 @@ export function useDailyQuests() {
           coinBalance: increment(quest.reward),
           dailyQuests: nextState,
         });
-        await refreshUserData();
+        if (auth?.refreshUserData) {
+          await auth.refreshUserData();
+        }
       } else {
         // Guest user: Sync to local storage
         try {
@@ -100,7 +110,9 @@ export function useDailyQuests() {
           // Dispatch storage event manually for guest coin balance updates
           window.dispatchEvent(new Event("storage"));
           window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
-        } catch {}
+        } catch {
+          // Ignore local storage errors for guests
+        }
       }
 
       window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
@@ -108,10 +120,11 @@ export function useDailyQuests() {
       triggerConfetti();
       playCorrect();
       toast.success(`Claimed Quest Reward: +${quest.reward} 🪙!`);
-    } catch (err: any) {
-      toast.error(err.message ?? "Failed to claim reward");
+    } catch (err) {
+      const error = err as Error;
+      toast.error(error.message ?? "Failed to claim reward");
     }
-  }, [quests, questsState, user, isGuest, refreshUserData]);
+  }, [quests, questsState, user, isGuest, auth]);
 
   return {
     quests,

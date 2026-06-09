@@ -3,7 +3,7 @@ import type { CricketPlayer, GameState, GridCategory } from "@/types/game";
 import { validate, calculateScore, checkBingo, getEligibleCells, getRecommendedCell, findNextPlayableIndex } from "@/lib/gameEngine";
 import { generateDailyGame, getTodayDateString, generateRandomGame, generateIPLGame } from "@/lib/dailyGame";
 import { FULL_CATEGORY_POOL } from "@/data/categories";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, serverTimestamp, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers } from "@/contexts/PlayersContext";
@@ -13,6 +13,7 @@ import { bingoBurst } from "@/lib/particles";
 import { isInIframe } from "@/lib/iframeUtils";
 import { cgGameplayStart, cgGameplayStop } from "@/lib/crazyGamesSDK";
 import { trackQuestProgress } from "@/lib/quests";
+import { toast } from "sonner";
 
 const IN_CRAZYGAMES = isInIframe();
 
@@ -216,18 +217,35 @@ export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "
       }
 
       const newLongest = Math.max(longestStreak, currentStreak);
-      await setDoc(userRef, {
+      
+      let coinsEarned = 0;
+      if (mode === "daily" && lastPlayed !== date) {
+        coinsEarned = gameState.status === "won" ? 100 : 50;
+      }
+
+      const updates: Record<string, unknown> = {
         currentStreak,
         longestStreak: newLongest,
         lastPlayedDate: date,
-      }, { merge: true });
+      };
+
+      if (coinsEarned > 0) {
+        updates.coinBalance = increment(coinsEarned);
+      }
+
+      await setDoc(userRef, updates, { merge: true });
+
+      if (coinsEarned > 0) {
+        toast.success(`Completed Daily Game: +${coinsEarned} 🪙!`);
+        window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
+      }
 
       // Refresh user data in context so UI updates
       await refreshUserData();
     };
 
     saveScore().catch(console.error);
-  }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData]);
+  }, [gameState.status, user, isGuest, gameState.dailyGameId, gameState.gridSize, gameState.score, gameState.placements, refreshUserData, mode]);
 
   // Save guest user stats locally when daily grid ends
   const guestSavedRef = useRef(false);
@@ -242,7 +260,7 @@ export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "
 
       if (lastPlayed !== date) {
         let currentStreak = Number(localStorage.getItem("cricket-bingo-streak") ?? "0");
-        let longestStreak = Number(localStorage.getItem("cricket-bingo-longest-streak") ?? "0");
+        const longestStreak = Number(localStorage.getItem("cricket-bingo-longest-streak") ?? "0");
 
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
@@ -259,6 +277,13 @@ export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "
         localStorage.setItem("cricket-bingo-longest-streak", String(newLongest));
         localStorage.setItem("cricket-bingo-last-played", date);
 
+        // Award coins for completion
+        const coinsEarned = gameState.status === "won" ? 100 : 50;
+        const currentCoins = Number(localStorage.getItem("cricket-bingo-coins") ?? "0");
+        localStorage.setItem("cricket-bingo-coins", String(currentCoins + coinsEarned));
+
+        toast.success(`Completed Daily Game: +${coinsEarned} 🪙!`);
+        window.dispatchEvent(new Event("storage"));
         window.dispatchEvent(new Event("cricket-bingo-coins-updated"));
       }
     } catch (e) {
@@ -413,7 +438,7 @@ export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "
         if (!category) return prev;
 
         const isValid = validate(player, category);
-        let next = { ...prev };
+        const next = { ...prev };
 
         if (isValid) {
           next.placements = { ...prev.placements, [categoryId]: player };
@@ -532,7 +557,7 @@ export function useGameState(gridSize: 3 | 4 | 5, adminGrid?: AdminGrid, mode: "
       history: [],
     };
     setGameState(newState);
-  }, [gridSize, allPlayers]);
+  }, [gridSize, allPlayers, mode]);
 
   const filledCount = Object.values(gameState.placements).filter(Boolean).length;
 

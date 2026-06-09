@@ -179,7 +179,7 @@ export function useGuessGame(allPlayers: CricketPlayer[]) {
         // don't advance round yet — show result first
       };
     });
-  }, []);
+  }, [game, user, isGuest]);
 
   const skipRound = useCallback(() => {
     triggerLightTap().catch(() => {});
