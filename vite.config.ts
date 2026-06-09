@@ -23,6 +23,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    entries: ["index.html", "src/**/*.{ts,tsx,js,jsx}"],
+  },
   base: "./",
   build: {
     target: "es2020",
